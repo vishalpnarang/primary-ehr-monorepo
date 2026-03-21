@@ -46,10 +46,13 @@ export const useAuthStore = create<AuthState>((set) => ({
       };
 
       // Persist to session
+      // Extract numeric tenant ID from JWT claim; fall back to '1' if not present
+      // decoded.tenant_id comes from the Keycloak realm mapper "tenant_id" claim
+      const tenantId = decoded.tenant_id == null ? '1' : String(decoded.tenant_id);
       sessionStorage.setItem('primus-access-token', tokenResponse.access_token);
       sessionStorage.setItem('primus-refresh-token', tokenResponse.refresh_token);
       sessionStorage.setItem('primus-user', JSON.stringify(user));
-      sessionStorage.setItem('primus-tenant-id', '1');
+      sessionStorage.setItem('primus-tenant-id', tenantId);
 
       set({ user, isAuthenticated: true, token: tokenResponse.access_token, loading: false });
     } catch {
@@ -58,8 +61,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   // Keep mock login for fallback when Keycloak isn't running
+  // Tenant ID '5' matches the auto-incremented PK from the seed data
   loginMock: (user: User) => {
     sessionStorage.setItem('primus-user', JSON.stringify(user));
+    sessionStorage.setItem('primus-tenant-id', '5');
     set({ user, isAuthenticated: true, loading: false });
   },
 

@@ -17,7 +17,7 @@ import {
   RefreshCw,
   Activity,
 } from 'lucide-react';
-import { clinicalApi, encounterApi } from '@primus/ui/mocks/api';
+import { useLabResults, useMedications } from '@/hooks/useApi';
 
 const PATIENT_ID = 'PAT-10001';
 

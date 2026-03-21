@@ -1,7 +1,9 @@
 import { create } from 'zustand';
+import { keycloakAuth } from '@/lib/api';
 
 export interface PatientUser {
   id: string;
+  uuid?: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -26,7 +28,14 @@ export interface PatientUser {
 interface AuthState {
   user: PatientUser | null;
   isAuthenticated: boolean;
-  login: (user: PatientUser) => void;
+  /** Mock login — sets user directly without Keycloak (dev/demo fallback) */
+  loginMock: (user: PatientUser) => void;
+  /**
+   * Real Keycloak login — gets JWT token, decodes it, stores token + UUID
+   * in sessionStorage, then populates user from the decoded claims.
+   * Throws on failure so the caller can fall back to loginMock.
+   */
+  loginWithKeycloak: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -55,6 +64,40 @@ export const MOCK_PATIENT: PatientUser = {
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   isAuthenticated: false,
-  login: (user) => set({ user, isAuthenticated: true }),
-  logout: () => set({ user: null, isAuthenticated: false }),
+
+  loginMock: (user) => set({ user, isAuthenticated: true }),
+
+  loginWithKeycloak: async (email, password) => {
+    const tokenResponse = await keycloakAuth.getToken(email, password);
+    const claims = keycloakAuth.decodeToken(tokenResponse.access_token);
+
+    // Persist token and patient UUID for API interceptor and hooks
+    sessionStorage.setItem('primus-patient-token', tokenResponse.access_token);
+    const uuid = (claims['sub'] as string | undefined) ?? '';
+    sessionStorage.setItem('primus-patient-uuid', uuid);
+
+    const user: PatientUser = {
+      id: uuid,
+      uuid,
+      firstName: (claims['given_name'] as string | undefined) ?? '',
+      lastName: (claims['family_name'] as string | undefined) ?? '',
+      email: (claims['email'] as string | undefined) ?? email,
+      dateOfBirth: '',
+      gender: '',
+      phone: '',
+      address: { street: '', city: '', state: '', zip: '' },
+      insurance: { payer: '', memberId: '', groupNumber: '', planName: '' },
+    };
+
+    set({ user, isAuthenticated: true });
+  },
+
+  logout: () => {
+    sessionStorage.removeItem('primus-patient-token');
+    sessionStorage.removeItem('primus-patient-uuid');
+    set({ user: null, isAuthenticated: false });
+  },
 }));
+
+// Keep legacy `login` alias so any existing callers continue to compile
+export const { loginMock: login } = useAuthStore.getState();

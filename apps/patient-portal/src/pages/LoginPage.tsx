@@ -5,19 +5,35 @@ import { useAuthStore, MOCK_PATIENT } from '@/stores/authStore';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const login = useAuthStore((s) => s.login);
+  const { loginWithKeycloak, loginMock } = useAuthStore();
   const [email, setEmail] = useState('robert.johnson@email.com');
-  const [password, setPassword] = useState('••••••••');
+  const [password, setPassword] = useState('password123');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate API delay
-    await new Promise((r) => setTimeout(r, 600));
-    login(MOCK_PATIENT);
-    navigate('/home');
+    setError(null);
+
+    try {
+      // Attempt real Keycloak authentication first
+      await loginWithKeycloak(email, password);
+      navigate('/home');
+    } catch (err) {
+      if (err instanceof Error && err.message === 'Authentication failed') {
+        // Keycloak reachable but credentials rejected — show error, do NOT mock
+        setError('Invalid email or password. Please try again.');
+        setLoading(false);
+        return;
+      }
+      // Keycloak unreachable (network error / dev environment) — fall back to mock
+      loginMock(MOCK_PATIENT);
+      navigate('/home');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -38,6 +54,11 @@ const LoginPage: React.FC = () => {
           <p className="text-gray-500 text-sm mb-6">Sign in to access your health records and care team</p>
 
           <form onSubmit={handleLogin} className="space-y-4">
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700">
+                {error}
+              </div>
+            )}
             {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -109,7 +130,7 @@ const LoginPage: React.FC = () => {
 
         {/* Demo note */}
         <p className="text-center text-xs text-gray-400 mt-4">
-          Demo: Pre-filled as Robert Johnson — click Sign In to continue
+          Demo: Pre-filled as Robert Johnson / password123 — click Sign In to continue
         </p>
       </div>
     </div>

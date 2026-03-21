@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import {
   Calendar,
   Clock,
@@ -14,9 +13,7 @@ import {
   CheckCircle,
   Phone,
 } from 'lucide-react';
-import { appointmentApi } from '@primus/ui/mocks/api';
-
-const PATIENT_ID = 'PAT-10001';
+import { useUpcomingAppointments, usePastAppointments } from '@/hooks/useApi';
 
 type AppointmentStatus = 'confirmed' | 'completed' | 'cancelled' | 'pending' | 'no_show' | 'checked_in' | 'scheduled';
 
@@ -190,15 +187,8 @@ const AppointmentsPage: React.FC = () => {
   const navigate = useNavigate();
   const [tab, setTab] = useState<'upcoming' | 'past'>('upcoming');
 
-  const { data: upcoming = [], isLoading: loadingUp } = useQuery({
-    queryKey: ['appointments', 'upcoming', PATIENT_ID],
-    queryFn: () => appointmentApi.getUpcoming(PATIENT_ID),
-  });
-
-  const { data: past = [], isLoading: loadingPast } = useQuery({
-    queryKey: ['appointments', 'past', PATIENT_ID],
-    queryFn: () => appointmentApi.getPast(PATIENT_ID),
-  });
+  const { data: upcoming = [], isLoading: loadingUp } = useUpcomingAppointments();
+  const { data: past = [], isLoading: loadingPast } = usePastAppointments();
 
   // Fallback mock data when shared API returns no patient-specific results
   const fallbackUpcoming = [
@@ -357,7 +347,7 @@ const AppointmentsPage: React.FC = () => {
             return (
               <div className="space-y-3 sm:space-y-4">
                 {displayUpcoming.map((appt) => (
-                  <ApptCard key={appt.id} appt={appt as any} upcoming />
+                  <ApptCard key={appt.id} appt={appt} upcoming />
                 ))}
               </div>
             );
@@ -381,7 +371,7 @@ const AppointmentsPage: React.FC = () => {
           return (
             <div className="space-y-3 sm:space-y-4">
               {displayPast.map((appt) => (
-                <ApptCard key={appt.id} appt={appt as any} />
+                <ApptCard key={appt.id} appt={appt} />
               ))}
             </div>
           );
