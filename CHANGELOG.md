@@ -18,6 +18,42 @@
 
 ---
 
+## Session 10 — Complete Frontend-Backend Integration
+
+### What was done
+1. **Tenant ID from JWT** — no more hardcoded '1', extracted from Keycloak token claim
+2. **WebSocket hook** — STOMP/SockJS client for real-time messaging
+3. **Patient Portal fully connected** — Axios client, query hooks, Keycloak auth, all key pages wired
+4. **Patient Portal login** — email/password form (pre-filled robert.johnson@email.com)
+5. **All builds pass** — both portals + backend compile and test successfully
+
+### Test results
+- Frontend: **70/70** tests pass
+- Backend: **32/32** tests pass
+- Provider Portal: **builds ✓**
+- Patient Portal: **builds ✓**
+
+### Ready to test end-to-end
+```bash
+# Infrastructure (already running)
+docker compose up -d
+
+# Backend (already running)
+cd backend && mvn spring-boot:run -Dspring-boot.run.profiles=dev
+
+# Provider Portal
+cd apps/provider-portal && npx vite  # http://localhost:5173
+
+# Patient Portal
+cd apps/patient-portal && npx vite   # http://localhost:5174
+
+# Login credentials (password: password123)
+# Provider: emily.chen@primusdemo.com
+# Patient: robert.johnson@email.com
+```
+
+---
+
 ## Session 9 — Real Database Services
 
 ### What was done
