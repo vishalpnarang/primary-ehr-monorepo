@@ -3,13 +3,12 @@ package com.thinkitive.primus.auth.dto;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.UUID;
 
 @Data
 @Builder
 public class LoginResponse {
 
-    private UUID userUuid;
+    private String userUuid;
     private String username;
     private String displayName;
     private String email;

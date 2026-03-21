@@ -3,13 +3,12 @@ package com.thinkitive.primus.tenant.dto;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.UUID;
 
 @Data
 @Builder
 public class LocationDto {
 
-    private UUID uuid;
+    private String uuid;
     private String name;
     private String addressLine1;
     private String city;

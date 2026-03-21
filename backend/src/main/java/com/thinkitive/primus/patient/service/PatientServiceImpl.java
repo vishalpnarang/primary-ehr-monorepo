@@ -29,7 +29,6 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -85,7 +84,7 @@ public class PatientServiceImpl implements PatientService {
     // ── Read ──────────────────────────────────────────────────────────────────
 
     @Override
-    public PatientDto getPatient(UUID uuid) {
+    public PatientDto getPatient(String uuid) {
         Long tenantId = TenantContext.getTenantId();
         Patient patient = findPatientOrThrow(uuid, tenantId);
         return toDto(patient);
@@ -95,7 +94,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     @Transactional
-    public PatientDto updatePatient(UUID uuid, UpdatePatientRequest request) {
+    public PatientDto updatePatient(String uuid, UpdatePatientRequest request) {
         Long tenantId = TenantContext.getTenantId();
         log.info("Updating patient uuid={} tenant={}", uuid, tenantId);
 
@@ -109,7 +108,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     @Transactional
-    public void deletePatient(UUID uuid) {
+    public void deletePatient(String uuid) {
         Long tenantId = TenantContext.getTenantId();
         log.info("Soft-deleting patient uuid={} tenant={}", uuid, tenantId);
 
@@ -138,7 +137,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     @Transactional
-    public AllergyDto addAllergy(UUID patientUuid, AllergyRequest request) {
+    public AllergyDto addAllergy(String patientUuid, AllergyRequest request) {
         Long tenantId = TenantContext.getTenantId();
         Patient patient = findPatientOrThrow(patientUuid, tenantId);
 
@@ -168,7 +167,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     @Transactional
-    public ProblemDto addProblem(UUID patientUuid, ProblemRequest request) {
+    public ProblemDto addProblem(String patientUuid, ProblemRequest request) {
         Long tenantId = TenantContext.getTenantId();
         Patient patient = findPatientOrThrow(patientUuid, tenantId);
 
@@ -198,7 +197,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     @Transactional
-    public VitalsDto recordVitals(UUID patientUuid, VitalsRequest request) {
+    public VitalsDto recordVitals(String patientUuid, VitalsRequest request) {
         Long tenantId = TenantContext.getTenantId();
         Patient patient = findPatientOrThrow(patientUuid, tenantId);
 
@@ -208,7 +207,7 @@ public class PatientServiceImpl implements PatientService {
         BigDecimal weight      = request.getWeightLbs()              != null ? BigDecimal.valueOf(request.getWeightLbs())              : null;
         BigDecimal height      = request.getHeightInches()           != null ? BigDecimal.valueOf(request.getHeightInches())           : null;
         BigDecimal temperature = request.getTemperatureFahrenheit()  != null ? BigDecimal.valueOf(request.getTemperatureFahrenheit())  : null;
-        BigDecimal o2Sat       = request.getOxygenSaturationPercent() != null ? BigDecimal.valueOf(request.getOxygenSaturationPercent()) : null;
+        Integer    o2Sat       = request.getOxygenSaturationPercent() != null ? request.getOxygenSaturationPercent().intValue()               : null;
         BigDecimal bmi         = request.getBmiCalculated()          != null ? BigDecimal.valueOf(request.getBmiCalculated())          : null;
 
         VitalSigns vitals = VitalSigns.builder()
@@ -251,7 +250,7 @@ public class PatientServiceImpl implements PatientService {
     // ── Timeline ──────────────────────────────────────────────────────────────
 
     @Override
-    public List<TimelineEventDto> getTimeline(UUID patientUuid) {
+    public List<TimelineEventDto> getTimeline(String patientUuid) {
         Long tenantId = TenantContext.getTenantId();
         Patient patient = findPatientOrThrow(patientUuid, tenantId);
         Long patientId  = patient.getId();
@@ -382,7 +381,7 @@ public class PatientServiceImpl implements PatientService {
         return "PAT-" + String.format("%05d", next);
     }
 
-    private Patient findPatientOrThrow(UUID uuid, Long tenantId) {
+    private Patient findPatientOrThrow(String uuid, Long tenantId) {
         return patientRepository.findByTenantIdAndUuid(tenantId, uuid)
                 .filter(p -> !p.isArchive())
                 .orElseThrow(() -> new PrimusException(ResponseCode.PATIENT_NOT_FOUND));

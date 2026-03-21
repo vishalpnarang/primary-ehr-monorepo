@@ -6,7 +6,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
-import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -43,7 +42,7 @@ public class LabResult extends TenantAwareEntity {
     private String loincCode;
 
     @Column(name = "result_date")
-    private LocalDate resultDate;
+    private Instant resultDate;
 
     @Column(name = "reviewed_by", length = 150)
     private String reviewedBy;

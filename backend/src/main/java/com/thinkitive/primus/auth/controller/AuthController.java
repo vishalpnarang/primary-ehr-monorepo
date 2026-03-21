@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Auth controller — mock mode only (Phase 0/1).
@@ -63,7 +62,7 @@ public class AuthController extends BaseController {
 
     private LoginResponse buildMockLoginResponse(String username) {
         return LoginResponse.builder()
-                .userUuid(UUID.fromString("11111111-0000-0000-0000-000000000001"))
+                .userUuid("11111111-0000-0000-0000-000000000001")
                 .username(username)
                 .displayName("Dr. Sarah Mitchell")
                 .email(username + "@primusdemo.com")
@@ -71,7 +70,7 @@ public class AuthController extends BaseController {
                 .tenantId(1L)
                 .tenantName("Primus Demo Clinic Health")
                 .tenantSubdomain("primusdemo")
-                .accessToken("mock-jwt-token-" + UUID.randomUUID())
+                .accessToken("mock-jwt-token-" + java.util.UUID.randomUUID())
                 .tokenType(MOCK_TOKEN_TYPE)
                 .expiresIn(MOCK_EXPIRES_IN)
                 .build();
@@ -79,7 +78,7 @@ public class AuthController extends BaseController {
 
     private CurrentUserDto buildMockCurrentUser(String activeRole) {
         return CurrentUserDto.builder()
-                .userUuid(UUID.fromString("11111111-0000-0000-0000-000000000001"))
+                .userUuid("11111111-0000-0000-0000-000000000001")
                 .username("sarah.mitchell")
                 .displayName("Dr. Sarah Mitchell")
                 .email("sarah.mitchell@primusdemo.com")

@@ -6,7 +6,6 @@ import com.thinkitive.primus.inbox.dto.InboxItemDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.UUID;
 
 public interface InboxService {
 
@@ -14,7 +13,7 @@ public interface InboxService {
 
     InboxCountDto getInboxCounts();
 
-    InboxItemDto actionItem(UUID uuid, InboxActionRequest request);
+    InboxItemDto actionItem(String uuid, InboxActionRequest request);
 
-    InboxItemDto archiveItem(UUID uuid);
+    InboxItemDto archiveItem(String uuid);
 }

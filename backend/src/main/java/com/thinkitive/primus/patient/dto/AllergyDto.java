@@ -4,14 +4,13 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Data
 @Builder
 public class AllergyDto {
 
-    private UUID uuid;
-    private UUID patientUuid;
+    private String uuid;
+    private String patientUuid;
     private String allergen;
     private String reaction;
     private String severity;

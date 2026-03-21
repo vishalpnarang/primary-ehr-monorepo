@@ -18,7 +18,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Real JPA implementation for appointment scheduling.
@@ -110,7 +115,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     // ── Read ──────────────────────────────────────────────────────────────────
 
     @Override
-    public AppointmentDto getAppointment(UUID uuid) {
+    public AppointmentDto getAppointment(String uuid) {
         Long tenantId = TenantContext.getTenantId();
         Appointment apt = findOrThrow(uuid, tenantId);
         return toDto(apt, null, null, null);
@@ -120,7 +125,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional
-    public AppointmentDto updateAppointment(UUID uuid, UpdateAppointmentRequest request) {
+    public AppointmentDto updateAppointment(String uuid, UpdateAppointmentRequest request) {
         Long tenantId = TenantContext.getTenantId();
         Appointment apt = findOrThrow(uuid, tenantId);
 
@@ -174,7 +179,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional
-    public AppointmentDto cancelAppointment(UUID uuid) {
+    public AppointmentDto cancelAppointment(String uuid) {
         Long tenantId = TenantContext.getTenantId();
         Appointment apt = findOrThrow(uuid, tenantId);
 
@@ -203,7 +208,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     @Transactional
-    public AppointmentDto updateStatus(UUID uuid, AppointmentStatusRequest request) {
+    public AppointmentDto updateStatus(String uuid, AppointmentStatusRequest request) {
         Long tenantId = TenantContext.getTenantId();
         Appointment apt = findOrThrow(uuid, tenantId);
 
@@ -280,12 +285,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     // ── Private helpers ───────────────────────────────────────────────────────
 
-    private Appointment findOrThrow(UUID uuid, Long tenantId) {
+    private Appointment findOrThrow(String uuid, Long tenantId) {
         return appointmentRepository.findByTenantIdAndUuid(tenantId, uuid)
                 .orElseThrow(() -> new PrimusException(ResponseCode.NOT_FOUND, "Appointment not found"));
     }
 
-    private Long resolvePatientId(Long tenantId, UUID patientUuid) {
+    private Long resolvePatientId(Long tenantId, String patientUuid) {
         Patient patient = patientRepository.findByTenantIdAndUuid(tenantId, patientUuid)
                 .filter(p -> !p.isArchive())
                 .orElseThrow(() -> new PrimusException(ResponseCode.PATIENT_NOT_FOUND));
@@ -297,7 +302,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .anyMatch(a -> a.getStartTime().isBefore(slotEnd) && a.getEndTime().isAfter(slotStart));
     }
 
-    private AppointmentDto toDto(Appointment a, UUID patientUuid, String patientName, String patientMrn) {
+    private AppointmentDto toDto(Appointment a, String patientUuid, String patientName, String patientMrn) {
         Instant startInstant = a.getDate().atTime(a.getStartTime()).atZone(CLINIC_ZONE).toInstant();
         Instant endInstant   = a.getDate().atTime(a.getEndTime()).atZone(CLINIC_ZONE).toInstant();
 

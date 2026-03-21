@@ -4,14 +4,13 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Data
 @Builder
 public class AppointmentDto {
 
-    private UUID uuid;
-    private UUID patientUuid;
+    private String uuid;
+    private String patientUuid;
     private String patientName;
     private String patientMrn;
     private String providerId;

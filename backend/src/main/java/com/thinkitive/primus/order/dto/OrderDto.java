@@ -5,17 +5,16 @@ import lombok.Data;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Builder
 public class OrderDto {
 
-    private UUID uuid;
+    private String uuid;
     private String orderType;  // LAB | IMAGING | REFERRAL
-    private UUID patientUuid;
+    private String patientUuid;
     private String patientName;
-    private UUID encounterUuid;
+    private String encounterUuid;
     private String orderingProviderId;
     private String orderingProviderName;
     private String status; // PENDING | SENT | RESULTED | REVIEWED | CANCELLED

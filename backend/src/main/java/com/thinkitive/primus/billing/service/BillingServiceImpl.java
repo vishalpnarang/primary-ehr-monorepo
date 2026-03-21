@@ -28,7 +28,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalDouble;
-import java.util.UUID;
 
 /**
  * Phase-6 implementation. Integrates Availity clearinghouse + Stripe payments in a later phase.
@@ -62,7 +61,7 @@ public class BillingServiceImpl implements BillingService {
     }
 
     @Override
-    public ClaimDto getClaim(UUID uuid) {
+    public ClaimDto getClaim(String uuid) {
         Long tenantId = TenantContext.getTenantId();
         Claim claim = claimRepository.findByTenantIdAndUuid(tenantId, uuid)
                 .orElseThrow(() -> new PrimusException(ResponseCode.NOT_FOUND, "Claim not found: " + uuid));
@@ -73,7 +72,7 @@ public class BillingServiceImpl implements BillingService {
 
     @Override
     @Transactional
-    public ClaimDto submitClaim(UUID uuid) {
+    public ClaimDto submitClaim(String uuid) {
         Long tenantId = TenantContext.getTenantId();
         Claim claim = claimRepository.findByTenantIdAndUuid(tenantId, uuid)
                 .orElseThrow(() -> new PrimusException(ResponseCode.NOT_FOUND, "Claim not found: " + uuid));
@@ -93,7 +92,7 @@ public class BillingServiceImpl implements BillingService {
 
     @Override
     @Transactional
-    public ClaimDto denyClaim(UUID uuid, ClaimDenyRequest request) {
+    public ClaimDto denyClaim(String uuid, ClaimDenyRequest request) {
         Long tenantId = TenantContext.getTenantId();
         Claim claim = claimRepository.findByTenantIdAndUuid(tenantId, uuid)
                 .orElseThrow(() -> new PrimusException(ResponseCode.NOT_FOUND, "Claim not found: " + uuid));
@@ -109,7 +108,7 @@ public class BillingServiceImpl implements BillingService {
 
     @Override
     @Transactional
-    public ClaimDto appealClaim(UUID uuid, ClaimAppealRequest request) {
+    public ClaimDto appealClaim(String uuid, ClaimAppealRequest request) {
         Long tenantId = TenantContext.getTenantId();
         Claim claim = claimRepository.findByTenantIdAndUuid(tenantId, uuid)
                 .orElseThrow(() -> new PrimusException(ResponseCode.NOT_FOUND, "Claim not found: " + uuid));
@@ -250,7 +249,7 @@ public class BillingServiceImpl implements BillingService {
     // ── Patient balance ───────────────────────────────────────────────────────
 
     @Override
-    public PatientBalanceDto getPatientBalance(UUID patientUuid) {
+    public PatientBalanceDto getPatientBalance(String patientUuid) {
         Long tenantId = TenantContext.getTenantId();
 
         Patient patient = patientRepository.findByTenantIdAndUuid(tenantId, patientUuid)
@@ -394,7 +393,7 @@ public class BillingServiceImpl implements BillingService {
     }
 
     /** Resolve patient UUID from the patient DB id for the DTO — best-effort. */
-    private UUID resolvePatientUuid(Long patientId) {
+    private String resolvePatientUuid(Long patientId) {
         if (patientId == null) return null;
         return patientRepository.findById(patientId)
                 .map(Patient::getUuid)
@@ -402,7 +401,7 @@ public class BillingServiceImpl implements BillingService {
     }
 
     /** Encounter UUID is stored as the entity pk; UUID column is on the entity. */
-    private UUID resolveEncounterUuid(Long encounterId) {
+    private String resolveEncounterUuid(Long encounterId) {
         // Encounter repository not injected here; return null — callers that need it
         // should call EncounterService directly to keep service boundaries clean.
         return null;

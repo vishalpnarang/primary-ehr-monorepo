@@ -10,7 +10,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/notifications")
@@ -27,7 +26,7 @@ public class NotificationController extends BaseController {
 
     /** PATCH /api/v1/notifications/{uuid}/read */
     @PatchMapping("/{uuid}/read")
-    public ResponseEntity<ApiResponse> markRead(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse> markRead(@PathVariable String uuid) {
         return ok(notificationService.markRead(uuid), "Notification marked as read");
     }
 

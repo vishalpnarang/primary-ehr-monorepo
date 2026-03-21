@@ -5,16 +5,15 @@ import lombok.Data;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Builder
 public class ThreadDto {
 
-    private UUID uuid;
+    private String uuid;
     private String subject;
     private String threadType;
-    private UUID patientUuid;
+    private String patientUuid;
     private String patientName;
     private List<String> participantIds;
     private int unreadCount;

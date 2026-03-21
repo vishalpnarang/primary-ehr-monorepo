@@ -4,25 +4,24 @@ import com.thinkitive.primus.billing.dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.UUID;
 
 public interface BillingService {
 
     Page<ClaimDto> listClaims(String status, Pageable pageable);
 
-    ClaimDto getClaim(UUID uuid);
+    ClaimDto getClaim(String uuid);
 
-    ClaimDto submitClaim(UUID uuid);
+    ClaimDto submitClaim(String uuid);
 
-    ClaimDto denyClaim(UUID uuid, ClaimDenyRequest request);
+    ClaimDto denyClaim(String uuid, ClaimDenyRequest request);
 
-    ClaimDto appealClaim(UUID uuid, ClaimAppealRequest request);
+    ClaimDto appealClaim(String uuid, ClaimAppealRequest request);
 
     BillingKpiDto getBillingKpi();
 
     PaymentDto recordPayment(PaymentRequest request);
 
-    PatientBalanceDto getPatientBalance(UUID patientUuid);
+    PatientBalanceDto getPatientBalance(String patientUuid);
 
     ArAgingDto getArAging();
 }

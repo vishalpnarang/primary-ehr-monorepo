@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "patient_documents")
+@Table(name = "documents")
 public class Document extends TenantAwareEntity {
 
     @Column(name = "patient_id", nullable = false)

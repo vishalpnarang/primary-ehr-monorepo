@@ -73,7 +73,7 @@ class PatientServiceTest {
         when(patientRepo.save(any(Patient.class))).thenAnswer(invocation -> {
             Patient p = invocation.getArgument(0);
             p.setId(1L);
-            p.setUuid(UUID.randomUUID());
+            p.setUuid(UUID.randomUUID().toString());
             return p;
         });
 
@@ -103,7 +103,7 @@ class PatientServiceTest {
         when(patientRepo.save(any(Patient.class))).thenAnswer(invocation -> {
             Patient p = invocation.getArgument(0);
             p.setId(System.nanoTime()); // unique id
-            p.setUuid(UUID.randomUUID());
+            p.setUuid(UUID.randomUUID().toString());
             return p;
         });
 
@@ -118,7 +118,7 @@ class PatientServiceTest {
 
     @Test
     void getPatient_returnsPatientDto() {
-        UUID uuid = UUID.randomUUID();
+        String uuid = UUID.randomUUID().toString();
         Patient patient = Patient.builder()
                 .tenantId(1L)
                 .mrn("PAT-10001")
@@ -142,7 +142,7 @@ class PatientServiceTest {
 
     @Test
     void getPatient_notFound_shouldThrowException() {
-        UUID uuid = UUID.randomUUID();
+        String uuid = UUID.randomUUID().toString();
         when(patientRepo.findByTenantIdAndUuid(1L, uuid)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> patientService.getPatient(uuid))
@@ -162,7 +162,7 @@ class PatientServiceTest {
                 .status(Patient.PatientStatus.ACTIVE)
                 .build();
         patient.setId(1L);
-        patient.setUuid(UUID.randomUUID());
+        patient.setUuid(UUID.randomUUID().toString());
 
         PageRequest pageable = PageRequest.of(0, 20);
         when(patientRepo.searchByName(eq(1L), eq("James"), eq(pageable)))
@@ -189,7 +189,7 @@ class PatientServiceTest {
                 .status(Patient.PatientStatus.ACTIVE)
                 .build();
         patient.setId(1L);
-        patient.setUuid(UUID.randomUUID());
+        patient.setUuid(UUID.randomUUID().toString());
 
         PageRequest pageable = PageRequest.of(0, 20);
         when(patientRepo.findByTenantIdAndArchiveFalse(eq(1L), eq(pageable)))

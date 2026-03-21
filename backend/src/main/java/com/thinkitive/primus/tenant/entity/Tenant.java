@@ -48,8 +48,11 @@ public class Tenant extends AuditableEntity {
     private String zip;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 20)
+    @Column(name = "status", nullable = false, length = 50)
     private TenantStatus status;
+
+    @Column(name = "logo_url", length = 1024)
+    private String logoUrl;
 
     public enum TenantStatus {
         ACTIVE, INACTIVE, PROVISIONING

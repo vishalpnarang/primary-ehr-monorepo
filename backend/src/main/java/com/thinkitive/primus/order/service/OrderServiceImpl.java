@@ -29,7 +29,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -131,7 +130,7 @@ public class OrderServiceImpl implements OrderService {
     // ── Retrieval ─────────────────────────────────────────────────────────────
 
     @Override
-    public OrderDto getOrder(UUID uuid) {
+    public OrderDto getOrder(String uuid) {
         Long tenantId = TenantContext.getTenantId();
 
         // Try LabOrder first, then Referral.
@@ -160,7 +159,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDto> getOrdersByPatient(UUID patientUuid) {
+    public List<OrderDto> getOrdersByPatient(String patientUuid) {
         Long tenantId = TenantContext.getTenantId();
         Patient patient = requirePatient(tenantId, patientUuid);
 
@@ -190,7 +189,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderDto receiveLabResult(UUID orderUuid, LabResultRequest request) {
+    public OrderDto receiveLabResult(String orderUuid, LabResultRequest request) {
         Long tenantId = TenantContext.getTenantId();
         log.info("Receiving lab result for order={}", orderUuid);
 
@@ -216,7 +215,7 @@ public class OrderServiceImpl implements OrderService {
                             .unit(c.getUnit())
                             .referenceRange(c.getReferenceRange())
                             .status(parseResultStatus(c.getFlag()))
-                            .resultDate(LocalDate.now())
+                            .resultDate(Instant.now())
                             .build())
                     .toList();
             labResultRepository.saveAll(resultRows);
@@ -234,7 +233,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderDto reviewResult(UUID orderUuid, OrderReviewRequest request) {
+    public OrderDto reviewResult(String orderUuid, OrderReviewRequest request) {
         Long tenantId = TenantContext.getTenantId();
 
         // Phase 4: add findByTenantIdAndUuid to LabOrderRepository
@@ -267,7 +266,7 @@ public class OrderServiceImpl implements OrderService {
 
     // ── Private helpers ───────────────────────────────────────────────────────
 
-    private Patient requirePatient(Long tenantId, UUID patientUuid) {
+    private Patient requirePatient(Long tenantId, String patientUuid) {
         return patientRepository.findByTenantIdAndUuid(tenantId, patientUuid)
                 .orElseThrow(() -> new PrimusException(ResponseCode.PATIENT_NOT_FOUND,
                         "Patient not found: " + patientUuid));

@@ -5,13 +5,12 @@ import lombok.Data;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Data
 @Builder
 public class PatientDto {
 
-    private UUID uuid;
+    private String uuid;
     private String mrn;
     private String firstName;
     private String lastName;

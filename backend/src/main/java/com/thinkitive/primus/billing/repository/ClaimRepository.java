@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public interface ClaimRepository extends JpaRepository<Claim, Long> {
@@ -24,7 +23,7 @@ public interface ClaimRepository extends JpaRepository<Claim, Long> {
 
     Page<Claim> findByTenantId(Long tenantId, Pageable pageable);
 
-    Optional<Claim> findByTenantIdAndUuid(Long tenantId, UUID uuid);
+    Optional<Claim> findByTenantIdAndUuid(Long tenantId, String uuid);
 
     List<Claim> findByEncounterId(Long encounterId);
 

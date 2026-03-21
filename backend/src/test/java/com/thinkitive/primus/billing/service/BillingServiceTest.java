@@ -65,7 +65,7 @@ class BillingServiceTest {
                 .status(Patient.PatientStatus.ACTIVE)
                 .build();
         testPatient.setId(1L);
-        testPatient.setUuid(UUID.randomUUID());
+        testPatient.setUuid(UUID.randomUUID().toString());
     }
 
     @AfterEach
@@ -118,7 +118,7 @@ class BillingServiceTest {
 
     @Test
     void submitClaim_withNonReadyStatus_shouldThrow() {
-        UUID uuid = UUID.randomUUID();
+        String uuid = UUID.randomUUID().toString();
         Claim claim = buildClaim(ClaimStatus.SUBMITTED, new BigDecimal("250.00"), BigDecimal.ZERO);
         claim.setUuid(uuid);
         claim.setSubmittedAt(Instant.now());
@@ -170,7 +170,7 @@ class BillingServiceTest {
 
     @Test
     void getClaim_returnsClaimWithLines() {
-        UUID uuid = UUID.randomUUID();
+        String uuid = UUID.randomUUID().toString();
         Claim claim = buildClaim(ClaimStatus.SUBMITTED, new BigDecimal("250.00"), BigDecimal.ZERO);
         claim.setUuid(uuid);
 
@@ -182,7 +182,7 @@ class BillingServiceTest {
                 .charge(new BigDecimal("250.00"))
                 .build();
         line.setId(1L);
-        line.setUuid(UUID.randomUUID());
+        line.setUuid(UUID.randomUUID().toString());
 
         when(claimRepo.findByTenantIdAndUuid(1L, uuid)).thenReturn(Optional.of(claim));
         when(claimLineRepo.findByClaimId(1L)).thenReturn(List.of(line));
@@ -197,7 +197,7 @@ class BillingServiceTest {
 
     @Test
     void appealClaim_nonDenied_shouldThrow() {
-        UUID uuid = UUID.randomUUID();
+        String uuid = UUID.randomUUID().toString();
         Claim claim = buildClaim(ClaimStatus.SUBMITTED, new BigDecimal("250.00"), BigDecimal.ZERO);
         claim.setUuid(uuid);
 
@@ -227,7 +227,7 @@ class BillingServiceTest {
                 .status(status)
                 .build();
         claim.setId(1L);
-        claim.setUuid(UUID.randomUUID());
+        claim.setUuid(UUID.randomUUID().toString());
         return claim;
     }
 }

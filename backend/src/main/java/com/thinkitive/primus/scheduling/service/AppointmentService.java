@@ -6,21 +6,20 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 public interface AppointmentService {
 
     AppointmentDto createAppointment(CreateAppointmentRequest request);
 
-    AppointmentDto getAppointment(UUID uuid);
+    AppointmentDto getAppointment(String uuid);
 
-    AppointmentDto updateAppointment(UUID uuid, UpdateAppointmentRequest request);
+    AppointmentDto updateAppointment(String uuid, UpdateAppointmentRequest request);
 
-    AppointmentDto cancelAppointment(UUID uuid);
+    AppointmentDto cancelAppointment(String uuid);
 
     Page<AppointmentDto> listAppointments(String providerId, String status, LocalDate date, Pageable pageable);
 
-    AppointmentDto updateStatus(UUID uuid, AppointmentStatusRequest request);
+    AppointmentDto updateStatus(String uuid, AppointmentStatusRequest request);
 
     List<AppointmentDto> getTodaysAppointments(String providerId);
 

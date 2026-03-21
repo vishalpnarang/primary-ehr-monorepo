@@ -7,17 +7,16 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Builder
 public class ClaimDto {
 
-    private UUID uuid;
+    private String uuid;
     private String claimNumber;
-    private UUID patientUuid;
+    private String patientUuid;
     private String patientName;
-    private UUID encounterUuid;
+    private String encounterUuid;
     private String providerId;
     private String providerName;
     private String insurancePlanName;

@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -38,20 +37,20 @@ public class OrderController extends BaseController {
 
     /** GET /api/v1/orders/{uuid} */
     @GetMapping("/{uuid}")
-    public ResponseEntity<ApiResponse> getOrder(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse> getOrder(@PathVariable String uuid) {
         return ok(orderService.getOrder(uuid));
     }
 
     /** GET /api/v1/orders/patient/{patientUuid} */
     @GetMapping("/patient/{patientUuid}")
-    public ResponseEntity<ApiResponse> getOrdersByPatient(@PathVariable UUID patientUuid) {
+    public ResponseEntity<ApiResponse> getOrdersByPatient(@PathVariable String patientUuid) {
         return ok(orderService.getOrdersByPatient(patientUuid));
     }
 
     /** POST /api/v1/orders/lab/{uuid}/result — receive lab result (webhook from Quest/LabCorp) */
     @PostMapping("/lab/{uuid}/result")
     public ResponseEntity<ApiResponse> receiveLabResult(
-            @PathVariable UUID uuid,
+            @PathVariable String uuid,
             @Valid @RequestBody LabResultRequest request) {
         return ok(orderService.receiveLabResult(uuid, request), "Lab result received");
     }
@@ -59,7 +58,7 @@ public class OrderController extends BaseController {
     /** POST /api/v1/orders/lab/{uuid}/review — provider reviews result */
     @PostMapping("/lab/{uuid}/review")
     public ResponseEntity<ApiResponse> reviewResult(
-            @PathVariable UUID uuid,
+            @PathVariable String uuid,
             @Valid @RequestBody OrderReviewRequest request) {
         return ok(orderService.reviewResult(uuid, request), "Result reviewed");
     }

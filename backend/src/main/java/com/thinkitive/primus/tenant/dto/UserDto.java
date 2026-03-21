@@ -5,13 +5,12 @@ import lombok.Data;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Builder
 public class UserDto {
 
-    private UUID uuid;
+    private String uuid;
     private String username;
     private String email;
     private String firstName;

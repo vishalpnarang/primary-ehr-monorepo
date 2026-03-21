@@ -49,7 +49,7 @@ class EncounterServiceTest {
     EncounterServiceImpl encounterService;
 
     private Patient testPatient;
-    private UUID patientUuid;
+    private String patientUuid;
 
     @BeforeEach
     void setUp() {
@@ -61,7 +61,7 @@ class EncounterServiceTest {
         auth.setAuthenticated(true);
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        patientUuid = UUID.randomUUID();
+        patientUuid = UUID.randomUUID().toString();
         testPatient = Patient.builder()
                 .tenantId(1L)
                 .mrn("PAT-10001")
@@ -83,7 +83,7 @@ class EncounterServiceTest {
 
     @Test
     void signEncounter_inProgress_shouldSucceed() {
-        UUID uuid = UUID.randomUUID();
+        String uuid = UUID.randomUUID().toString();
         Encounter encounter = buildEncounter(uuid, EncounterStatus.IN_PROGRESS);
 
         when(encounterRepo.findByTenantIdAndUuid(1L, uuid)).thenReturn(Optional.of(encounter));
@@ -104,7 +104,7 @@ class EncounterServiceTest {
 
     @Test
     void signEncounter_alreadySigned_shouldThrow() {
-        UUID uuid = UUID.randomUUID();
+        String uuid = UUID.randomUUID().toString();
         Encounter encounter = buildEncounter(uuid, EncounterStatus.SIGNED);
 
         when(encounterRepo.findByTenantIdAndUuid(1L, uuid)).thenReturn(Optional.of(encounter));
@@ -116,7 +116,7 @@ class EncounterServiceTest {
 
     @Test
     void signEncounter_setsSignedByAndTimestamp() {
-        UUID uuid = UUID.randomUUID();
+        String uuid = UUID.randomUUID().toString();
         Encounter encounter = buildEncounter(uuid, EncounterStatus.IN_PROGRESS);
 
         when(encounterRepo.findByTenantIdAndUuid(1L, uuid)).thenReturn(Optional.of(encounter));
@@ -135,7 +135,7 @@ class EncounterServiceTest {
 
     @Test
     void getEncounter_returnsExpectedFields() {
-        UUID uuid = UUID.randomUUID();
+        String uuid = UUID.randomUUID().toString();
         Encounter encounter = buildEncounter(uuid, EncounterStatus.IN_PROGRESS);
 
         AssessmentPlan plan = AssessmentPlan.builder()
@@ -147,7 +147,7 @@ class EncounterServiceTest {
                 .sortOrder(0)
                 .build();
         plan.setId(1L);
-        plan.setUuid(UUID.randomUUID());
+        plan.setUuid(UUID.randomUUID().toString());
 
         when(encounterRepo.findByTenantIdAndUuid(1L, uuid)).thenReturn(Optional.of(encounter));
         when(patientRepo.findById(1L)).thenReturn(Optional.of(testPatient));
@@ -166,11 +166,11 @@ class EncounterServiceTest {
 
     @Test
     void getEncountersByPatient_shouldReturnEncounters() {
-        Encounter enc1 = buildEncounter(UUID.randomUUID(), EncounterStatus.SIGNED);
+        Encounter enc1 = buildEncounter(UUID.randomUUID().toString(), EncounterStatus.SIGNED);
         enc1.setSignedAt(Instant.now());
         enc1.setSignedBy("Dr. Sarah Mitchell");
 
-        Encounter enc2 = buildEncounter(UUID.randomUUID(), EncounterStatus.SIGNED);
+        Encounter enc2 = buildEncounter(UUID.randomUUID().toString(), EncounterStatus.SIGNED);
         enc2.setSignedAt(Instant.now());
         enc2.setSignedBy("Dr. Sarah Mitchell");
 
@@ -190,7 +190,7 @@ class EncounterServiceTest {
 
     // ── helpers ──────────────────────────────────────────────────────────────
 
-    private Encounter buildEncounter(UUID uuid, EncounterStatus status) {
+    private Encounter buildEncounter( String uuid, EncounterStatus status) {
         Encounter enc = Encounter.builder()
                 .tenantId(1L)
                 .patientId(1L)

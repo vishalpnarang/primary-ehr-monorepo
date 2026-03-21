@@ -12,7 +12,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/inbox")
@@ -36,14 +35,14 @@ public class InboxController extends BaseController {
     /** PATCH /api/v1/inbox/{uuid}/action */
     @PatchMapping("/{uuid}/action")
     public ResponseEntity<ApiResponse> actionItem(
-            @PathVariable UUID uuid,
+            @PathVariable String uuid,
             @Valid @RequestBody InboxActionRequest request) {
         return ok(inboxService.actionItem(uuid, request), "Item actioned");
     }
 
     /** PATCH /api/v1/inbox/{uuid}/archive */
     @PatchMapping("/{uuid}/archive")
-    public ResponseEntity<ApiResponse> archiveItem(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse> archiveItem(@PathVariable String uuid) {
         return ok(inboxService.archiveItem(uuid), "Item archived");
     }
 }

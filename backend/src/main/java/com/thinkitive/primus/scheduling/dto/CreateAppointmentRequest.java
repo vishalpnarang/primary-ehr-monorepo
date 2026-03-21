@@ -5,12 +5,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Data
 public class CreateAppointmentRequest {
 
-    @NotNull  private UUID patientUuid;
+    @NotNull  private String patientUuid;
     @NotBlank private String providerId;
     @NotNull  private Instant startTime;
     @NotNull  private Instant endTime;

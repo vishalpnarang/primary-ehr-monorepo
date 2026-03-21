@@ -54,7 +54,7 @@ class PatientControllerIT extends IntegrationTestBase {
     void getPatient_notFound_shouldReturn200WithMockData() throws Exception {
         // Phase-0 stub always returns mock data regardless of UUID.
         // In Phase 2, this will return 404 for unknown UUIDs.
-        UUID unknownUuid = UUID.randomUUID();
+        String unknownUuid = UUID.randomUUID().toString();
 
         mockMvc.perform(get(BASE_URL + "/{uuid}", unknownUuid)
                         .accept(MediaType.APPLICATION_JSON))

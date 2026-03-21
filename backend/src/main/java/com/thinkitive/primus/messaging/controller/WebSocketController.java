@@ -12,7 +12,6 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import java.util.UUID;
 
 /**
  * Handles inbound STOMP WebSocket messages from connected clients.
@@ -40,7 +39,7 @@ public class WebSocketController {
             @DestinationVariable String threadUuid,
             SendMessageRequest request) {
         log.debug("WS message received — thread={} bodyLength={}", threadUuid, request.getBody().length());
-        return messagingService.sendMessage(UUID.fromString(threadUuid), request);
+        return messagingService.sendMessage(threadUuid, request);
     }
 
     /**

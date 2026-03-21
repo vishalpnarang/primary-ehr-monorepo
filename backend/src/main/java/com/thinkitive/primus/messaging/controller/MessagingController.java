@@ -12,7 +12,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/messages")
@@ -35,21 +34,21 @@ public class MessagingController extends BaseController {
 
     /** GET /api/v1/messages/threads/{uuid} */
     @GetMapping("/threads/{uuid}")
-    public ResponseEntity<ApiResponse> getThread(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse> getThread(@PathVariable String uuid) {
         return ok(messagingService.getThread(uuid));
     }
 
     /** POST /api/v1/messages/threads/{uuid}/messages */
     @PostMapping("/threads/{uuid}/messages")
     public ResponseEntity<ApiResponse> sendMessage(
-            @PathVariable UUID uuid,
+            @PathVariable String uuid,
             @Valid @RequestBody SendMessageRequest request) {
         return created(messagingService.sendMessage(uuid, request), "Message sent");
     }
 
     /** PATCH /api/v1/messages/threads/{uuid}/read */
     @PatchMapping("/threads/{uuid}/read")
-    public ResponseEntity<ApiResponse> markThreadRead(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse> markThreadRead(@PathVariable String uuid) {
         return ok(messagingService.markThreadRead(uuid), "Thread marked as read");
     }
 

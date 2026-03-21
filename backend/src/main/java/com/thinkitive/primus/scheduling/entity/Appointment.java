@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -63,6 +64,9 @@ public class Appointment extends TenantAwareEntity {
 
     @Column(name = "telehealth", nullable = false)
     private boolean telehealth = false;
+
+    @Column(name = "balance", precision = 10, scale = 2)
+    private BigDecimal balance;
 
     public enum AppointmentType {
         NEW_PATIENT, FOLLOW_UP, ANNUAL_WELLNESS, TELEHEALTH, URGENT, PROCEDURE, BLOCKED

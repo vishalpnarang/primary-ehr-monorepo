@@ -4,14 +4,13 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Data
 @Builder
 public class MessageDto {
 
-    private UUID uuid;
-    private UUID threadUuid;
+    private String uuid;
+    private String threadUuid;
     private String senderId;
     private String senderName;
     private String body;

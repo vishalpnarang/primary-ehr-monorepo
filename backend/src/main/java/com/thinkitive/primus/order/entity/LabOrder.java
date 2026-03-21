@@ -39,7 +39,7 @@ public class LabOrder extends TenantAwareEntity {
     @Column(name = "resulted_at")
     private Instant resultedAt;
 
-    @Column(name = "indication", length = 20)
+    @Column(name = "indication", length = 500)
     private String indication;
 
     public enum LabPriority {

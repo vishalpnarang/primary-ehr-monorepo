@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Phase-8 implementation. Persists threads to DB; broadcasts via WebSocket.
@@ -99,7 +98,7 @@ public class MessagingServiceImpl implements MessagingService {
     }
 
     @Override
-    public ThreadDto getThread(UUID uuid) {
+    public ThreadDto getThread(String uuid) {
         Long tenantId = TenantContext.getTenantId();
         MessageThread thread = findThread(tenantId, uuid);
 
@@ -118,7 +117,7 @@ public class MessagingServiceImpl implements MessagingService {
 
     @Override
     @Transactional
-    public MessageDto sendMessage(UUID threadUuid, SendMessageRequest request) {
+    public MessageDto sendMessage(String threadUuid, SendMessageRequest request) {
         Long tenantId     = TenantContext.getTenantId();
         Long currentUserId = currentUserId();
         MessageThread thread = findThread(tenantId, threadUuid);
@@ -135,7 +134,7 @@ public class MessagingServiceImpl implements MessagingService {
 
     @Override
     @Transactional
-    public ThreadDto markThreadRead(UUID threadUuid) {
+    public ThreadDto markThreadRead(String threadUuid) {
         Long tenantId     = TenantContext.getTenantId();
         Long currentUserId = currentUserId();
         MessageThread thread = findThread(tenantId, threadUuid);
@@ -224,7 +223,7 @@ public class MessagingServiceImpl implements MessagingService {
         );
     }
 
-    private MessageThread findThread(Long tenantId, UUID uuid) {
+    private MessageThread findThread(Long tenantId, String uuid) {
         // MessageThreadRepository queries by tenantId + participant; for direct lookup
         // we use the JpaRepository findById after resolving by uuid across all threads.
         return threadRepository.findAll().stream()
@@ -257,7 +256,7 @@ public class MessagingServiceImpl implements MessagingService {
                 .build();
     }
 
-    private MessageDto toMessageDto(Message message, UUID threadUuid) {
+    private MessageDto toMessageDto(Message message, String threadUuid) {
         return MessageDto.builder()
                 .uuid(message.getUuid())
                 .threadUuid(threadUuid)

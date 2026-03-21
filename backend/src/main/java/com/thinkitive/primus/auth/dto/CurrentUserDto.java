@@ -4,13 +4,12 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Builder
 public class CurrentUserDto {
 
-    private UUID userUuid;
+    private String userUuid;
     private String username;
     private String displayName;
     private String email;

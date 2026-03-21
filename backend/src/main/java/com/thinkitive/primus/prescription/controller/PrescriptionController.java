@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/prescriptions")
@@ -26,25 +25,25 @@ public class PrescriptionController extends BaseController {
 
     /** GET /api/v1/prescriptions/{uuid} */
     @GetMapping("/{uuid}")
-    public ResponseEntity<ApiResponse> getPrescription(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse> getPrescription(@PathVariable String uuid) {
         return ok(prescriptionService.getPrescription(uuid));
     }
 
     /** GET /api/v1/prescriptions/patient/{patientUuid} */
     @GetMapping("/patient/{patientUuid}")
-    public ResponseEntity<ApiResponse> getPrescriptionsByPatient(@PathVariable UUID patientUuid) {
+    public ResponseEntity<ApiResponse> getPrescriptionsByPatient(@PathVariable String patientUuid) {
         return ok(prescriptionService.getPrescriptionsByPatient(patientUuid));
     }
 
     /** POST /api/v1/prescriptions/{uuid}/send — transmit to pharmacy via ScriptSure */
     @PostMapping("/{uuid}/send")
-    public ResponseEntity<ApiResponse> sendToPharmacy(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse> sendToPharmacy(@PathVariable String uuid) {
         return ok(prescriptionService.sendToPharmacy(uuid), "Prescription sent to pharmacy");
     }
 
     /** POST /api/v1/prescriptions/{uuid}/cancel */
     @PostMapping("/{uuid}/cancel")
-    public ResponseEntity<ApiResponse> cancelPrescription(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse> cancelPrescription(@PathVariable String uuid) {
         return ok(prescriptionService.cancelPrescription(uuid), "Prescription cancelled");
     }
 

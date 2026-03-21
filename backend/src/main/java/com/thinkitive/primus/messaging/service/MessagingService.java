@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface MessagingService {
 
@@ -13,11 +12,11 @@ public interface MessagingService {
 
     ThreadDto createThread(CreateThreadRequest request);
 
-    ThreadDto getThread(UUID uuid);
+    ThreadDto getThread(String uuid);
 
-    MessageDto sendMessage(UUID threadUuid, SendMessageRequest request);
+    MessageDto sendMessage(String threadUuid, SendMessageRequest request);
 
-    ThreadDto markThreadRead(UUID threadUuid);
+    ThreadDto markThreadRead(String threadUuid);
 
     UnreadCountDto getUnreadCount();
 }

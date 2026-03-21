@@ -4,7 +4,6 @@ import com.thinkitive.primus.tenant.entity.Tenant.TenantStatus;
 import lombok.*;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -14,7 +13,7 @@ import java.util.UUID;
 public class TenantDto {
 
     private Long id;
-    private UUID uuid;
+    private String uuid;
     private String name;
     private String subdomain;
     private String npi;

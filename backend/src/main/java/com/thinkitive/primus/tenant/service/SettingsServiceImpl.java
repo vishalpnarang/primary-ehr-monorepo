@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Phase-1/2 implementation. Reads tenant and location data from JPA.
@@ -136,7 +135,7 @@ public class SettingsServiceImpl implements SettingsService {
         // }
 
         return UserDto.builder()
-                .uuid(UUID.randomUUID())
+                .uuid(java.util.UUID.randomUUID().toString())
                 .username(request.getEmail().split("@")[0])
                 .email(request.getEmail())
                 .firstName(request.getFirstName())

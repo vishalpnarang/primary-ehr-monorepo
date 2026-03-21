@@ -4,13 +4,12 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Data
 @Builder
 public class NotificationDto {
 
-    private UUID uuid;
+    private String uuid;
     private String recipientId;
     private String type;       // LAB_RESULT | MESSAGE | APPOINTMENT | REFILL | PA | TASK | SYSTEM
     private String title;

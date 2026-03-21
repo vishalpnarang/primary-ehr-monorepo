@@ -3,7 +3,6 @@ package com.thinkitive.primus.order.service;
 import com.thinkitive.primus.order.dto.*;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface OrderService {
 
@@ -13,11 +12,11 @@ public interface OrderService {
 
     OrderDto createReferral(ReferralRequest request);
 
-    OrderDto getOrder(UUID uuid);
+    OrderDto getOrder(String uuid);
 
-    List<OrderDto> getOrdersByPatient(UUID patientUuid);
+    List<OrderDto> getOrdersByPatient(String patientUuid);
 
-    OrderDto receiveLabResult(UUID orderUuid, LabResultRequest request);
+    OrderDto receiveLabResult(String orderUuid, LabResultRequest request);
 
-    OrderDto reviewResult(UUID orderUuid, OrderReviewRequest request);
+    OrderDto reviewResult(String orderUuid, OrderReviewRequest request);
 }

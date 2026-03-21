@@ -80,8 +80,8 @@ public class Patient extends TenantAwareEntity {
     @Column(name = "status", nullable = false, length = 20)
     private PatientStatus status;
 
-    @Column(name = "photo", length = 500)
-    private String photo;
+    @Column(name = "photo_url", length = 1024)
+    private String photoUrl;
 
     public enum PatientStatus {
         ACTIVE, INACTIVE, DECEASED

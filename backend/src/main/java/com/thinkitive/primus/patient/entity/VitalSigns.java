@@ -35,8 +35,8 @@ public class VitalSigns extends TenantAwareEntity {
     @Column(name = "temperature", precision = 5, scale = 1)
     private BigDecimal temperature;
 
-    @Column(name = "o2_saturation", precision = 5, scale = 2)
-    private BigDecimal o2Saturation;
+    @Column(name = "o2_saturation")
+    private Integer o2Saturation;
 
     @Column(name = "weight", precision = 6, scale = 2)
     private BigDecimal weight;

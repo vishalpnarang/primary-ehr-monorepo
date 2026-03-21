@@ -43,6 +43,9 @@ public class Immunization extends TenantAwareEntity {
     @Column(name = "lot_number", length = 50)
     private String lotNumber;
 
-    @Column(name = "manufacturer", length = 100)
+    @Column(name = "manufacturer", length = 255)
     private String manufacturer;
+
+    @Column(name = "expiration_date")
+    private LocalDate expirationDate;
 }

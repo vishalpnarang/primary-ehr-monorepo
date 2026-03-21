@@ -12,7 +12,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/billing")
@@ -31,20 +30,20 @@ public class BillingController extends BaseController {
 
     /** GET /api/v1/billing/claims/{uuid} */
     @GetMapping("/claims/{uuid}")
-    public ResponseEntity<ApiResponse> getClaim(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse> getClaim(@PathVariable String uuid) {
         return ok(billingService.getClaim(uuid));
     }
 
     /** POST /api/v1/billing/claims/{uuid}/submit */
     @PostMapping("/claims/{uuid}/submit")
-    public ResponseEntity<ApiResponse> submitClaim(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse> submitClaim(@PathVariable String uuid) {
         return ok(billingService.submitClaim(uuid), "Claim submitted to clearinghouse");
     }
 
     /** POST /api/v1/billing/claims/{uuid}/deny */
     @PostMapping("/claims/{uuid}/deny")
     public ResponseEntity<ApiResponse> denyClaim(
-            @PathVariable UUID uuid,
+            @PathVariable String uuid,
             @Valid @RequestBody ClaimDenyRequest request) {
         return ok(billingService.denyClaim(uuid, request), "Claim denial recorded");
     }
@@ -52,7 +51,7 @@ public class BillingController extends BaseController {
     /** POST /api/v1/billing/claims/{uuid}/appeal */
     @PostMapping("/claims/{uuid}/appeal")
     public ResponseEntity<ApiResponse> appealClaim(
-            @PathVariable UUID uuid,
+            @PathVariable String uuid,
             @Valid @RequestBody ClaimAppealRequest request) {
         return ok(billingService.appealClaim(uuid, request), "Appeal filed");
     }
@@ -71,7 +70,7 @@ public class BillingController extends BaseController {
 
     /** GET /api/v1/billing/patient/{patientUuid}/balance */
     @GetMapping("/patient/{patientUuid}/balance")
-    public ResponseEntity<ApiResponse> getPatientBalance(@PathVariable UUID patientUuid) {
+    public ResponseEntity<ApiResponse> getPatientBalance(@PathVariable String patientUuid) {
         return ok(billingService.getPatientBalance(patientUuid));
     }
 

@@ -31,7 +31,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -148,7 +147,7 @@ public class InboxServiceImpl implements InboxService {
 
     @Override
     @Transactional
-    public InboxItemDto actionItem(UUID uuid, InboxActionRequest request) {
+    public InboxItemDto actionItem(String uuid, InboxActionRequest request) {
         Long tenantId     = TenantContext.getTenantId();
         Long currentUserId = currentUserId();
 
@@ -170,7 +169,7 @@ public class InboxServiceImpl implements InboxService {
 
     @Override
     @Transactional
-    public InboxItemDto archiveItem(UUID uuid) {
+    public InboxItemDto archiveItem(String uuid) {
         Long tenantId     = TenantContext.getTenantId();
         Long currentUserId = currentUserId();
 

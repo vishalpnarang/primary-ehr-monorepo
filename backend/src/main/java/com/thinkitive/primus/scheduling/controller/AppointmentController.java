@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/appointments")
@@ -31,21 +30,21 @@ public class AppointmentController extends BaseController {
 
     /** GET /api/v1/appointments/{uuid} */
     @GetMapping("/{uuid}")
-    public ResponseEntity<ApiResponse> getAppointment(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse> getAppointment(@PathVariable String uuid) {
         return ok(appointmentService.getAppointment(uuid));
     }
 
     /** PUT /api/v1/appointments/{uuid} */
     @PutMapping("/{uuid}")
     public ResponseEntity<ApiResponse> updateAppointment(
-            @PathVariable UUID uuid,
+            @PathVariable String uuid,
             @Valid @RequestBody UpdateAppointmentRequest request) {
         return ok(appointmentService.updateAppointment(uuid, request), "Appointment updated");
     }
 
     /** DELETE /api/v1/appointments/{uuid} — cancel */
     @DeleteMapping("/{uuid}")
-    public ResponseEntity<ApiResponse> cancelAppointment(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse> cancelAppointment(@PathVariable String uuid) {
         return ok(appointmentService.cancelAppointment(uuid), "Appointment cancelled");
     }
 
@@ -62,7 +61,7 @@ public class AppointmentController extends BaseController {
     /** PATCH /api/v1/appointments/{uuid}/status */
     @PatchMapping("/{uuid}/status")
     public ResponseEntity<ApiResponse> updateStatus(
-            @PathVariable UUID uuid,
+            @PathVariable String uuid,
             @Valid @RequestBody AppointmentStatusRequest request) {
         return ok(appointmentService.updateStatus(uuid, request), "Status updated to " + request.getStatus());
     }

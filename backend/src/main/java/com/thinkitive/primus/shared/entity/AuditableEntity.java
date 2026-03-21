@@ -12,7 +12,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Getter
 @Setter
@@ -27,22 +26,22 @@ public abstract class AuditableEntity {
     private Long id;
 
     @Column(name = "uuid", nullable = false, unique = true, updatable = false)
-    private UUID uuid;
+    private String uuid;
 
     @CreatedBy
-    @Column(name = "created_by", nullable = false, updatable = false, length = 150)
+    @Column(name = "created_by", updatable = false, length = 255)
     private String createdBy;
 
     @LastModifiedBy
-    @Column(name = "modified_by", length = 150)
+    @Column(name = "modified_by", length = 255)
     private String modifiedBy;
 
     @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created", updatable = false)
     private Instant createdAt;
 
     @LastModifiedDate
-    @Column(name = "modified_at")
+    @Column(name = "modified")
     private Instant modifiedAt;
 
     @Column(name = "archive", nullable = false)
@@ -51,7 +50,7 @@ public abstract class AuditableEntity {
     @PrePersist
     protected void prePersist() {
         if (this.uuid == null) {
-            this.uuid = UUID.randomUUID();
+            this.uuid = java.util.UUID.randomUUID().toString();
         }
     }
 }

@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.UUID;
 
 /**
  * Phase-8 implementation. Phase 8+: integrate Twilio SMS + SES email + in-app push.
@@ -43,7 +42,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional
-    public NotificationDto markRead(UUID uuid) {
+    public NotificationDto markRead(String uuid) {
         Long tenantId = TenantContext.getTenantId();
         Long userId   = currentUserId();
 

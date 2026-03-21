@@ -4,13 +4,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.util.UUID;
 
 @Data
 public class ImagingOrderRequest {
 
-    @NotNull  private UUID patientUuid;
-    @NotNull  private UUID encounterUuid;
+    @NotNull  private String patientUuid;
+    @NotNull  private String encounterUuid;
     @NotBlank private String modality;    // XRAY | MRI | CT | ULTRASOUND
     @NotBlank private String bodyPart;
     private String laterality;           // LEFT | RIGHT | BILATERAL

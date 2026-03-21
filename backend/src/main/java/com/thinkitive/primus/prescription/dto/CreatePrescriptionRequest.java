@@ -4,13 +4,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.util.UUID;
 
 @Data
 public class CreatePrescriptionRequest {
 
-    @NotNull  private UUID patientUuid;
-    @NotNull  private UUID encounterUuid;
+    @NotNull  private String patientUuid;
+    @NotNull  private String encounterUuid;
     @NotBlank private String drugName;
     private String ndcCode;
     @NotBlank private String strength;

@@ -9,12 +9,11 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public interface EncounterRepository extends JpaRepository<Encounter, Long> {
 
-    Optional<Encounter> findByTenantIdAndUuid(Long tenantId, UUID uuid);
+    Optional<Encounter> findByTenantIdAndUuid(Long tenantId, String uuid);
 
     Page<Encounter> findByTenantIdAndPatientIdOrderByDateDesc(Long tenantId, Long patientId, Pageable pageable);
 

@@ -5,16 +5,15 @@ import lombok.Data;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Builder
 public class EncounterDto {
 
-    private UUID uuid;
-    private UUID patientUuid;
+    private String uuid;
+    private String patientUuid;
     private String patientName;
-    private UUID appointmentUuid;
+    private String appointmentUuid;
     private String providerId;
     private String providerName;
     private String encounterType;

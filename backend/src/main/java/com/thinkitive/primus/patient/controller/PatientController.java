@@ -12,7 +12,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/patients")
@@ -30,21 +29,21 @@ public class PatientController extends BaseController {
 
     /** GET /api/v1/patients/{uuid} — get patient by UUID */
     @GetMapping("/{uuid}")
-    public ResponseEntity<ApiResponse> getPatient(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse> getPatient(@PathVariable String uuid) {
         return ok(patientService.getPatient(uuid));
     }
 
     /** PUT /api/v1/patients/{uuid} — update patient demographics */
     @PutMapping("/{uuid}")
     public ResponseEntity<ApiResponse> updatePatient(
-            @PathVariable UUID uuid,
+            @PathVariable String uuid,
             @Valid @RequestBody UpdatePatientRequest request) {
         return ok(patientService.updatePatient(uuid, request), "Patient updated");
     }
 
     /** DELETE /api/v1/patients/{uuid} — soft-delete (archive) patient */
     @DeleteMapping("/{uuid}")
-    public ResponseEntity<ApiResponse> deletePatient(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse> deletePatient(@PathVariable String uuid) {
         patientService.deletePatient(uuid);
         return ok(null, "Patient archived");
     }
@@ -66,7 +65,7 @@ public class PatientController extends BaseController {
     /** POST /api/v1/patients/{uuid}/allergies — add allergy */
     @PostMapping("/{uuid}/allergies")
     public ResponseEntity<ApiResponse> addAllergy(
-            @PathVariable UUID uuid,
+            @PathVariable String uuid,
             @Valid @RequestBody AllergyRequest request) {
         return created(patientService.addAllergy(uuid, request), "Allergy recorded");
     }
@@ -74,7 +73,7 @@ public class PatientController extends BaseController {
     /** POST /api/v1/patients/{uuid}/problems — add problem to problem list */
     @PostMapping("/{uuid}/problems")
     public ResponseEntity<ApiResponse> addProblem(
-            @PathVariable UUID uuid,
+            @PathVariable String uuid,
             @Valid @RequestBody ProblemRequest request) {
         return created(patientService.addProblem(uuid, request), "Problem added to list");
     }
@@ -82,14 +81,14 @@ public class PatientController extends BaseController {
     /** POST /api/v1/patients/{uuid}/vitals — record vital signs */
     @PostMapping("/{uuid}/vitals")
     public ResponseEntity<ApiResponse> recordVitals(
-            @PathVariable UUID uuid,
+            @PathVariable String uuid,
             @Valid @RequestBody VitalsRequest request) {
         return created(patientService.recordVitals(uuid, request), "Vitals recorded");
     }
 
     /** GET /api/v1/patients/{uuid}/timeline — clinical timeline */
     @GetMapping("/{uuid}/timeline")
-    public ResponseEntity<ApiResponse> getTimeline(@PathVariable UUID uuid) {
+    public ResponseEntity<ApiResponse> getTimeline(@PathVariable String uuid) {
         return ok(patientService.getTimeline(uuid));
     }
 }

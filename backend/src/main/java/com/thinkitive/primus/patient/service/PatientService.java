@@ -5,27 +5,26 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface PatientService {
 
     PatientDto createPatient(CreatePatientRequest request);
 
-    PatientDto getPatient(UUID uuid);
+    PatientDto getPatient(String uuid);
 
-    PatientDto updatePatient(UUID uuid, UpdatePatientRequest request);
+    PatientDto updatePatient(String uuid, UpdatePatientRequest request);
 
-    void deletePatient(UUID uuid);
+    void deletePatient(String uuid);
 
     Page<PatientSearchResult> searchPatients(String query, Pageable pageable);
 
     Page<PatientDto> listPatients(Pageable pageable);
 
-    AllergyDto addAllergy(UUID patientUuid, AllergyRequest request);
+    AllergyDto addAllergy(String patientUuid, AllergyRequest request);
 
-    ProblemDto addProblem(UUID patientUuid, ProblemRequest request);
+    ProblemDto addProblem(String patientUuid, ProblemRequest request);
 
-    VitalsDto recordVitals(UUID patientUuid, VitalsRequest request);
+    VitalsDto recordVitals(String patientUuid, VitalsRequest request);
 
-    List<TimelineEventDto> getTimeline(UUID patientUuid);
+    List<TimelineEventDto> getTimeline(String patientUuid);
 }

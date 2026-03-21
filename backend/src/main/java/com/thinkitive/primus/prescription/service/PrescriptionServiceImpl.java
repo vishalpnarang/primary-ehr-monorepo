@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -85,7 +84,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
     @Override
     @Transactional
-    public PrescriptionDto sendToPharmacy(UUID uuid) {
+    public PrescriptionDto sendToPharmacy(String uuid) {
         Long tenantId = TenantContext.getTenantId();
 
         Prescription rx = requirePrescription(tenantId, uuid);
@@ -112,7 +111,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
     @Override
     @Transactional
-    public PrescriptionDto cancelPrescription(UUID uuid) {
+    public PrescriptionDto cancelPrescription(String uuid) {
         Long tenantId = TenantContext.getTenantId();
 
         Prescription rx = requirePrescription(tenantId, uuid);
@@ -141,7 +140,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     // ── Read operations ───────────────────────────────────────────────────────
 
     @Override
-    public PrescriptionDto getPrescription(UUID uuid) {
+    public PrescriptionDto getPrescription(String uuid) {
         Long tenantId = TenantContext.getTenantId();
         Prescription rx = requirePrescription(tenantId, uuid);
         Medication med = requireMedication(rx.getMedicationId());
@@ -150,7 +149,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
-    public List<PrescriptionDto> getPrescriptionsByPatient(UUID patientUuid) {
+    public List<PrescriptionDto> getPrescriptionsByPatient(String patientUuid) {
         Long tenantId = TenantContext.getTenantId();
         Patient patient = requirePatient(tenantId, patientUuid);
 
@@ -181,7 +180,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
 
     // ── Private helpers ───────────────────────────────────────────────────────
 
-    private Prescription requirePrescription(Long tenantId, UUID uuid) {
+    private Prescription requirePrescription(Long tenantId, String uuid) {
         // Phase 5: add findByTenantIdAndUuid to PrescriptionRepository to replace this scan.
         return prescriptionRepository
                 .findByTenantIdAndProviderIdAndStatus(tenantId, UNRESOLVED_PROVIDER_ID, PrescriptionStatus.PENDING)
@@ -205,7 +204,7 @@ public class PrescriptionServiceImpl implements PrescriptionService {
                         "Medication not found for id: " + medicationId));
     }
 
-    private Patient requirePatient(Long tenantId, UUID patientUuid) {
+    private Patient requirePatient(Long tenantId, String patientUuid) {
         return patientRepository.findByTenantIdAndUuid(tenantId, patientUuid)
                 .orElseThrow(() -> new PrimusException(ResponseCode.PATIENT_NOT_FOUND,
                         "Patient not found: " + patientUuid));

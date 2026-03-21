@@ -3,19 +3,18 @@ package com.thinkitive.primus.prescription.service;
 import com.thinkitive.primus.prescription.dto.*;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface PrescriptionService {
 
     PrescriptionDto createPrescription(CreatePrescriptionRequest request);
 
-    PrescriptionDto getPrescription(UUID uuid);
+    PrescriptionDto getPrescription(String uuid);
 
-    List<PrescriptionDto> getPrescriptionsByPatient(UUID patientUuid);
+    List<PrescriptionDto> getPrescriptionsByPatient(String patientUuid);
 
-    PrescriptionDto sendToPharmacy(UUID uuid);
+    PrescriptionDto sendToPharmacy(String uuid);
 
-    PrescriptionDto cancelPrescription(UUID uuid);
+    PrescriptionDto cancelPrescription(String uuid);
 
     InteractionResult checkInteractions(InteractionCheckRequest request);
 }

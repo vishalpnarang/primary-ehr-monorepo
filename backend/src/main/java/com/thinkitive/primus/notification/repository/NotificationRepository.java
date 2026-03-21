@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
@@ -24,5 +23,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
         Long tenantId, Long userId, Pageable pageable
     );
 
-    Optional<Notification> findByTenantIdAndUserIdAndUuid(Long tenantId, Long userId, UUID uuid);
+    Optional<Notification> findByTenantIdAndUserIdAndUuid(Long tenantId, Long userId, String uuid);
 }

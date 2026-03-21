@@ -27,7 +27,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -87,7 +86,7 @@ public class EncounterServiceImpl implements EncounterService {
 
     @Override
     @Transactional
-    public EncounterDto updateEncounter(UUID uuid, UpdateEncounterRequest request) {
+    public EncounterDto updateEncounter(String uuid, UpdateEncounterRequest request) {
         Long tenantId = TenantContext.getTenantId();
 
         Encounter encounter = requireEncounter(tenantId, uuid);
@@ -130,7 +129,7 @@ public class EncounterServiceImpl implements EncounterService {
 
     @Override
     @Transactional
-    public EncounterDto signEncounter(UUID uuid) {
+    public EncounterDto signEncounter(String uuid) {
         Long tenantId = TenantContext.getTenantId();
 
         Encounter encounter = requireEncounter(tenantId, uuid);
@@ -156,7 +155,7 @@ public class EncounterServiceImpl implements EncounterService {
 
     @Override
     @Transactional
-    public EncounterDto addAddendum(UUID uuid, AddendumRequest request) {
+    public EncounterDto addAddendum(String uuid, AddendumRequest request) {
         Long tenantId = TenantContext.getTenantId();
 
         Encounter original = requireEncounter(tenantId, uuid);
@@ -193,7 +192,7 @@ public class EncounterServiceImpl implements EncounterService {
     // ── Read operations ───────────────────────────────────────────────────────
 
     @Override
-    public EncounterDto getEncounter(UUID uuid) {
+    public EncounterDto getEncounter(String uuid) {
         Long tenantId = TenantContext.getTenantId();
         Encounter encounter = requireEncounter(tenantId, uuid);
         Patient patient = requirePatient(encounter.getPatientId());
@@ -202,7 +201,7 @@ public class EncounterServiceImpl implements EncounterService {
     }
 
     @Override
-    public List<EncounterDto> getEncountersByPatient(UUID patientUuid) {
+    public List<EncounterDto> getEncountersByPatient(String patientUuid) {
         Long tenantId = TenantContext.getTenantId();
         Patient patient = patientRepository.findByTenantIdAndUuid(tenantId, patientUuid)
                 .orElseThrow(() -> new PrimusException(ResponseCode.PATIENT_NOT_FOUND,
@@ -225,7 +224,7 @@ public class EncounterServiceImpl implements EncounterService {
 
     // ── Private helpers ───────────────────────────────────────────────────────
 
-    private Encounter requireEncounter(Long tenantId, UUID uuid) {
+    private Encounter requireEncounter(Long tenantId, String uuid) {
         return encounterRepository.findByTenantIdAndUuid(tenantId, uuid)
                 .filter(e -> !e.isArchive())
                 .orElseThrow(() -> new PrimusException(ResponseCode.NOT_FOUND,

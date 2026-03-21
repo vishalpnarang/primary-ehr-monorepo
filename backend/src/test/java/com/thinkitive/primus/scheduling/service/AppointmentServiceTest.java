@@ -122,7 +122,7 @@ class AppointmentServiceTest {
 
     @Test
     void updateStatus_invalidStatus_shouldThrow() {
-        UUID uuid = UUID.randomUUID();
+        String uuid = UUID.randomUUID().toString();
         // findOrThrow is called before parseStatus, so we must provide a mock appointment
         Appointment apt = buildAppointment(AppointmentStatus.SCHEDULED, LocalTime.of(9, 0), LocalTime.of(9, 30));
         apt.setUuid(uuid);
@@ -138,7 +138,7 @@ class AppointmentServiceTest {
 
     @Test
     void updateStatus_validTransition_shouldUpdateAppointment() {
-        UUID uuid = UUID.randomUUID();
+        String uuid = UUID.randomUUID().toString();
         Appointment apt = buildAppointment(AppointmentStatus.SCHEDULED, LocalTime.of(9, 0), LocalTime.of(9, 30));
         apt.setUuid(uuid);
 
@@ -156,7 +156,7 @@ class AppointmentServiceTest {
 
     @Test
     void cancelAppointment_shouldSetStatusCancelled() {
-        UUID uuid = UUID.randomUUID();
+        String uuid = UUID.randomUUID().toString();
         Appointment apt = buildAppointment(AppointmentStatus.SCHEDULED, LocalTime.of(9, 0), LocalTime.of(9, 30));
         apt.setUuid(uuid);
 
@@ -186,7 +186,7 @@ class AppointmentServiceTest {
                 .duration(30)
                 .build();
         apt.setId(System.nanoTime());
-        apt.setUuid(UUID.randomUUID());
+        apt.setUuid(UUID.randomUUID().toString());
         return apt;
     }
 }

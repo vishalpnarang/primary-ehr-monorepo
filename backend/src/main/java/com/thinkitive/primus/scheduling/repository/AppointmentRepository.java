@@ -13,12 +13,11 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
-    Optional<Appointment> findByTenantIdAndUuid(Long tenantId, UUID uuid);
+    Optional<Appointment> findByTenantIdAndUuid(Long tenantId, String uuid);
 
     List<Appointment> findByTenantIdAndDateAndProviderId(Long tenantId, LocalDate date, Long providerId);
 

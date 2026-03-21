@@ -4,14 +4,13 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.Instant;
-import java.util.UUID;
 
 @Data
 @Builder
 public class VitalsDto {
 
-    private UUID uuid;
-    private UUID patientUuid;
+    private String uuid;
+    private String patientUuid;
     private Instant recordedAt;
     private Double weightLbs;
     private Double heightInches;
