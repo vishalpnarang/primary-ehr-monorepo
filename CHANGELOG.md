@@ -9,12 +9,36 @@
 | Internal: Client Deck | `/internal/client` | 5173 | Password: primus2026 |
 | Internal: Demo Guide | `/internal/demo-guide` | 5173 | Password: primus2026 |
 | Patient Portal | `apps/patient-portal/` | 5174 | UI complete (mock data) |
-| Backend API | `backend/` | 8080 | Running, 14 controllers |
+| Backend API | `backend/` | 8080 | Running, real DB, 14 controllers |
 | Swagger UI | — | 8080/swagger-ui | Live |
 | PostgreSQL | Docker | 5432 | Running, 30+ tables |
 | Keycloak | Docker | 8180 | Running, 8 users |
 | Redis | Docker | 6379 | Running |
 | Mailhog | Docker | 8025 | Running |
+
+---
+
+## Session 9 — Real Database Services
+
+### What was done
+1. **All 11 ServiceImpls rewritten** — real JPA repository calls, no more hardcoded mock returns
+2. **Entity↔column mappings fixed** — @Column, @Table annotations aligned with Liquibase schema
+3. **UUID/String standardized** — 83 files fixed, String uuid used consistently everywhere
+4. **Seed data loaded** — 10 patients, 10 appointments, 10 problems, 9 medications, 5 allergies, 4 users, 2 locations in real PostgreSQL
+5. **All tests passing** — 32 backend unit tests, BUILD SUCCESS
+6. **APIs verified against real DB** — patients, appointments, dashboard, billing, settings all return 200 with real data
+
+### Key insight
+- Tenant ID from seed data is `5` (auto-incremented), not `1` — frontend header `X-TENANT-ID` must match
+- Backend uses `X-TENANT-ID` header for tenant isolation
+- All queries filter by `tenant_id AND archive = false`
+
+### Verified endpoints (all 200 with real DB data)
+- `GET /api/v1/patients` — 10 patients from PostgreSQL
+- `GET /api/v1/appointments/today` — today's appointments
+- `GET /api/v1/dashboard/provider` — real counts
+- `GET /api/v1/billing/kpi` — calculated from claims
+- `GET /api/v1/settings/organization` — tenant info
 
 ---
 
