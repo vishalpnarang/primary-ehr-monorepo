@@ -5,6 +5,9 @@
 | What | Where | Port | Status |
 |------|-------|------|--------|
 | Provider Portal | `apps/provider-portal/` | 5173 | UI complete (mock data) |
+| Internal: Mgmt Deck | `/internal/management` | 5173 | Password: primus2026 |
+| Internal: Client Deck | `/internal/client` | 5173 | Password: primus2026 |
+| Internal: Demo Guide | `/internal/demo-guide` | 5173 | Password: primus2026 |
 | Patient Portal | `apps/patient-portal/` | 5174 | UI complete (mock data) |
 | Backend API | `backend/` | 8080 | Running, 14 controllers |
 | Swagger UI | — | 8080/swagger-ui | Live |
@@ -120,6 +123,25 @@
 - All seed data uses relative dates — never stale
 - Terraform destroy = $0 cost
 - Estimated running cost: ~$75-90/month
+
+---
+
+## What's NOT done yet
+
+## Session 7 — Internal Portal (Pitch Decks + Demo Guide)
+
+### What was done
+1. **Password-protected internal routes** at `/internal/*` — gate uses sessionStorage, password: `primus2026`
+2. **Management pitch deck** (`/internal/management`) — 10-slide scroll-snap presentation: Market Opportunity, Product, Features, Architecture, Build Progress, Roadmap, Unit Economics, Go-to-Market, Team
+3. **Client pitch deck** (`/internal/client`) — 9-slide prospect-facing deck: Problem, Solution, Feature Tour, Comparison vs Elation/athena/Epic, Security, Implementation Timeline, Pricing, Demo Request
+4. **Demo & testing guide** (`/internal/demo-guide`) — Credentials table, 5 demo flows, API curl examples, key URLs, troubleshooting FAQ
+5. **Moved pitch deck and demo guide from standalone HTML to React pages** inside the provider portal
+
+### Key decisions
+- Internal pages are part of the frontend app (not standalone HTML) — deployable with the same build
+- Password-gated via sessionStorage (not Keycloak) — separate from EHR auth
+- Management deck includes costs/architecture; Client deck is value-focused only
+- After every milestone: update CHANGELOG, pitch deck stats, seed data, terraform, memory
 
 ---
 

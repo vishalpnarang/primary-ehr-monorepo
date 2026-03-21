@@ -5,6 +5,12 @@ import { AppShell } from '@/layouts/AppShell';
 import { LoginPage } from '@/pages/LoginPage';
 import { useAuthStore } from '@/stores/authStore';
 
+// Internal pages (password-gated, outside EHR auth)
+const InternalGate = lazy(() => import('@/pages/internal/InternalGate'));
+const ManagementDeckPage = lazy(() => import('@/pages/internal/ManagementDeckPage'));
+const ClientDeckPage = lazy(() => import('@/pages/internal/ClientDeckPage'));
+const DemoGuidePage = lazy(() => import('@/pages/internal/DemoGuidePage'));
+
 // Lazy-loaded pages
 const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
 const SchedulePage = lazy(() => import('@/pages/SchedulePage'));
@@ -70,6 +76,12 @@ const App = () => (
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/settings/:section" element={<SettingsPage />} />
             <Route path="/settings/tenants/new" element={<TenantProvisioningPage />} />
+          </Route>
+          {/* Internal routes — password-gated, no EHR auth required */}
+          <Route element={<InternalGate />}>
+            <Route path="/internal/management" element={<ManagementDeckPage />} />
+            <Route path="/internal/client" element={<ClientDeckPage />} />
+            <Route path="/internal/demo-guide" element={<DemoGuidePage />} />
           </Route>
           <Route path="/" element={<Navigate to="/login" replace />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
