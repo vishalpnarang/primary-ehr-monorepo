@@ -1,7 +1,10 @@
 package com.thinkitive.primus.tenant.service;
 
 import com.thinkitive.primus.shared.config.TenantContext;
+import com.thinkitive.primus.shared.dto.ResponseCode;
+import com.thinkitive.primus.shared.exception.PrimusException;
 import com.thinkitive.primus.tenant.dto.*;
+import com.thinkitive.primus.tenant.entity.Location;
 import com.thinkitive.primus.tenant.entity.Tenant;
 import com.thinkitive.primus.tenant.repository.LocationRepository;
 import com.thinkitive.primus.tenant.repository.TenantRepository;
@@ -15,8 +18,8 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Phase-0/1 stub. Phase 1: pull users from Keycloak Admin API.
- * Phase 2+: full tenant management from DB.
+ * Phase-1/2 implementation. Reads tenant and location data from JPA.
+ * Phase 1: listUsers / inviteUser will call the Keycloak Admin REST API.
  */
 @Slf4j
 @Service
@@ -24,76 +27,63 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class SettingsServiceImpl implements SettingsService {
 
-    private final TenantRepository tenantRepository;
+    private final TenantRepository   tenantRepository;
     private final LocationRepository locationRepository;
+
+    // ── Organization (Tenant) ─────────────────────────────────────────────────
 
     @Override
     public TenantDto getOrganization() {
         Long tenantId = TenantContext.getTenantId();
-        // Phase 2: tenantRepository.findById(tenantId).map(this::toDto).orElseThrow(...)
-        return TenantDto.builder()
-                .id(tenantId)
-                .uuid(UUID.fromString("ffffffff-0000-0000-0000-000000000001"))
-                .name("Primus Demo Clinic Health")
-                .subdomain("primusdemo")
-                .npi("1234567890")
-                .taxId("12-3456789")
-                .phone("6145550100")
-                .addressLine1("300 East Broad Street")
-                .city("Columbus")
-                .state("OH")
-                .zip("43215")
-                .status(Tenant.TenantStatus.ACTIVE)
-                .build();
+        Tenant tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new PrimusException(ResponseCode.NOT_FOUND,
+                        "Tenant not found: " + tenantId));
+        return toTenantDto(tenant);
     }
 
     @Override
     @Transactional
     public TenantDto updateOrganization(UpdateTenantRequest request) {
         Long tenantId = TenantContext.getTenantId();
-        log.info("Updating organization tenant={}", tenantId);
-        TenantDto dto = getOrganization();
-        if (request.getName()    != null) dto.setName(request.getName());
-        if (request.getNpi()     != null) dto.setNpi(request.getNpi());
-        if (request.getPhone()   != null) dto.setPhone(request.getPhone());
-        if (request.getCity()    != null) dto.setCity(request.getCity());
-        if (request.getState()   != null) dto.setState(request.getState());
-        dto.setModifiedAt(Instant.now());
-        return dto;
+        Tenant tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new PrimusException(ResponseCode.NOT_FOUND,
+                        "Tenant not found: " + tenantId));
+
+        if (request.getName()         != null) tenant.setName(request.getName());
+        if (request.getNpi()          != null) tenant.setNpi(request.getNpi());
+        if (request.getTaxId()        != null) tenant.setTaxId(request.getTaxId());
+        if (request.getPhone()        != null) tenant.setPhone(request.getPhone());
+        if (request.getFax()          != null) tenant.setFax(request.getFax());
+        if (request.getAddressLine1() != null) tenant.setAddressLine1(request.getAddressLine1());
+        if (request.getAddressLine2() != null) tenant.setAddressLine2(request.getAddressLine2());
+        if (request.getCity()         != null) tenant.setCity(request.getCity());
+        if (request.getState()        != null) tenant.setState(request.getState());
+        if (request.getZip()          != null) tenant.setZip(request.getZip());
+
+        tenantRepository.save(tenant);
+        log.info("Organization updated for tenant={}", tenantId);
+        return toTenantDto(tenant);
     }
+
+    // ── Locations ─────────────────────────────────────────────────────────────
 
     @Override
     public List<LocationDto> listLocations() {
-        return List.of(
-                LocationDto.builder()
-                        .uuid(UUID.randomUUID())
-                        .name("Primus Demo Clinic — Main Campus")
-                        .addressLine1("300 East Broad Street")
-                        .city("Columbus")
-                        .state("OH")
-                        .zip("43215")
-                        .phone("6145550100")
-                        .active(true)
-                        .build(),
-                LocationDto.builder()
-                        .uuid(UUID.randomUUID())
-                        .name("Primus Demo Clinic — Westerville")
-                        .addressLine1("8200 N High Street")
-                        .city("Westerville")
-                        .state("OH")
-                        .zip("43081")
-                        .phone("6145550200")
-                        .active(true)
-                        .build()
-        );
+        Long tenantId = TenantContext.getTenantId();
+        return locationRepository.findByTenantIdAndActiveTrue(tenantId)
+                .stream()
+                .map(this::toLocationDto)
+                .toList();
     }
 
     @Override
     @Transactional
     public LocationDto addLocation(CreateLocationRequest request) {
-        log.info("Adding location name={} tenant={}", request.getName(), TenantContext.getTenantId());
-        return LocationDto.builder()
-                .uuid(UUID.randomUUID())
+        Long tenantId = TenantContext.getTenantId();
+        log.info("Adding location name={} tenant={}", request.getName(), tenantId);
+
+        Location location = Location.builder()
+                .tenantId(tenantId)
                 .name(request.getName())
                 .addressLine1(request.getAddressLine1())
                 .city(request.getCity())
@@ -103,40 +93,48 @@ public class SettingsServiceImpl implements SettingsService {
                 .fax(request.getFax())
                 .active(true)
                 .build();
+        locationRepository.save(location);
+
+        return toLocationDto(location);
     }
 
+    // ── Users ─────────────────────────────────────────────────────────────────
+
+    /**
+     * Phase 1: call Keycloak Admin REST API GET /admin/realms/{realm}/users?briefRepresentation=false
+     * and filter by the tenant's group/attribute.
+     * Returns empty list until Keycloak integration is implemented.
+     */
     @Override
     public List<UserDto> listUsers() {
-        // Phase 1: fetch from Keycloak Admin REST API GET /admin/realms/{realm}/users
-        return List.of(
-                UserDto.builder()
-                        .uuid(UUID.fromString("11111111-0000-0000-0000-000000000001"))
-                        .username("sarah.mitchell")
-                        .email("sarah.mitchell@primusdemo.com")
-                        .firstName("Sarah")
-                        .lastName("Mitchell")
-                        .roles(List.of("PROVIDER"))
-                        .enabled(true)
-                        .createdAt(Instant.now().minusSeconds(86400 * 90))
-                        .build(),
-                UserDto.builder()
-                        .uuid(UUID.fromString("22222222-0000-0000-0000-000000000002"))
-                        .username("jessica.chen")
-                        .email("jessica.chen@primusdemo.com")
-                        .firstName("Jessica")
-                        .lastName("Chen")
-                        .roles(List.of("NURSE"))
-                        .enabled(true)
-                        .createdAt(Instant.now().minusSeconds(86400 * 60))
-                        .build()
-        );
+        Long tenantId = TenantContext.getTenantId();
+        log.info("listUsers called for tenant={} — Keycloak Admin API not yet integrated (Phase 1)", tenantId);
+        // TODO Phase 1: GET /admin/realms/primus/users?q=tenant_id:{tenantId}
+        return List.of();
     }
 
+    /**
+     * Phase 1: POST to Keycloak Admin API to create user + send verification email.
+     * Creates a minimal UserDto with enabled=false (pending email verification).
+     */
     @Override
     @Transactional
     public UserDto inviteUser(InviteUserRequest request) {
-        log.info("Inviting user email={} roles={}", request.getEmail(), request.getRoles());
-        // Phase 1: call Keycloak Admin API to create user + send verification email
+        Long tenantId = TenantContext.getTenantId();
+        log.info("Inviting user email={} roles={} tenant={}", request.getEmail(), request.getRoles(), tenantId);
+
+        // TODO Phase 1: call Keycloak Admin REST API to create user and add to tenant group.
+        // POST /admin/realms/primus/users
+        // {
+        //   "username": "<email-local-part>",
+        //   "email": "<email>",
+        //   "firstName": "<firstName>",
+        //   "lastName": "<lastName>",
+        //   "enabled": true,
+        //   "requiredActions": ["VERIFY_EMAIL"],
+        //   "attributes": { "tenant_id": ["<tenantId>"] }
+        // }
+
         return UserDto.builder()
                 .uuid(UUID.randomUUID())
                 .username(request.getEmail().split("@")[0])
@@ -144,8 +142,46 @@ public class SettingsServiceImpl implements SettingsService {
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .roles(request.getRoles() != null ? request.getRoles() : List.of())
-                .enabled(false) // pending email verification
+                .enabled(false)   // pending email verification
                 .createdAt(Instant.now())
+                .build();
+    }
+
+    // ── Mappers ───────────────────────────────────────────────────────────────
+
+    private TenantDto toTenantDto(Tenant t) {
+        return TenantDto.builder()
+                .id(t.getId())
+                .uuid(t.getUuid())
+                .name(t.getName())
+                .subdomain(t.getSubdomain())
+                .npi(t.getNpi())
+                .taxId(t.getTaxId())
+                .phone(t.getPhone())
+                .fax(t.getFax())
+                .addressLine1(t.getAddressLine1())
+                .addressLine2(t.getAddressLine2())
+                .city(t.getCity())
+                .state(t.getState())
+                .zip(t.getZip())
+                .status(t.getStatus())
+                .createdBy(t.getCreatedBy())
+                .createdAt(t.getCreatedAt())
+                .modifiedAt(t.getModifiedAt())
+                .build();
+    }
+
+    private LocationDto toLocationDto(Location l) {
+        return LocationDto.builder()
+                .uuid(l.getUuid())
+                .name(l.getName())
+                .addressLine1(l.getAddressLine1())
+                .city(l.getCity())
+                .state(l.getState())
+                .zip(l.getZip())
+                .phone(l.getPhone())
+                .fax(l.getFax())
+                .active(l.isActive())
                 .build();
     }
 }

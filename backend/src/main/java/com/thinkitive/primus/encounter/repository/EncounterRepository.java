@@ -25,4 +25,8 @@ public interface EncounterRepository extends JpaRepository<Encounter, Long> {
     Optional<Encounter> findByAppointmentId(Long appointmentId);
 
     List<Encounter> findByTenantIdAndProviderIdAndDate(Long tenantId, Long providerId, LocalDate date);
+
+    List<Encounter> findByTenantIdAndProviderIdAndStatusIn(Long tenantId, Long providerId, List<Encounter.EncounterStatus> statuses);
+
+    List<Encounter> findByTenantIdAndDateBetween(Long tenantId, LocalDate startDate, LocalDate endDate);
 }

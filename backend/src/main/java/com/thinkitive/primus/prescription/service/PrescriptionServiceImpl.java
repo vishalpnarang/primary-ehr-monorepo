@@ -1,146 +1,251 @@
 package com.thinkitive.primus.prescription.service;
 
+import com.thinkitive.primus.patient.entity.Patient;
+import com.thinkitive.primus.patient.repository.PatientRepository;
 import com.thinkitive.primus.prescription.dto.*;
+import com.thinkitive.primus.prescription.entity.Medication;
+import com.thinkitive.primus.prescription.entity.Medication.MedicationStatus;
+import com.thinkitive.primus.prescription.entity.Prescription;
+import com.thinkitive.primus.prescription.entity.Prescription.PrescriptionStatus;
+import com.thinkitive.primus.prescription.repository.MedicationRepository;
+import com.thinkitive.primus.prescription.repository.PrescriptionRepository;
 import com.thinkitive.primus.shared.config.TenantContext;
 import com.thinkitive.primus.shared.dto.ResponseCode;
 import com.thinkitive.primus.shared.exception.PrimusException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Phase-0 stub. Phase 5: integrate ScriptSure EPCS for e-prescribing.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PrescriptionServiceImpl implements PrescriptionService {
 
+    // Phase 1: replace with a real provider lookup from JWT claims via ProviderRepository
+    private static final long UNRESOLVED_PROVIDER_ID = 0L;
+
+    private final PrescriptionRepository prescriptionRepository;
+    private final MedicationRepository medicationRepository;
+    private final PatientRepository patientRepository;
+
+    // ── Write operations ──────────────────────────────────────────────────────
+
     @Override
     @Transactional
     public PrescriptionDto createPrescription(CreatePrescriptionRequest request) {
         Long tenantId = TenantContext.getTenantId();
         log.info("Creating prescription tenant={} drug={} patient={}", tenantId, request.getDrugName(), request.getPatientUuid());
-        return PrescriptionDto.builder()
-                .uuid(UUID.randomUUID())
-                .patientUuid(request.getPatientUuid())
-                .patientName("James Anderson")
-                .encounterUuid(request.getEncounterUuid())
-                .prescriberId("PRV-00001")
-                .prescriberName("Dr. Sarah Mitchell")
+
+        Patient patient = requirePatient(tenantId, request.getPatientUuid());
+
+        // 1. Create and persist the Medication record (the medication list entry)
+        Medication medication = Medication.builder()
+                .tenantId(tenantId)
+                .patientId(patient.getId())
                 .drugName(request.getDrugName())
-                .ndcCode(request.getNdcCode())
                 .strength(request.getStrength())
                 .dosageForm(request.getDosageForm())
-                .route(request.getRoute())
-                .sig(request.getSig())
+                .directions(request.getSig())
                 .quantity(request.getQuantity())
-                .unit(request.getUnit())
                 .refills(request.getRefills() != null ? request.getRefills() : 0)
-                .refillsRemaining(request.getRefills() != null ? request.getRefills() : 0)
-                .daw(request.isDaw())
-                .diagnosisCode(request.getDiagnosisCode())
-                .pharmacyId(request.getPharmacyId())
-                .controlled(request.isControlled())
-                .deaSchedule(request.getDeaSchedule())
-                .notes(request.getNotes())
-                .status("PENDING")
+                .prescribedBy(currentAuditor())
                 .prescribedAt(Instant.now())
+                .status(MedicationStatus.ACTIVE)
+                .startDate(LocalDate.now())
+                .isControlled(request.isControlled())
+                .schedule(request.getDeaSchedule())
                 .build();
-    }
 
-    @Override
-    public PrescriptionDto getPrescription(UUID uuid) {
-        return buildMockPrescription(uuid, "PENDING");
-    }
+        Medication savedMed = medicationRepository.save(medication);
 
-    @Override
-    public List<PrescriptionDto> getPrescriptionsByPatient(UUID patientUuid) {
-        return List.of(
-                buildMockPrescription(UUID.randomUUID(), "FILLED"),
-                buildMockPrescription(UUID.randomUUID(), "SENT")
-        );
+        // 2. Create and persist the Prescription (the dispense event/order)
+        Prescription prescription = Prescription.builder()
+                .tenantId(tenantId)
+                .patientId(patient.getId())
+                .medicationId(savedMed.getId())
+                .providerId(UNRESOLVED_PROVIDER_ID)
+                .pharmacyId(request.getPharmacyId())
+                .status(PrescriptionStatus.PENDING)
+                .build();
+
+        Prescription savedRx = prescriptionRepository.save(prescription);
+        log.info("Prescription created id={} uuid={} medicationId={}", savedRx.getId(), savedRx.getUuid(), savedMed.getId());
+
+        return toDto(savedRx, savedMed, patient);
     }
 
     @Override
     @Transactional
     public PrescriptionDto sendToPharmacy(UUID uuid) {
-        PrescriptionDto rx = getPrescription(uuid);
-        if ("CANCELLED".equals(rx.getStatus())) {
-            throw new PrimusException(ResponseCode.BAD_REQUEST, "Cannot send a cancelled prescription");
+        Long tenantId = TenantContext.getTenantId();
+
+        Prescription rx = requirePrescription(tenantId, uuid);
+
+        if (rx.getStatus() == PrescriptionStatus.CANCELLED) {
+            throw new PrimusException(ResponseCode.BAD_REQUEST, "Cannot send a cancelled prescription.");
         }
-        if ("SENT".equals(rx.getStatus()) || "FILLED".equals(rx.getStatus())) {
-            throw new PrimusException(ResponseCode.BAD_REQUEST, "Prescription already sent to pharmacy");
+        if (rx.getStatus() == PrescriptionStatus.SENT || rx.getStatus() == PrescriptionStatus.FILLED) {
+            throw new PrimusException(ResponseCode.BAD_REQUEST,
+                    "Prescription has already been sent to pharmacy (status=" + rx.getStatus() + ").");
         }
-        // Phase 5: call ScriptSure EPCS API here
-        rx.setStatus("SENT");
+
+        rx.setStatus(PrescriptionStatus.SENT);
         rx.setSentAt(Instant.now());
-        log.info("Prescription {} sent to pharmacy via ScriptSure (mock)", uuid);
-        return rx;
+        Prescription saved = prescriptionRepository.save(rx);
+
+        Medication med = requireMedication(saved.getMedicationId());
+        Patient patient = requirePatientById(saved.getPatientId());
+
+        // Phase 5: call ScriptSure EPCS API here to transmit the prescription electronically
+        log.info("Prescription {} sent to pharmacy — ScriptSure EPCS integration deferred to Phase 5", uuid);
+        return toDto(saved, med, patient);
     }
 
     @Override
     @Transactional
     public PrescriptionDto cancelPrescription(UUID uuid) {
-        PrescriptionDto rx = getPrescription(uuid);
-        if ("CANCELLED".equals(rx.getStatus())) {
-            throw new PrimusException(ResponseCode.BAD_REQUEST, "Prescription is already cancelled");
+        Long tenantId = TenantContext.getTenantId();
+
+        Prescription rx = requirePrescription(tenantId, uuid);
+
+        if (rx.getStatus() == PrescriptionStatus.CANCELLED) {
+            throw new PrimusException(ResponseCode.BAD_REQUEST, "Prescription is already cancelled.");
         }
-        if ("FILLED".equals(rx.getStatus())) {
-            throw new PrimusException(ResponseCode.BAD_REQUEST, "Prescription has already been filled");
+        if (rx.getStatus() == PrescriptionStatus.FILLED) {
+            throw new PrimusException(ResponseCode.BAD_REQUEST, "Prescription has already been filled and cannot be cancelled.");
         }
-        rx.setStatus("CANCELLED");
-        rx.setCancelledAt(Instant.now());
-        return rx;
+
+        rx.setStatus(PrescriptionStatus.CANCELLED);
+        Prescription saved = prescriptionRepository.save(rx);
+
+        // Also mark the medication as discontinued
+        Medication med = requireMedication(saved.getMedicationId());
+        med.setStatus(MedicationStatus.DISCONTINUED);
+        med.setEndDate(LocalDate.now());
+        medicationRepository.save(med);
+
+        Patient patient = requirePatientById(saved.getPatientId());
+        log.info("Prescription {} cancelled, medication {} discontinued", uuid, med.getUuid());
+        return toDto(saved, med, patient);
+    }
+
+    // ── Read operations ───────────────────────────────────────────────────────
+
+    @Override
+    public PrescriptionDto getPrescription(UUID uuid) {
+        Long tenantId = TenantContext.getTenantId();
+        Prescription rx = requirePrescription(tenantId, uuid);
+        Medication med = requireMedication(rx.getMedicationId());
+        Patient patient = requirePatientById(rx.getPatientId());
+        return toDto(rx, med, patient);
+    }
+
+    @Override
+    public List<PrescriptionDto> getPrescriptionsByPatient(UUID patientUuid) {
+        Long tenantId = TenantContext.getTenantId();
+        Patient patient = requirePatient(tenantId, patientUuid);
+
+        // Active medications for the patient, most recent prescriptions first
+        return medicationRepository
+                .findByPatientIdAndStatus(patient.getId(), MedicationStatus.ACTIVE)
+                .stream()
+                .filter(m -> !m.isArchive())
+                .flatMap(m -> prescriptionRepository.findByMedicationId(m.getId())
+                        .stream()
+                        .filter(rx -> !rx.isArchive())
+                        .map(rx -> toDto(rx, m, patient)))
+                .toList();
     }
 
     @Override
     public InteractionResult checkInteractions(InteractionCheckRequest request) {
-        // Phase 5: call ScriptSure or DrFirst interaction checking API
-        // Mock: return a sample moderate interaction for demo
-        if (request.getNdcCodes().size() >= 2) {
-            return InteractionResult.builder()
-                    .hasInteractions(true)
-                    .interactions(List.of(
-                            InteractionResult.Interaction.builder()
-                                    .drug1(request.getNdcCodes().get(0))
-                                    .drug2(request.getNdcCodes().get(1))
-                                    .severity("MODERATE")
-                                    .description("Concurrent use may increase bleeding risk.")
-                                    .recommendation("Monitor patient for signs of bleeding.")
-                                    .build()
-                    ))
-                    .build();
-        }
-        return InteractionResult.builder().hasInteractions(false).interactions(List.of()).build();
+        // Phase 5: replace with ScriptSure or DrFirst drug interaction API call.
+        // The API will accept NDC codes and return severity-graded interaction pairs.
+        // Returning no interactions for now so the UI flow can proceed unblocked.
+        log.debug("Drug interaction check called for patient={} codes={} — returning empty result (Phase 5 stub)",
+                request.getPatientUuid(), request.getNdcCodes());
+        return InteractionResult.builder()
+                .hasInteractions(false)
+                .interactions(List.of())
+                .build();
     }
 
-    // ── helpers ──────────────────────────────────────────────────────────────
+    // ── Private helpers ───────────────────────────────────────────────────────
 
-    private PrescriptionDto buildMockPrescription(UUID uuid, String status) {
+    private Prescription requirePrescription(Long tenantId, UUID uuid) {
+        // Phase 5: add findByTenantIdAndUuid to PrescriptionRepository to replace this scan.
+        return prescriptionRepository
+                .findByTenantIdAndProviderIdAndStatus(tenantId, UNRESOLVED_PROVIDER_ID, PrescriptionStatus.PENDING)
+                .stream()
+                .filter(rx -> rx.getUuid().equals(uuid) && !rx.isArchive())
+                .findFirst()
+                // Fallback: scan all statuses for this tenant
+                .orElseGet(() -> prescriptionRepository.findAll()
+                        .stream()
+                        .filter(rx -> rx.getTenantId().equals(tenantId)
+                                && rx.getUuid().equals(uuid)
+                                && !rx.isArchive())
+                        .findFirst()
+                        .orElseThrow(() -> new PrimusException(ResponseCode.NOT_FOUND,
+                                "Prescription not found: " + uuid)));
+    }
+
+    private Medication requireMedication(Long medicationId) {
+        return medicationRepository.findById(medicationId)
+                .orElseThrow(() -> new PrimusException(ResponseCode.NOT_FOUND,
+                        "Medication not found for id: " + medicationId));
+    }
+
+    private Patient requirePatient(Long tenantId, UUID patientUuid) {
+        return patientRepository.findByTenantIdAndUuid(tenantId, patientUuid)
+                .orElseThrow(() -> new PrimusException(ResponseCode.PATIENT_NOT_FOUND,
+                        "Patient not found: " + patientUuid));
+    }
+
+    private Patient requirePatientById(Long patientId) {
+        return patientRepository.findById(patientId)
+                .orElseThrow(() -> new PrimusException(ResponseCode.PATIENT_NOT_FOUND,
+                        "Patient not found for id: " + patientId));
+    }
+
+    private String currentAuditor() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getName())) {
+            return auth.getName();
+        }
+        return "system";
+    }
+
+    // ── DTO mapping ───────────────────────────────────────────────────────────
+
+    private PrescriptionDto toDto(Prescription rx, Medication med, Patient patient) {
         return PrescriptionDto.builder()
-                .uuid(uuid)
-                .patientUuid(UUID.fromString("aaaaaaaa-0000-0000-0000-000000000001"))
-                .patientName("James Anderson")
-                .prescriberId("PRV-00001")
-                .prescriberName("Dr. Sarah Mitchell")
-                .drugName("Lisinopril")
-                .strength("10mg")
-                .dosageForm("TABLET")
-                .route("ORAL")
-                .sig("Take 1 tablet by mouth once daily")
-                .quantity(30)
-                .unit("TABLETS")
-                .refills(1)
-                .refillsRemaining(1)
-                .status(status)
-                .prescribedAt(Instant.now().minusSeconds(86400))
+                .uuid(rx.getUuid())
+                .patientUuid(patient.getUuid())
+                .patientName(patient.getFirstName() + " " + patient.getLastName())
+                .drugName(med.getDrugName())
+                .strength(med.getStrength())
+                .dosageForm(med.getDosageForm())
+                .sig(med.getDirections())
+                .quantity(med.getQuantity())
+                .refills(med.getRefills())
+                .refillsRemaining(med.getRefills())   // Phase 5: track dispenses to decrement this
+                .pharmacyId(rx.getPharmacyId())
+                .pharmacyName(rx.getPharmacyName())
+                .status(rx.getStatus() != null ? rx.getStatus().name() : null)
+                .controlled(med.isControlled())
+                .deaSchedule(med.getSchedule())
+                .prescribedAt(med.getPrescribedAt())
+                .sentAt(rx.getSentAt())
                 .build();
     }
 }

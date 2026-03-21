@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -15,6 +17,12 @@ import java.util.UUID;
 public interface PatientRepository extends JpaRepository<Patient, Long> {
 
     Optional<Patient> findByTenantIdAndUuid(Long tenantId, UUID uuid);
+
+    Page<Patient> findByTenantIdAndArchiveFalse(Long tenantId, Pageable pageable);
+
+    long countByTenantIdAndStatus(Long tenantId, Patient.PatientStatus status);
+
+    List<Patient> findByTenantIdAndCreatedAtBetween(Long tenantId, Instant start, Instant end);
 
     Optional<Patient> findByTenantIdAndMrn(Long tenantId, String mrn);
 

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface ClaimRepository extends JpaRepository<Claim, Long> {
@@ -15,6 +17,14 @@ public interface ClaimRepository extends JpaRepository<Claim, Long> {
     Page<Claim> findByTenantIdAndPatientId(Long tenantId, Long patientId, Pageable pageable);
 
     List<Claim> findByTenantIdAndStatus(Long tenantId, Claim.ClaimStatus status);
+
+    Page<Claim> findByTenantIdAndStatus(Long tenantId, Claim.ClaimStatus status, Pageable pageable);
+
+    List<Claim> findByTenantId(Long tenantId);
+
+    Page<Claim> findByTenantId(Long tenantId, Pageable pageable);
+
+    Optional<Claim> findByTenantIdAndUuid(Long tenantId, UUID uuid);
 
     List<Claim> findByEncounterId(Long encounterId);
 

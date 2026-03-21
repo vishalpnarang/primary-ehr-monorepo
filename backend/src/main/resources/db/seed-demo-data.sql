@@ -1162,5 +1162,6 @@ END; -- patient_pk block
 END; -- room_pk block
 END; -- loc/room block
 END; -- tenant do block
+$$;
 
 COMMIT;
