@@ -1,0 +1,513 @@
+{
+  "realm": "primus",
+  "displayName": "Primus EHR",
+  "displayNameHtml": "<strong>Primus</strong> EHR",
+  "enabled": true,
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "permanentLockout": false,
+  "maxFailureWaitSeconds": 900,
+  "minimumQuickLoginWaitSeconds": 60,
+  "waitIncrementSeconds": 60,
+  "quickLoginCheckMilliSeconds": 1000,
+  "maxDeltaTimeSeconds": 43200,
+  "failureFactor": 10,
+  "ssoSessionIdleTimeout": 43200,
+  "ssoSessionMaxLifespan": 86400,
+  "accessTokenLifespan": 3600,
+  "accessTokenLifespanForImplicitFlow": 900,
+  "accessCodeLifespan": 60,
+  "accessCodeLifespanUserAction": 300,
+  "accessCodeLifespanLogin": 1800,
+  "offlineSessionIdleTimeout": 2592000,
+  "offlineSessionMaxLifespanEnabled": false,
+  "offlineSessionMaxLifespan": 5184000,
+  "clientSessionIdleTimeout": 0,
+  "clientSessionMaxLifespan": 0,
+  "actionTokenGeneratedByAdminLifespan": 43200,
+  "actionTokenGeneratedByUserLifespan": 300,
+  "defaultSignatureAlgorithm": "RS256",
+  "revokeRefreshToken": false,
+  "refreshTokenMaxReuse": 0,
+  "internationalizationEnabled": false,
+  "supportedLocales": ["en"],
+  "defaultLocale": "en",
+  "sslRequired": "external",
+  "verifyEmail": false,
+
+  "roles": {
+    "realm": [
+      {
+        "id": "role-00000000-0000-0000-0000-000000000001",
+        "name": "super_admin",
+        "description": "Thinkitive staff — full platform access across all tenants",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "primus",
+        "attributes": {}
+      },
+      {
+        "id": "role-00000000-0000-0000-0000-000000000002",
+        "name": "tenant_admin",
+        "description": "Clinic owner or manager — manages their organization",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "primus",
+        "attributes": {}
+      },
+      {
+        "id": "role-00000000-0000-0000-0000-000000000003",
+        "name": "practice_admin",
+        "description": "Office manager — daily operations within a practice",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "primus",
+        "attributes": {}
+      },
+      {
+        "id": "role-00000000-0000-0000-0000-000000000004",
+        "name": "provider",
+        "description": "Physician, NP, or PA — clinical care, charting, prescribing",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "primus",
+        "attributes": {}
+      },
+      {
+        "id": "role-00000000-0000-0000-0000-000000000005",
+        "name": "nurse",
+        "description": "RN or MA — rooming patients, vitals, clinical support",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "primus",
+        "attributes": {}
+      },
+      {
+        "id": "role-00000000-0000-0000-0000-000000000006",
+        "name": "front_desk",
+        "description": "Front desk staff — scheduling, check-in, registration",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "primus",
+        "attributes": {}
+      },
+      {
+        "id": "role-00000000-0000-0000-0000-000000000007",
+        "name": "billing",
+        "description": "Billing staff — claims, RCM, ERA, denials",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "primus",
+        "attributes": {}
+      },
+      {
+        "id": "role-00000000-0000-0000-0000-000000000008",
+        "name": "patient",
+        "description": "Patient portal user — restricted to own health record",
+        "composite": false,
+        "clientRole": false,
+        "containerId": "primus",
+        "attributes": {}
+      }
+    ],
+    "client": {
+      "primus-frontend": [],
+      "primus-backend": []
+    }
+  },
+
+  "clients": [
+    {
+      "id": "client-00000000-0000-0000-0000-000000000001",
+      "clientId": "primus-frontend",
+      "name": "Primus EHR — Provider Portal",
+      "description": "React SPA client for the provider portal (public, PKCE)",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "authorizationServicesEnabled": false,
+      "bearerOnly": false,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "rootUrl": "http://localhost:3000",
+      "baseUrl": "/",
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:5173/*",
+        "https://app.primaryplus.primus.health/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://app.primaryplus.primus.health"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "access.token.lifespan": "3600",
+        "post.logout.redirect.uris": "http://localhost:3000/*##http://localhost:5173/*"
+      },
+      "defaultClientScopes": [
+        "openid",
+        "profile",
+        "email",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access"
+      ]
+    },
+    {
+      "id": "client-00000000-0000-0000-0000-000000000002",
+      "clientId": "primus-backend",
+      "name": "Primus EHR — Backend Service",
+      "description": "Confidential client for Spring Boot backend service-to-service calls",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": false,
+      "bearerOnly": false,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "redirectUris": [],
+      "webOrigins": [],
+      "attributes": {
+        "access.token.lifespan": "3600",
+        "use.refresh.tokens": "true"
+      },
+      "defaultClientScopes": [
+        "openid",
+        "profile",
+        "email",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "offline_access"
+      ]
+    },
+    {
+      "id": "client-00000000-0000-0000-0000-000000000003",
+      "clientId": "primus-patient-portal",
+      "name": "Primus EHR — Patient Portal",
+      "description": "React SPA client for the patient portal (public, PKCE)",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "bearerOnly": false,
+      "fullScopeAllowed": false,
+      "protocol": "openid-connect",
+      "rootUrl": "http://localhost:3001",
+      "baseUrl": "/",
+      "redirectUris": [
+        "http://localhost:3001/*",
+        "http://localhost:5174/*",
+        "https://patient.primaryplus.primus.health/*"
+      ],
+      "webOrigins": [
+        "http://localhost:3001",
+        "http://localhost:5174",
+        "https://patient.primaryplus.primus.health"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "access.token.lifespan": "3600"
+      },
+      "defaultClientScopes": [
+        "openid",
+        "profile",
+        "email",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "offline_access"
+      ]
+    }
+  ],
+
+  "clientScopes": [
+    {
+      "name": "roles",
+      "description": "OpenID Connect scope for add user roles to the access token",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "realm roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "user.attribute": "foo",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "realm_access.roles",
+            "jsonType.label": "String"
+          }
+        },
+        {
+          "name": "tenant_id",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "userinfo.token.claim": "true",
+            "user.attribute": "tenant_id",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "tenant_id",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    }
+  ],
+
+  "users": [
+    {
+      "id": "kc-00000000-0000-0000-0000-000000000001",
+      "username": "alex.morgan",
+      "email": "alex.morgan@thinkitive.com",
+      "firstName": "Alex",
+      "lastName": "Morgan",
+      "enabled": true,
+      "emailVerified": true,
+      "attributes": {
+        "tenant_id": [""]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["super_admin"],
+      "clientRoles": {},
+      "groups": []
+    },
+    {
+      "id": "kc-00000000-0000-0000-0000-000000000002",
+      "username": "james.wilson",
+      "email": "james.wilson@primaryplus.com",
+      "firstName": "James",
+      "lastName": "Wilson",
+      "enabled": true,
+      "emailVerified": true,
+      "attributes": {
+        "tenant_id": ["TEN-00001"]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["tenant_admin"],
+      "clientRoles": {},
+      "groups": []
+    },
+    {
+      "id": "kc-00000000-0000-0000-0000-000000000003",
+      "username": "maria.garcia",
+      "email": "maria.garcia@primaryplus.com",
+      "firstName": "Maria",
+      "lastName": "Garcia",
+      "enabled": true,
+      "emailVerified": true,
+      "attributes": {
+        "tenant_id": ["TEN-00001"]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["practice_admin"],
+      "clientRoles": {},
+      "groups": []
+    },
+    {
+      "id": "kc-00000000-0000-0000-0000-000000000004",
+      "username": "emily.chen",
+      "email": "emily.chen@primaryplus.com",
+      "firstName": "Emily",
+      "lastName": "Chen",
+      "enabled": true,
+      "emailVerified": true,
+      "attributes": {
+        "tenant_id": ["TEN-00001"],
+        "title": ["MD"],
+        "specialty": ["Internal Medicine"],
+        "npi": ["1234567890"]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["provider"],
+      "clientRoles": {},
+      "groups": []
+    },
+    {
+      "id": "kc-00000000-0000-0000-0000-000000000005",
+      "username": "kevin.torres",
+      "email": "kevin.torres@primaryplus.com",
+      "firstName": "Kevin",
+      "lastName": "Torres",
+      "enabled": true,
+      "emailVerified": true,
+      "attributes": {
+        "tenant_id": ["TEN-00001"],
+        "title": ["MD"],
+        "specialty": ["Family Medicine"],
+        "npi": ["9876543210"]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["provider"],
+      "clientRoles": {},
+      "groups": []
+    },
+    {
+      "id": "kc-00000000-0000-0000-0000-000000000006",
+      "username": "sarah.thompson",
+      "email": "sarah.thompson@primaryplus.com",
+      "firstName": "Sarah",
+      "lastName": "Thompson",
+      "enabled": true,
+      "emailVerified": true,
+      "attributes": {
+        "tenant_id": ["TEN-00001"],
+        "title": ["RN"]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["nurse"],
+      "clientRoles": {},
+      "groups": []
+    },
+    {
+      "id": "kc-00000000-0000-0000-0000-000000000007",
+      "username": "david.kim",
+      "email": "david.kim@primaryplus.com",
+      "firstName": "David",
+      "lastName": "Kim",
+      "enabled": true,
+      "emailVerified": true,
+      "attributes": {
+        "tenant_id": ["TEN-00001"]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["front_desk"],
+      "clientRoles": {},
+      "groups": []
+    },
+    {
+      "id": "kc-00000000-0000-0000-0000-000000000008",
+      "username": "lisa.patel",
+      "email": "lisa.patel@primaryplus.com",
+      "firstName": "Lisa",
+      "lastName": "Patel",
+      "enabled": true,
+      "emailVerified": true,
+      "attributes": {
+        "tenant_id": ["TEN-00001"]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["billing"],
+      "clientRoles": {},
+      "groups": []
+    }
+  ],
+
+  "groups": [],
+
+  "defaultRoles": ["offline_access", "uma_authorization"],
+
+  "requiredCredentials": ["password"],
+
+  "passwordPolicy": "length(8) and notUsername(undefined)",
+
+  "browserSecurityHeaders": {
+    "contentSecurityPolicyReportOnly": "",
+    "xContentTypeOptions": "nosniff",
+    "xRobotsTag": "none",
+    "xFrameOptions": "SAMEORIGIN",
+    "contentSecurityPolicy": "frame-src 'self'; frame-ancestors 'self'; object-src 'none';",
+    "xXSSProtection": "1; mode=block",
+    "strictTransportSecurity": "max-age=31536000; includeSubDomains"
+  },
+
+  "smtpServer": {
+    "host": "mailhog",
+    "port": "1025",
+    "from": "noreply@primus.health",
+    "fromDisplayName": "Primus EHR",
+    "ssl": "false",
+    "starttls": "false",
+    "auth": "false"
+  },
+
+  "loginTheme": "keycloak",
+  "accountTheme": "keycloak.v2",
+  "adminTheme": "keycloak",
+  "emailTheme": "keycloak",
+
+  "eventsEnabled": true,
+  "eventsExpiration": 2592000,
+  "enabledEventTypes": [
+    "LOGIN", "LOGIN_ERROR", "LOGOUT", "TOKEN_EXCHANGE",
+    "REGISTER", "REGISTER_ERROR", "RESET_PASSWORD", "UPDATE_PASSWORD",
+    "UPDATE_PROFILE", "UPDATE_EMAIL"
+  ],
+  "adminEventsEnabled": true,
+  "adminEventsDetailsEnabled": true
+}
