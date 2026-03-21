@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { usePatient, usePatientTimeline } from '@/hooks/useApi';
 import {
   FileText, AlertTriangle, FlaskConical,
   ChevronRight, Plus, MessageSquare, Calendar,
@@ -281,6 +282,9 @@ const ActionPanel: React.FC<{ collapsed: boolean; toggle: () => void }> = ({ col
 
 const PatientChartPage: React.FC = () => {
   const { patientId } = useParams();
+  // Real API data (falls back to inline mock if backend is down)
+  const { data: apiPatient } = usePatient(patientId ?? '');
+  const { data: apiTimeline } = usePatientTimeline(patientId ?? '');
   const [headerTab, setHeaderTab] = useState<string>('home');
   const [subTab, setSubTab] = useState<string>('facesheet');
   const [viewAll, setViewAll] = useState<string | null>(null);

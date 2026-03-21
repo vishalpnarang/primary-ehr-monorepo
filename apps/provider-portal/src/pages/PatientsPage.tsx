@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { usePatientList, usePatientSearch } from '@/hooks/useApi';
 import {
   Search,
   Plus,
@@ -319,6 +320,16 @@ const PatientsPage: React.FC = () => {
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortDir, setSortDir] = useState<SortDir>('asc');
 
+  // API hooks — data is used if available, falls back to inline mock data
+  const { data: apiPatients } = usePatientList();
+  const { data: apiSearchResults } = usePatientSearch(searchQuery);
+
+  // Resolved patient list: prefer API data, fall back to inline mock
+  const allPatients: MockPatient[] = useMemo(
+    () => (apiPatients?.content as MockPatient[] | undefined) ?? MOCK_PATIENTS,
+    [apiPatients],
+  );
+
   // Simulate a brief loading flash when search changes
   const handleSearch = useCallback((value: string) => {
     setSearchQuery(value);
@@ -329,21 +340,24 @@ const PatientsPage: React.FC = () => {
   }, []);
 
   const recentPatients = useMemo(
-    () => RECENT_PATIENT_IDS.map((id) => MOCK_PATIENTS.find((p) => p.id === id)).filter(Boolean) as MockPatient[],
-    [],
+    () => RECENT_PATIENT_IDS.map((id) => allPatients.find((p) => p.id === id)).filter(Boolean) as MockPatient[],
+    [allPatients],
   );
 
   const filteredPatients = useMemo(() => {
-    let result = MOCK_PATIENTS.filter((p) => matchesSearch(p, searchQuery));
-    result = [...result].sort((a, b) => {
+    // When search is active and API returned results, prefer those; otherwise filter allPatients locally
+    const searchBase: MockPatient[] =
+      searchQuery.length >= 2 && apiSearchResults?.content
+        ? (apiSearchResults.content as MockPatient[])
+        : allPatients.filter((p) => matchesSearch(p, searchQuery));
+    return [...searchBase].sort((a, b) => {
       let cmp = 0;
       if (sortField === 'name') cmp = `${a.lastName}${a.firstName}`.localeCompare(`${b.lastName}${b.firstName}`);
       else if (sortField === 'dob') cmp = a.dob.localeCompare(b.dob);
       else if (sortField === 'lastVisit') cmp = (a.lastVisitDate ?? '').localeCompare(b.lastVisitDate ?? '');
       return sortDir === 'asc' ? cmp : -cmp;
     });
-    return result;
-  }, [searchQuery, sortField, sortDir]);
+  }, [searchQuery, apiSearchResults, allPatients, sortField, sortDir]);
 
   const toggleSort = (field: SortField) => {
     if (sortField === field) setSortDir((d) => d === 'asc' ? 'desc' : 'asc');
@@ -359,7 +373,7 @@ const PatientsPage: React.FC = () => {
       <div className="flex items-center justify-between mb-3">
         <div>
           <h1 className="text-xl font-semibold text-gray-900">Patients</h1>
-          <p className="text-sm text-gray-500 mt-0.5">{MOCK_PATIENTS.length} patients in practice</p>
+          <p className="text-sm text-gray-500 mt-0.5">{allPatients.length} patients in practice</p>
         </div>
         <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
           <Plus className="w-4 h-4" />
@@ -467,7 +481,7 @@ const PatientsPage: React.FC = () => {
         {!isLoading && filteredPatients.length > 0 && (
           <div className="px-4 py-2 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
             <span className="text-xs text-gray-400">
-              Showing {filteredPatients.length} of {MOCK_PATIENTS.length} patients
+              Showing {filteredPatients.length} of {allPatients.length} patients
             </span>
             <span className="text-xs text-gray-400">
               Sorted by {sortField === 'name' ? 'name' : sortField === 'dob' ? 'date of birth' : 'last visit'} ({sortDir})

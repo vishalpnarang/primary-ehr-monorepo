@@ -34,6 +34,7 @@ import {
 import { cn } from '@primus/ui/lib';
 import { useAuthStore } from '@/stores/authStore';
 import type { UserRole } from '@primus/ui/types';
+import { useProviderDashboard, useBillingDashboard } from '@/hooks/useApi';
 
 // ─── Shared constants ──────────────────────────────────────────────────────
 
@@ -270,19 +271,23 @@ const CARE_GAPS: CareGapRow[] = [
 // ─── Provider Dashboard ────────────────────────────────────────────────────
 
 const ProviderDashboard: React.FC = () => {
-  const completed = PROVIDER_APPTS.filter((a) => a.status === 'completed').length;
-  const inRoom    = PROVIDER_APPTS.filter((a) => a.status === 'in_room' || a.status === 'in_progress').length;
-  const noShows   = PROVIDER_APPTS.filter((a) => a.status === 'no_show').length;
+  const { data: apiData } = useProviderDashboard();
+
+  // KPI counts — use API data when available, fall back to inline mock derivations
+  const completed = apiData?.completedAppointments ?? PROVIDER_APPTS.filter((a) => a.status === 'completed').length;
+  const inRoom    = apiData?.inRoomCount         ?? PROVIDER_APPTS.filter((a) => a.status === 'in_room' || a.status === 'in_progress').length;
+  const noShows   = apiData?.noShowCount         ?? PROVIDER_APPTS.filter((a) => a.status === 'no_show').length;
+  const totalAppts = apiData?.todayAppointmentsTotal ?? PROVIDER_APPTS.length;
   const totalGaps = CARE_GAPS.reduce((n, g) => n + g.gaps.length, 0);
 
   return (
     <div className="flex flex-col gap-2 h-full">
       {/* KPI Strip */}
       <div className="grid grid-cols-4 gap-2">
-        <KpiCard label="Patients Today"  value={PROVIDER_APPTS.length} sub="on schedule"              icon={<Calendar    className="w-3.5 h-3.5 text-blue-600"  />} iconBg="bg-blue-50"  />
-        <KpiCard label="Completed"       value={completed}             sub={`${PROVIDER_APPTS.length - completed} remaining`}          icon={<CheckCircle2 className="w-3.5 h-3.5 text-success-600" />} iconBg="bg-success-50" />
-        <KpiCard label="In Room / Active" value={inRoom}              sub="currently occupied"        icon={<DoorOpen    className="w-3.5 h-3.5 text-purple-600"  />} iconBg="bg-purple-50"  />
-        <KpiCard label="No Shows"        value={noShows}              sub="today"                     icon={<XCircle     className="w-3.5 h-3.5 text-critical-600" />} iconBg="bg-critical-50" alert={noShows > 0} />
+        <KpiCard label="Patients Today"  value={totalAppts}            sub="on schedule"                            icon={<Calendar    className="w-3.5 h-3.5 text-blue-600"  />} iconBg="bg-blue-50"  />
+        <KpiCard label="Completed"       value={completed}             sub={`${totalAppts - completed} remaining`}  icon={<CheckCircle2 className="w-3.5 h-3.5 text-success-600" />} iconBg="bg-success-50" />
+        <KpiCard label="In Room / Active" value={inRoom}              sub="currently occupied"                      icon={<DoorOpen    className="w-3.5 h-3.5 text-purple-600"  />} iconBg="bg-purple-50"  />
+        <KpiCard label="No Shows"        value={noShows}              sub="today"                                   icon={<XCircle     className="w-3.5 h-3.5 text-critical-600" />} iconBg="bg-critical-50" alert={noShows > 0} />
       </div>
 
       {/* Main Grid: 3 cols */}
@@ -655,13 +660,22 @@ const CLAIM_STATUS_STYLE: Record<ClaimRow['status'], string> = {
 
 // ─── Billing Dashboard ──────────────────────────────────────────────────────
 
-const BillingDashboard: React.FC = () => (
+const BillingDashboard: React.FC = () => {
+  const { data: apiData } = useBillingDashboard();
+
+  // KPI values — use API data when available, fall back to inline mock literals
+  const cleanClaimRate   = apiData?.cleanClaimRate   != null ? `${apiData.cleanClaimRate}%` : '94.2%';
+  const denialRate       = apiData?.denialRate       != null ? `${apiData.denialRate}%`     : '5.8%';
+  const daysInAR         = apiData?.daysInAR         ?? 32;
+  const collectionsPerWk = apiData?.collectionsPerWk != null ? `$${apiData.collectionsPerWk}` : '$48.2k';
+
+  return (
   <div className="flex flex-col gap-2">
     <div className="grid grid-cols-4 gap-2">
-      <KpiCard label="Clean Claim Rate"  value="94.2%" trend="up"   sub="+1.3% vs last mo"  icon={<CheckCircle2  className="w-3.5 h-3.5 text-success-600" />} iconBg="bg-success-50" />
-      <KpiCard label="Denial Rate"       value="5.8%"  trend="down" sub="-0.4% vs last mo"  icon={<XCircle       className="w-3.5 h-3.5 text-critical-600" />} iconBg="bg-critical-50" alert />
-      <KpiCard label="Days in A/R"       value="32"    trend="down" sub="target ≤30"         icon={<Clock         className="w-3.5 h-3.5 text-warning-600" />} iconBg="bg-warning-50" />
-      <KpiCard label="Collections / Wk"  value="$48.2k" trend="up"  sub="+8.2% vs last wk"  icon={<DollarSign    className="w-3.5 h-3.5 text-blue-600"  />} iconBg="bg-blue-50"  />
+      <KpiCard label="Clean Claim Rate"  value={cleanClaimRate}   trend="up"   sub="+1.3% vs last mo"  icon={<CheckCircle2  className="w-3.5 h-3.5 text-success-600" />} iconBg="bg-success-50" />
+      <KpiCard label="Denial Rate"       value={denialRate}       trend="down" sub="-0.4% vs last mo"  icon={<XCircle       className="w-3.5 h-3.5 text-critical-600" />} iconBg="bg-critical-50" alert />
+      <KpiCard label="Days in A/R"       value={daysInAR}         trend="down" sub="target ≤30"         icon={<Clock         className="w-3.5 h-3.5 text-warning-600" />} iconBg="bg-warning-50" />
+      <KpiCard label="Collections / Wk"  value={collectionsPerWk} trend="up"  sub="+8.2% vs last wk"  icon={<DollarSign    className="w-3.5 h-3.5 text-blue-600"  />} iconBg="bg-blue-50"  />
     </div>
 
     <div className="grid grid-cols-2 gap-2">
@@ -746,7 +760,8 @@ const BillingDashboard: React.FC = () => (
       </Card>
     </div>
   </div>
-);
+  );
+};
 
 // ═══════════════════════════════════════════════════════════════════════════
 // DATA — Practice Admin

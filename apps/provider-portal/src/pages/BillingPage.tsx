@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useBillingKpi, useClaims } from '@/hooks/useApi';
 import {
   DollarSign,
   AlertTriangle,
@@ -115,7 +116,13 @@ const KpiCard: React.FC<KpiCardProps> = ({ label, value, change, up, positive, i
 // ─── Views ────────────────────────────────────────────────────────────────────
 
 const DashboardView: React.FC = () => {
-  const dashClaims = MOCK_CLAIMS.slice(0, 10);
+  // API hooks — use API data when available, fall back to inline mock values
+  const { data: apiKpi } = useBillingKpi();
+  const { data: apiClaims } = useClaims();
+
+  const kpi = apiKpi as Record<string, string | number> | undefined;
+
+  const dashClaims = (apiClaims?.content as Claim[] | undefined)?.slice(0, 10) ?? MOCK_CLAIMS.slice(0, 10);
   const dashDenials = MOCK_DENIALS.slice(0, 5);
 
   return (
@@ -124,8 +131,8 @@ const DashboardView: React.FC = () => {
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
         <KpiCard
           label="Clean Claim Rate"
-          value="94.2%"
-          change="+2.1%"
+          value={kpi?.cleanClaimRate != null ? String(kpi.cleanClaimRate) : '94.2%'}
+          change={kpi?.cleanClaimRateChange != null ? String(kpi.cleanClaimRateChange) : '+2.1%'}
           up={true}
           positive={true}
           icon={<CheckCircle className="w-5 h-5 text-emerald-600" />}
@@ -133,8 +140,8 @@ const DashboardView: React.FC = () => {
         />
         <KpiCard
           label="Denial Rate"
-          value="5.8%"
-          change="-0.4%"
+          value={kpi?.denialRate != null ? String(kpi.denialRate) : '5.8%'}
+          change={kpi?.denialRateChange != null ? String(kpi.denialRateChange) : '-0.4%'}
           up={false}
           positive={true}
           icon={<XCircle className="w-5 h-5 text-red-500" />}
@@ -142,8 +149,8 @@ const DashboardView: React.FC = () => {
         />
         <KpiCard
           label="Days in A/R"
-          value="32"
-          change="+2 days"
+          value={kpi?.daysInAr != null ? String(kpi.daysInAr) : '32'}
+          change={kpi?.daysInArChange != null ? String(kpi.daysInArChange) : '+2 days'}
           up={true}
           positive={false}
           icon={<Clock className="w-5 h-5 text-amber-500" />}
@@ -151,8 +158,8 @@ const DashboardView: React.FC = () => {
         />
         <KpiCard
           label="Collections This Week"
-          value="$48,200"
-          change="+$3,100"
+          value={kpi?.collectionsThisWeek != null ? String(kpi.collectionsThisWeek) : '$48,200'}
+          change={kpi?.collectionsChange != null ? String(kpi.collectionsChange) : '+$3,100'}
           up={true}
           positive={true}
           icon={<DollarSign className="w-5 h-5 text-blue-500" />}

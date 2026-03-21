@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useInboxItems, useInboxCounts } from '@/hooks/useApi';
 import {
   FlaskConical,
   MessageSquare,
@@ -286,6 +287,10 @@ const InboxPage: React.FC = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
+  // API hooks — use API data if available, fall back to inline mock
+  const { data: apiInboxItems } = useInboxItems();
+  const { data: apiCounts } = useInboxCounts();
+
   const filtered = activeTab === 'all'
     ? items.filter((i) => i.status !== 'archived')
     : items.filter((i) => i.type === activeTab && i.status !== 'archived');
@@ -331,7 +336,19 @@ const InboxPage: React.FC = () => {
     if (selectedId === id) setSelectedId(null);
   };
 
+  // Merge API inbox items into local state once on first successful fetch
+  React.useEffect(() => {
+    if (apiInboxItems?.content && Array.isArray(apiInboxItems.content) && apiInboxItems.content.length > 0) {
+      setItems(apiInboxItems.content as InboxItem[]);
+    }
+  }, [apiInboxItems]);
+
   const unreadCount = (tab: FilterTab) => {
+    // Prefer API counts when available, fall back to local computation
+    if (apiCounts) {
+      if (tab === 'all') return (apiCounts as Record<string, number>).total ?? items.filter((i) => i.status === 'unread').length;
+      return (apiCounts as Record<string, number>)[tab] ?? countByType(items, tab as InboxType);
+    }
     if (tab === 'all') return items.filter((i) => i.status === 'unread').length;
     return countByType(items, tab as InboxType);
   };

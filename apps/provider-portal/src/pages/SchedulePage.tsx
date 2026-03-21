@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTodaysAppointments } from '@/hooks/useApi';
 import {
   ChevronLeft,
   ChevronRight,
@@ -710,12 +711,16 @@ const SchedulePage: React.FC = () => {
   const [selectedAppt, setSelectedAppt] = useState<ScheduleAppointment | null>(null);
   const [providerDropdownOpen, setProviderDropdownOpen] = useState(false);
 
+  // Fetch from real API; fall back to inline mock data if backend is unavailable
+  const { data: apiAppointments } = useTodaysAppointments();
+  const allAppointments: ScheduleAppointment[] = (apiAppointments as ScheduleAppointment[] | undefined) ?? MOCK_APPOINTMENTS;
+
   const filteredAppointments = useMemo(() => {
-    return MOCK_APPOINTMENTS.filter((a) => {
+    return allAppointments.filter((a) => {
       if (selectedProvider !== 'all' && a.providerId !== selectedProvider) return false;
       return true;
     });
-  }, [selectedProvider]);
+  }, [allAppointments, selectedProvider]);
 
   const dayAppointments = useMemo(() => {
     return filteredAppointments
