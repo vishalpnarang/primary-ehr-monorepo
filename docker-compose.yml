@@ -43,5 +43,22 @@ services:
       - "1025:1025"
       - "8025:8025"
 
+  sonarqube:
+    image: sonarqube:community
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://postgres:5432/primus_ehr
+      SONAR_JDBC_USERNAME: primus
+      SONAR_JDBC_PASSWORD: primus
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - sonar_data:/opt/sonarqube/data
+      - sonar_extensions:/opt/sonarqube/extensions
+
 volumes:
   pgdata:
+  sonar_data:
+  sonar_extensions:

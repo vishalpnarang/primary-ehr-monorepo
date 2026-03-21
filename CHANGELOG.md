@@ -128,6 +128,25 @@
 
 ## What's NOT done yet
 
+## Session 8 — API Wiring + Testing Infrastructure
+
+### What was done
+1. **Axios API client** (`lib/api.ts`) — typed functions for all 12 domains, JWT + tenant interceptors
+2. **Keycloak auth flow** — login via password grant, JWT stored in sessionStorage, mock fallback
+3. **TanStack Query hooks** (`hooks/useApi.ts`) — 25+ hooks wrapping every backend endpoint
+4. **All key pages wired** — Dashboard, Schedule, Patients, PatientChart, Inbox, Billing, Settings try real API first, fall back to inline mock data
+5. **Frontend testing** — Vitest + React Testing Library: 4 files, 70 tests, ALL PASS
+6. **Backend testing** — JUnit 5 + Mockito: 5 files, 32 tests, ALL PASS
+7. **E2E testing** — Playwright config + 4 spec files (auth, navigation, patient-chart, patient-portal)
+8. **SonarQube** — Docker service, sonar-project.properties, JaCoCo coverage plugin
+
+### Test results
+- Frontend: **70/70 pass** (auth store, command palette, API client, query hooks)
+- Backend: **32/32 pass** (patient, appointment, encounter, billing, exception handler)
+- E2E: 4 spec files ready
+
+---
+
 ## Session 7 — Internal Portal (Pitch Decks + Demo Guide)
 
 ### What was done
