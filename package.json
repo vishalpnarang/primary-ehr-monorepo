@@ -1,0 +1,17 @@
+{
+  "name": "primus-ehr",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/shared",
+    "apps/provider-portal",
+    "apps/patient-portal"
+  ],
+  "scripts": {
+    "dev:provider": "npm run dev --workspace=apps/provider-portal",
+    "dev:patient": "npm run dev --workspace=apps/patient-portal",
+    "build:provider": "npm run build --workspace=apps/provider-portal",
+    "build:patient": "npm run build --workspace=apps/patient-portal",
+    "build": "npm run build:provider && npm run build:patient"
+  }
+}
