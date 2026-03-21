@@ -1,0 +1,34 @@
+# ---------------------------------------------------------------------------
+# terraform.tfvars.example — Copy to terraform.tfvars and fill in values.
+#
+# Usage:
+#   cp terraform.tfvars.example terraform.tfvars
+#   # Edit terraform.tfvars with your values
+#   terraform apply
+#
+# WARNING: Never commit terraform.tfvars to git if it contains real passwords.
+# The .gitignore in this directory excludes terraform.tfvars automatically.
+# ---------------------------------------------------------------------------
+
+aws_region    = "us-east-1"
+environment   = "demo"
+instance_name = "demo-primaryplus"
+
+# Database password — change this before any real-data demos
+db_password = "YourSecurePassword123!"
+
+# Keycloak admin password — used to access /auth/admin console
+keycloak_admin_password = "KeycloakAdmin2026!"
+
+# JWT signing secret — must be at least 32 characters
+backend_jwt_secret = "primus-jwt-secret-change-in-prod-min-32-chars!"
+
+# Optional: custom domain (e.g. demo.yourcompany.com)
+# Requires ACM certificate setup — leave empty to use CloudFront/ALB URLs
+domain_name = ""
+
+# Fargate sizing — increase for staging/prod
+# backend_cpu    = 512   # 0.5 vCPU
+# backend_memory = 1024  # 1 GB
+# keycloak_cpu    = 512
+# keycloak_memory = 1024
