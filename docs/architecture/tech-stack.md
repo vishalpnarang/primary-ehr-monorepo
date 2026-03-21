@@ -1,6 +1,6 @@
 # Tech Stack — Primus EHR
 
-**Philosophy:** Start with the simplest architecture that can evolve. Monolith-first with DDD structure so individual modules can be extracted to microservices without major rewrites. Every decision is grounded in the Primary Plus battle-tested reference architecture.
+**Philosophy:** Start with the simplest architecture that can evolve. Monolith-first with DDD structure so individual modules can be extracted to microservices without major rewrites. Every decision is grounded in the Primus Demo Clinic battle-tested reference architecture.
 
 ---
 
@@ -8,14 +8,14 @@
 
 | Layer | Choice | Version | Rationale |
 |-------|--------|---------|-----------|
-| Framework | React | 18.x | Team expertise, ecosystem maturity, same as Primary Plus |
+| Framework | React | 18.x | Team expertise, ecosystem maturity, same as Primus Demo Clinic |
 | Build tool | Vite | 5.x | Fast HMR, native ESM, minimal config — replaced CRA |
 | Language | TypeScript | 5.x | Type safety critical for healthcare data models |
 | Styling | Tailwind CSS | 3.x | Utility-first, consistent with design tokens |
 | Component primitives | shadcn/ui | Latest | Built on Radix UI, accessible by default, fully customizable |
 | State management | Zustand | 4.x | Lightweight, no boilerplate, scales well |
 | Server state | TanStack Query (React Query) | 5.x | Caching, background refresh, optimistic updates |
-| Routing | React Router | 6.x | Same as Primary Plus reference |
+| Routing | React Router | 6.x | Same as Primus Demo Clinic reference |
 | Form handling | React Hook Form + Zod | Latest | Performance, TypeScript integration, schema validation |
 | Icons | lucide-react | Latest | Consistent, tree-shakeable, healthcare-appropriate |
 | Charts | Recharts | Latest | React-native, composable, good accessibility support |
@@ -33,12 +33,12 @@
 
 | Layer | Choice | Version | Rationale |
 |-------|--------|---------|-----------|
-| Framework | Spring Boot | 3.x (Java 21) | Team expertise, virtual threads, same as Primary Plus |
+| Framework | Spring Boot | 3.x (Java 21) | Team expertise, virtual threads, same as Primus Demo Clinic |
 | Language | Java | 21 (LTS) | Virtual threads (Project Loom), record classes, pattern matching |
 | Architecture | Domain-Driven Design monolith | — | Package per domain; extractable to services later |
-| ORM | Spring Data JPA + Hibernate | Latest | Same as Primary Plus |
+| ORM | Spring Data JPA + Hibernate | Latest | Same as Primus Demo Clinic |
 | Validation | Bean Validation (Jakarta) | 3.x | Standard, declarative |
-| Migrations | Liquibase | 4.x | Same as Primary Plus — SQL changesets |
+| Migrations | Liquibase | 4.x | Same as Primus Demo Clinic — SQL changesets |
 | API | REST (JSON) | — | FHIR R4 APIs added in Phase 10 |
 | API docs | Springdoc OpenAPI (Swagger) | 2.x | Auto-generated from annotations |
 | Async | Spring Events + `@Async` → SQS | — | Internal events sync; cross-domain async via SQS |
@@ -74,7 +74,7 @@ Each domain package contains: `domain/`, `application/`, `infrastructure/`, `api
 |-------|--------|-----------|
 | Database engine | PostgreSQL 16 | ACID, JSON support, RLS for multi-tenancy |
 | Dev/local | PostgreSQL 16 (Docker) | Same engine as prod, no surprises |
-| Prod | AWS Aurora PostgreSQL 16 | Same as Primary Plus battle-tested |
+| Prod | AWS Aurora PostgreSQL 16 | Same as Primus Demo Clinic battle-tested |
 | Migrations | Liquibase | Audited, version-controlled schema changes |
 | Multi-tenancy | Shared DB + `tenant_id` column + RLS | From day one — no retrofit needed |
 | Connection pool | HikariCP | Default Spring Boot, fast, reliable |
@@ -100,7 +100,7 @@ CREATE POLICY patient_tenant_isolation ON patients
 
 | Component | Choice | Rationale |
 |-----------|--------|-----------|
-| Auth provider | Keycloak 24 | Same as Primary Plus, battle-tested |
+| Auth provider | Keycloak 24 | Same as Primus Demo Clinic, battle-tested |
 | Deployment | ECS Fargate (prod) / Docker (local) | No managed Keycloak needed |
 | Protocol | OpenID Connect + OAuth 2.0 | Standard, FHIR-compatible |
 | Tenant isolation | Separate Keycloak realm per tenant | Hard isolation |
@@ -117,17 +117,17 @@ See `docs/architecture/auth-strategy.md` for full RBAC matrix.
 
 | Service | Usage | Rationale |
 |---------|-------|-----------|
-| ECS Fargate | Backend containers | Same as Primary Plus — no EC2 management |
+| ECS Fargate | Backend containers | Same as Primus Demo Clinic — no EC2 management |
 | Aurora PostgreSQL 16 | Database | Serverless v2 dev, dedicated prod |
-| S3 + CloudFront | Frontend hosting + static assets | Same as Primary Plus |
+| S3 + CloudFront | Frontend hosting + static assets | Same as Primus Demo Clinic |
 | SQS + DLQ | Async messaging between domains | Reliable, cheap, simple |
 | Secrets Manager | DB passwords, API keys | Per-environment paths |
 | Parameter Store | URLs, config, non-secret config | Cheaper than Secrets Manager for config |
 | CloudFront | CDN for static assets only | API traffic goes direct to ALB |
 | ALB | Load balancer + TLS termination | Single entry point |
-| WAF v2 | OWASP rules + geo-restriction + rate limiting | Same as Primary Plus |
-| CloudTrail | 7-year audit log (HIPAA) | Same as Primary Plus |
-| Keycloak on ECS | Auth server | Self-hosted — Primary Plus proven |
+| WAF v2 | OWASP rules + geo-restriction + rate limiting | Same as Primus Demo Clinic |
+| CloudTrail | 7-year audit log (HIPAA) | Same as Primus Demo Clinic |
+| Keycloak on ECS | Auth server | Self-hosted — Primus Demo Clinic proven |
 
 **Cost target:** ~$150–200/month for dev/staging (single-server monolith mode)
 
@@ -147,11 +147,11 @@ Total: ~$150–200/month
 
 ## Observability
 
-Same battle-tested stack as Primary Plus:
+Same battle-tested stack as Primus Demo Clinic:
 
 | Tool | Usage | Notes |
 |------|-------|-------|
-| Grafana | Dashboards, alerting | On ECS — same as Primary Plus |
+| Grafana | Dashboards, alerting | On ECS — same as Primus Demo Clinic |
 | Loki | Log aggregation (backed by S3) | Much cheaper than CloudWatch Logs |
 | Tempo | Distributed tracing | TraceId follows all requests |
 | CloudWatch | Native AWS metrics, alarms, short-term container logs | 7-day log retention only |
@@ -192,7 +192,7 @@ See `docs/architecture/integration-strategy.md` for full integration details.
 |------|-------|
 | Docker + Docker Compose | Local development stack |
 | GitHub Actions | CI/CD pipeline |
-| Terraform | IaC — same modular structure as Primary Plus |
+| Terraform | IaC — same modular structure as Primus Demo Clinic |
 | Liquibase | Database migrations |
 | Checkstyle + SpotBugs | Java code quality |
 | ESLint + Prettier | TypeScript code quality |

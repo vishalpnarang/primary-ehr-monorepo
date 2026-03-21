@@ -133,7 +133,7 @@
 ### What was done
 1. **Password-protected internal routes** at `/internal/*` — gate uses sessionStorage, password: `primus2026`
 2. **Management pitch deck** (`/internal/management`) — 10-slide scroll-snap presentation: Market Opportunity, Product, Features, Architecture, Build Progress, Roadmap, Unit Economics, Go-to-Market, Team
-3. **Client pitch deck** (`/internal/client`) — 9-slide prospect-facing deck: Problem, Solution, Feature Tour, Comparison vs Elation/athena/Epic, Security, Implementation Timeline, Pricing, Demo Request
+3. **Client pitch deck** (`/internal/client`) — 9-slide prospect-facing deck: Problem, Solution, Feature Tour, Comparison vs legacy EHR/athena/Epic, Security, Implementation Timeline, Pricing, Demo Request
 4. **Demo & testing guide** (`/internal/demo-guide`) — Credentials table, 5 demo flows, API curl examples, key URLs, troubleshooting FAQ
 5. **Moved pitch deck and demo guide from standalone HTML to React pages** inside the provider portal
 

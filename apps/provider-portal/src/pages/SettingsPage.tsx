@@ -64,22 +64,22 @@ const NAV_ITEMS: NavItem[] = [
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
 const MOCK_USERS = [
-  { id: 'USR-00002', name: 'James Wilson',    email: 'james.wilson@primaryplus.com',    role: 'Tenant Admin',    status: 'active',   lastLogin: '2026-03-19 09:12' },
-  { id: 'USR-00003', name: 'Maria Garcia',    email: 'maria.garcia@primaryplus.com',    role: 'Practice Admin',  status: 'active',   lastLogin: '2026-03-19 08:45' },
-  { id: 'USR-00004', name: 'Emily Chen',      email: 'emily.chen@primaryplus.com',      role: 'Provider',        status: 'active',   lastLogin: '2026-03-19 07:30' },
-  { id: 'USR-00005', name: 'Sarah Thompson',  email: 'sarah.thompson@primaryplus.com',  role: 'Nurse / MA',      status: 'active',   lastLogin: '2026-03-18 16:00' },
-  { id: 'USR-00006', name: 'David Kim',       email: 'david.kim@primaryplus.com',       role: 'Front Desk',      status: 'active',   lastLogin: '2026-03-19 07:50' },
-  { id: 'USR-00007', name: 'Lisa Patel',      email: 'lisa.patel@primaryplus.com',      role: 'Billing Staff',   status: 'active',   lastLogin: '2026-03-18 14:22' },
-  { id: 'USR-00008', name: 'Kevin Torres',    email: 'kevin.torres@primaryplus.com',    role: 'Provider',        status: 'active',   lastLogin: '2026-03-17 17:10' },
-  { id: 'USR-00009', name: 'Rachel Moore',    email: 'rachel.moore@primaryplus.com',    role: 'Nurse / MA',      status: 'active',   lastLogin: '2026-03-18 08:00' },
-  { id: 'USR-00010', name: 'Tom Bradley',     email: 'tom.bradley@primaryplus.com',     role: 'Front Desk',      status: 'inactive', lastLogin: '2026-02-28 12:00' },
-  { id: 'USR-00011', name: 'Amanda Foster',   email: 'amanda.foster@primaryplus.com',   role: 'Billing Staff',   status: 'pending',  lastLogin: 'Never' },
+  { id: 'USR-00002', name: 'James Wilson',    email: 'james.wilson@primusdemo.com',    role: 'Tenant Admin',    status: 'active',   lastLogin: '2026-03-19 09:12' },
+  { id: 'USR-00003', name: 'Maria Garcia',    email: 'maria.garcia@primusdemo.com',    role: 'Practice Admin',  status: 'active',   lastLogin: '2026-03-19 08:45' },
+  { id: 'USR-00004', name: 'Emily Chen',      email: 'emily.chen@primusdemo.com',      role: 'Provider',        status: 'active',   lastLogin: '2026-03-19 07:30' },
+  { id: 'USR-00005', name: 'Sarah Thompson',  email: 'sarah.thompson@primusdemo.com',  role: 'Nurse / MA',      status: 'active',   lastLogin: '2026-03-18 16:00' },
+  { id: 'USR-00006', name: 'David Kim',       email: 'david.kim@primusdemo.com',       role: 'Front Desk',      status: 'active',   lastLogin: '2026-03-19 07:50' },
+  { id: 'USR-00007', name: 'Lisa Patel',      email: 'lisa.patel@primusdemo.com',      role: 'Billing Staff',   status: 'active',   lastLogin: '2026-03-18 14:22' },
+  { id: 'USR-00008', name: 'Kevin Torres',    email: 'kevin.torres@primusdemo.com',    role: 'Provider',        status: 'active',   lastLogin: '2026-03-17 17:10' },
+  { id: 'USR-00009', name: 'Rachel Moore',    email: 'rachel.moore@primusdemo.com',    role: 'Nurse / MA',      status: 'active',   lastLogin: '2026-03-18 08:00' },
+  { id: 'USR-00010', name: 'Tom Bradley',     email: 'tom.bradley@primusdemo.com',     role: 'Front Desk',      status: 'inactive', lastLogin: '2026-02-28 12:00' },
+  { id: 'USR-00011', name: 'Amanda Foster',   email: 'amanda.foster@primusdemo.com',   role: 'Billing Staff',   status: 'pending',  lastLogin: 'Never' },
 ];
 
 const MOCK_LOCATIONS = [
   {
     id: 'LOC-00001',
-    name: 'Primary Plus — Downtown',
+    name: 'Primus Demo — Downtown',
     address: '250 W 57th St, Suite 801, New York, NY 10107',
     phone: '(212) 555-0100',
     fax: '(212) 555-0101',
@@ -88,7 +88,7 @@ const MOCK_LOCATIONS = [
   },
   {
     id: 'LOC-00002',
-    name: 'Primary Plus — Midtown East',
+    name: 'Primus Demo — Midtown',
     address: '420 Lexington Ave, Suite 300, New York, NY 10170',
     phone: '(212) 555-0200',
     fax: '(212) 555-0201',
@@ -97,7 +97,7 @@ const MOCK_LOCATIONS = [
   },
   {
     id: 'LOC-00003',
-    name: 'Primary Plus — Upper West Side',
+    name: 'Primus Demo — Uptown',
     address: '2880 Broadway, Suite 201, New York, NY 10025',
     phone: '(212) 555-0300',
     fax: '(212) 555-0301',
@@ -107,7 +107,7 @@ const MOCK_LOCATIONS = [
 ];
 
 const MOCK_TENANTS = [
-  { id: 'TEN-00001', name: 'Primary Plus Medical Group', subdomain: 'primaryplus', locations: 3, users: 11, status: 'active',       createdAt: '2025-10-01' },
+  { id: 'TEN-00001', name: 'Primus Demo Clinic', subdomain: 'primusdemo', locations: 3, users: 11, status: 'active',       createdAt: '2025-10-01' },
   { id: 'TEN-00002', name: 'Riverside Family Medicine',  subdomain: 'riverside',   locations: 2, users: 8,  status: 'active',       createdAt: '2026-01-15' },
   { id: 'TEN-00003', name: 'Lakewood Internal Medicine', subdomain: 'lakewood',    locations: 1, users: 5,  status: 'provisioning', createdAt: '2026-03-10' },
   { id: 'TEN-00004', name: 'Sunrise Health Partners',    subdomain: 'sunrise',     locations: 4, users: 22, status: 'active',       createdAt: '2025-12-01' },
@@ -148,7 +148,7 @@ const OrganizationView: React.FC = () => {
             <label className="block text-xs font-medium text-gray-700 mb-1.5">Practice Name</label>
             <input
               type="text"
-              defaultValue="Primary Plus Medical Group"
+              defaultValue="Primus Demo Clinic"
               className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>

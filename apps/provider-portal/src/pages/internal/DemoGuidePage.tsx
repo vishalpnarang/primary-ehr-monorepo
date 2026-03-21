@@ -147,12 +147,12 @@ cd apps/mock-api && npm run dev`}
 // ─── 2. Login Credentials ─────────────────────────────────────────────────────
 const credentials = [
   { email: 'superadmin@thinkitive.com', password: 'Admin@1234', role: 'Super Admin', test: 'Tenant management, global settings' },
-  { email: 'admin@primaryplus.com', password: 'Admin@1234', role: 'Tenant Admin', test: 'Org settings, user management, billing' },
-  { email: 'manager@primaryplus.com', password: 'Admin@1234', role: 'Practice Admin', test: 'Staff schedules, daily ops, reports' },
-  { email: 'dr.smith@primaryplus.com', password: 'Doctor@1234', role: 'Provider (MD)', test: 'Patient chart, SOAP notes, orders, Rx' },
-  { email: 'nurse.jones@primaryplus.com', password: 'Nurse@1234', role: 'Nurse / MA', test: 'Rooming, vitals, medication reconciliation' },
-  { email: 'frontdesk@primaryplus.com', password: 'Desk@1234', role: 'Front Desk', test: 'Scheduling, check-in, patient registration' },
-  { email: 'billing@primaryplus.com', password: 'Billing@1234', role: 'Billing Staff', test: 'Claims, ERA, denials, RCM dashboard' },
+  { email: 'admin@primusdemo.com', password: 'Admin@1234', role: 'Tenant Admin', test: 'Org settings, user management, billing' },
+  { email: 'manager@primusdemo.com', password: 'Admin@1234', role: 'Practice Admin', test: 'Staff schedules, daily ops, reports' },
+  { email: 'dr.smith@primusdemo.com', password: 'Doctor@1234', role: 'Provider (MD)', test: 'Patient chart, SOAP notes, orders, Rx' },
+  { email: 'nurse.jones@primusdemo.com', password: 'Nurse@1234', role: 'Nurse / MA', test: 'Rooming, vitals, medication reconciliation' },
+  { email: 'frontdesk@primusdemo.com', password: 'Desk@1234', role: 'Front Desk', test: 'Scheduling, check-in, patient registration' },
+  { email: 'billing@primusdemo.com', password: 'Billing@1234', role: 'Billing Staff', test: 'Claims, ERA, denials, RCM dashboard' },
   { email: 'patient@example.com', password: 'Patient@1234', role: 'Patient', test: 'Patient portal — labs, messages, booking' },
 ];
 
@@ -186,14 +186,14 @@ const CredentialsSection = () => (
       </table>
     </div>
     <p className="text-slate-500 text-xs mt-2">
-      All users belong to tenant: <span className="font-mono bg-slate-100 px-1 py-0.5 rounded">TEN-00001</span> (Primary Plus). Super Admin can switch tenants from the top nav.
+      All users belong to tenant: <span className="font-mono bg-slate-100 px-1 py-0.5 rounded">TEN-00001</span> (Primus Demo Clinic). Super Admin can switch tenants from the top nav.
     </p>
   </section>
 );
 
 // ─── 3. Demo Flows ────────────────────────────────────────────────────────────
 const demoFlowA = [
-  { title: 'Log in as Provider', desc: 'Use dr.smith@primaryplus.com / Doctor@1234 at localhost:5173' },
+  { title: 'Log in as Provider', desc: 'Use dr.smith@primusdemo.com / Doctor@1234 at localhost:5173' },
   { title: 'Review the Dashboard', desc: 'Check today\'s appointments, pending tasks, and inbox alerts' },
   { title: 'Open a Patient Chart', desc: 'Click on "Sarah Johnson" in today\'s schedule. Observe sticky header with allergies and risk flags.' },
   { title: 'Try the Command Palette', desc: 'Press Ctrl+K. Search for a patient by name. Navigate directly to their chart.' },
@@ -206,7 +206,7 @@ const demoFlowA = [
 ];
 
 const demoFlowB = [
-  { title: 'Log in as Front Desk', desc: 'Use frontdesk@primaryplus.com / Desk@1234' },
+  { title: 'Log in as Front Desk', desc: 'Use frontdesk@primusdemo.com / Desk@1234' },
   { title: 'Review Today\'s Schedule', desc: 'Navigate to Schedule. View the day grid with all providers.' },
   { title: 'Register a New Patient', desc: 'Click New Patient. Fill demographics, insurance, and emergency contact.' },
   { title: 'Book an Appointment', desc: 'On the schedule, click an open slot. Select patient, visit type, and provider.' },
@@ -224,14 +224,14 @@ const demoFlowC = [
 ];
 
 const demoFlowD = [
-  { title: 'Log in as Billing Staff', desc: 'Use billing@primaryplus.com / Billing@1234' },
+  { title: 'Log in as Billing Staff', desc: 'Use billing@primusdemo.com / Billing@1234' },
   { title: 'Review Claim Queue', desc: 'Navigate to Billing → Claims. Review claims pending submission.' },
   { title: 'Post an ERA', desc: 'Click ERA Posting → Upload ERA file. Watch automated posting against open claims.' },
   { title: 'Work a Denial', desc: 'In Denials tab, open a CO-4 denial. Add corrected procedure code and resubmit.' },
 ];
 
 const demoFlowE = [
-  { title: 'Log in as Tenant Admin', desc: 'Use admin@primaryplus.com / Admin@1234' },
+  { title: 'Log in as Tenant Admin', desc: 'Use admin@primusdemo.com / Admin@1234' },
   { title: 'Manage Users', desc: 'Settings → Users → Add User. Create a new provider with Provider role.' },
   { title: 'Configure Locations', desc: 'Settings → Locations. View all 3 clinic locations with their tax IDs and NPIs.' },
   { title: 'Review Reports', desc: 'Reports → Provider Productivity. Review encounters per provider, avg visit duration.' },
@@ -273,7 +273,7 @@ const ApiTesting = () => (
   -H "Content-Type: application/x-www-form-urlencoded" \\
   -d "grant_type=password" \\
   -d "client_id=primus-provider-portal" \\
-  -d "username=dr.smith@primaryplus.com" \\
+  -d "username=dr.smith@primusdemo.com" \\
   -d "password=Doctor@1234"
 
 # Response: { "access_token": "eyJ...", "expires_in": 3600 }`}

@@ -5,7 +5,7 @@
 # Usage:
 #   ./deploy.sh <instance-name> [aws-region]
 #   ./deploy.sh demo-acme
-#   ./deploy.sh demo-primaryplus us-west-2
+#   ./deploy.sh demo-primusdemo us-west-2
 #
 # What this does:
 #   1. Validate prerequisites (aws, terraform, docker, node, mvn)
@@ -67,7 +67,7 @@ if [[ -z "${INSTANCE_NAME}" ]]; then
 
   Examples:
     ./deploy.sh demo-acme
-    ./deploy.sh demo-primaryplus us-west-2
+    ./deploy.sh demo-primusdemo us-west-2
 
   instance-name must be lowercase alphanumeric and hyphens only.
 

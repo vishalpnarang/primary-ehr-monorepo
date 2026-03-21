@@ -38,7 +38,7 @@ import type { UserRole } from '@primus/ui/types';
 // ─── Shared constants ──────────────────────────────────────────────────────
 
 const TODAY = 'Thursday, March 19, 2026';
-const LOCATION = 'Primary Plus Health · Location A';
+const LOCATION = 'Primus Demo Clinic Health · Location A';
 
 // ─── Micro-components ─────────────────────────────────────────────────────
 
@@ -932,7 +932,7 @@ interface TenantRow {
 }
 
 const TENANTS: TenantRow[] = [
-  { id: 'TEN-00001', name: 'Primary Plus Health',     subdomain: 'primaryplus', providers: 4, patients: 2847, enc: 487, status: 'active',       plan: 'pro',        lastActive: '2 min ago'  },
+  { id: 'TEN-00001', name: 'Primus Demo Clinic Health',     subdomain: 'primusdemo', providers: 4, patients: 2847, enc: 487, status: 'active',       plan: 'pro',        lastActive: '2 min ago'  },
   { id: 'TEN-00002', name: 'Riverside Family Clinic', subdomain: 'riverside',   providers: 2, patients: 1204, enc: 218, status: 'active',       plan: 'starter',    lastActive: '18 min ago' },
   { id: 'TEN-00003', name: 'Lakeview Medical Group',  subdomain: 'lakeview',    providers: 8, patients: 5620, enc: 941, status: 'active',       plan: 'enterprise', lastActive: '5 min ago'  },
   { id: 'TEN-00004', name: 'Summit Primary Care',     subdomain: 'summit',      providers: 3, patients: 1870, enc: 312, status: 'active',       plan: 'pro',        lastActive: '1 hr ago'   },

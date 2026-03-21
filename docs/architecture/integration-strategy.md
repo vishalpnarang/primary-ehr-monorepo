@@ -257,7 +257,7 @@ const provider = process.env.VIDEO_PROVIDER === 'chime'
 | **Protocol** | Self-hosted on ECS, embedded via SDK |
 | **Phase** | 9 |
 
-**Note:** Same as Primary Plus — self-hosted Superset within VPC. Queries read-replica Aurora. PHI visible only to authenticated users via Superset row-level security.
+**Note:** Same as Primus Demo Clinic — self-hosted Superset within VPC. Queries read-replica Aurora. PHI visible only to authenticated users via Superset row-level security.
 
 ---
 

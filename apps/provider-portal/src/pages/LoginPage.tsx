@@ -6,12 +6,12 @@ import type { User, UserRole } from '@primus/ui/types';
 
 const mockUsers: Record<UserRole, User> = {
   super_admin: { id: 'USR-00001', email: 'alex.morgan@thinkitive.com', firstName: 'Alex', lastName: 'Morgan', role: 'super_admin', tenantId: 'TEN-00001', title: 'Platform Admin' },
-  tenant_admin: { id: 'USR-00002', email: 'james.wilson@primaryplus.com', firstName: 'James', lastName: 'Wilson', role: 'tenant_admin', tenantId: 'TEN-00001', title: 'Clinic Owner' },
-  practice_admin: { id: 'USR-00003', email: 'maria.garcia@primaryplus.com', firstName: 'Maria', lastName: 'Garcia', role: 'practice_admin', tenantId: 'TEN-00001', title: 'Office Manager' },
-  provider: { id: 'USR-00004', email: 'emily.chen@primaryplus.com', firstName: 'Emily', lastName: 'Chen', role: 'provider', tenantId: 'TEN-00001', title: 'MD', specialty: 'Internal Medicine', npi: '1234567890', providerId: 'PRV-00001' },
-  nurse: { id: 'USR-00005', email: 'sarah.thompson@primaryplus.com', firstName: 'Sarah', lastName: 'Thompson', role: 'nurse', tenantId: 'TEN-00001', title: 'RN' },
-  front_desk: { id: 'USR-00006', email: 'david.kim@primaryplus.com', firstName: 'David', lastName: 'Kim', role: 'front_desk', tenantId: 'TEN-00001', title: 'Front Desk' },
-  billing: { id: 'USR-00007', email: 'lisa.patel@primaryplus.com', firstName: 'Lisa', lastName: 'Patel', role: 'billing', tenantId: 'TEN-00001', title: 'Billing Specialist' },
+  tenant_admin: { id: 'USR-00002', email: 'james.wilson@primusdemo.com', firstName: 'James', lastName: 'Wilson', role: 'tenant_admin', tenantId: 'TEN-00001', title: 'Clinic Owner' },
+  practice_admin: { id: 'USR-00003', email: 'maria.garcia@primusdemo.com', firstName: 'Maria', lastName: 'Garcia', role: 'practice_admin', tenantId: 'TEN-00001', title: 'Office Manager' },
+  provider: { id: 'USR-00004', email: 'emily.chen@primusdemo.com', firstName: 'Emily', lastName: 'Chen', role: 'provider', tenantId: 'TEN-00001', title: 'MD', specialty: 'Internal Medicine', npi: '1234567890', providerId: 'PRV-00001' },
+  nurse: { id: 'USR-00005', email: 'sarah.thompson@primusdemo.com', firstName: 'Sarah', lastName: 'Thompson', role: 'nurse', tenantId: 'TEN-00001', title: 'RN' },
+  front_desk: { id: 'USR-00006', email: 'david.kim@primusdemo.com', firstName: 'David', lastName: 'Kim', role: 'front_desk', tenantId: 'TEN-00001', title: 'Front Desk' },
+  billing: { id: 'USR-00007', email: 'lisa.patel@primusdemo.com', firstName: 'Lisa', lastName: 'Patel', role: 'billing', tenantId: 'TEN-00001', title: 'Billing Specialist' },
   patient: { id: 'USR-00008', email: 'robert.johnson@email.com', firstName: 'Robert', lastName: 'Johnson', role: 'patient', tenantId: 'TEN-00001' },
 };
 

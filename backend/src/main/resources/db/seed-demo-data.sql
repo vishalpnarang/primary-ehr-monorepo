@@ -1,7 +1,7 @@
 -- =============================================================================
 -- Primus EHR — Demo Seed Data
 -- =============================================================================
--- Purpose : Populate a fresh demo environment for Primary Plus Medical Group.
+-- Purpose : Populate a fresh demo environment for Primus Demo Clinic.
 -- Audience : Developers, QA, sales demos.
 -- Run after: All Liquibase migrations have been applied.
 -- Safety   : Every INSERT uses ON CONFLICT DO NOTHING so the script is
@@ -20,8 +20,8 @@ INSERT INTO tenants (uuid, name, subdomain, npi, tax_id, phone, fax,
                      address_line1, city, state, zip, status,
                      created_by, modified_by)
 VALUES ('10000000-0000-0000-0000-000000000001',
-        'Primary Plus Medical Group',
-        'primaryplus',
+        'Primus Demo Clinic',
+        'primusdemo',
         '1234567890',
         '47-1234567',
         '(212) 555-0100',
@@ -39,7 +39,7 @@ DO $$
 DECLARE
   v_tenant_id BIGINT;
 BEGIN
-  SELECT id INTO v_tenant_id FROM tenants WHERE subdomain = 'primaryplus';
+  SELECT id INTO v_tenant_id FROM tenants WHERE subdomain = 'primusdemo';
 
 -- ---------------------------------------------------------------------------
 -- 2. LOCATIONS
@@ -48,11 +48,11 @@ INSERT INTO locations (uuid, tenant_id, name, address_line1, city, state, zip,
                        phone, fax, active, created_by, modified_by)
 VALUES
   ('20000000-0000-0000-0000-000000000001',
-   v_tenant_id, 'Primary Plus Downtown',
+   v_tenant_id, 'Primus Demo Clinic Downtown',
    '250 W 57th St', 'New York', 'NY', '10107',
    '(212) 555-0110', '(212) 555-0111', true, 'system', 'system'),
   ('20000000-0000-0000-0000-000000000002',
-   v_tenant_id, 'Primary Plus Midtown',
+   v_tenant_id, 'Primus Demo Clinic Midtown',
    '420 Lexington Ave', 'New York', 'NY', '10170',
    '(212) 555-0120', '(212) 555-0121', true, 'system', 'system')
 ON CONFLICT (uuid) DO NOTHING;
@@ -97,7 +97,7 @@ BEGIN
     ('40000000-0000-0000-0000-000000000002',
      v_tenant_id,
      'kc-00000000-0000-0000-0000-000000000002',
-     'james.wilson@primaryplus.com',
+     'james.wilson@primusdemo.com',
      'James', 'Wilson', 'tenant_admin', NULL, NULL, NULL,
      '(212) 555-0200', 'ACTIVE', 'system', 'system'),
 
@@ -105,7 +105,7 @@ BEGIN
     ('40000000-0000-0000-0000-000000000003',
      v_tenant_id,
      'kc-00000000-0000-0000-0000-000000000003',
-     'maria.garcia@primaryplus.com',
+     'maria.garcia@primusdemo.com',
      'Maria', 'Garcia', 'practice_admin', NULL, NULL, NULL,
      '(212) 555-0201', 'ACTIVE', 'system', 'system'),
 
@@ -113,7 +113,7 @@ BEGIN
     ('40000000-0000-0000-0000-000000000004',
      v_tenant_id,
      'kc-00000000-0000-0000-0000-000000000004',
-     'emily.chen@primaryplus.com',
+     'emily.chen@primusdemo.com',
      'Emily', 'Chen', 'provider', 'MD', 'Internal Medicine', '1234567890',
      '(212) 555-0202', 'ACTIVE', 'system', 'system'),
 
@@ -121,7 +121,7 @@ BEGIN
     ('40000000-0000-0000-0000-000000000005',
      v_tenant_id,
      'kc-00000000-0000-0000-0000-000000000005',
-     'kevin.torres@primaryplus.com',
+     'kevin.torres@primusdemo.com',
      'Kevin', 'Torres', 'provider', 'MD', 'Family Medicine', '9876543210',
      '(212) 555-0203', 'ACTIVE', 'system', 'system'),
 
@@ -129,7 +129,7 @@ BEGIN
     ('40000000-0000-0000-0000-000000000006',
      v_tenant_id,
      'kc-00000000-0000-0000-0000-000000000006',
-     'sarah.thompson@primaryplus.com',
+     'sarah.thompson@primusdemo.com',
      'Sarah', 'Thompson', 'nurse', 'RN', NULL, NULL,
      '(212) 555-0204', 'ACTIVE', 'system', 'system'),
 
@@ -137,7 +137,7 @@ BEGIN
     ('40000000-0000-0000-0000-000000000007',
      v_tenant_id,
      'kc-00000000-0000-0000-0000-000000000007',
-     'david.kim@primaryplus.com',
+     'david.kim@primusdemo.com',
      'David', 'Kim', 'front_desk', NULL, NULL, NULL,
      '(212) 555-0205', 'ACTIVE', 'system', 'system'),
 
@@ -145,7 +145,7 @@ BEGIN
     ('40000000-0000-0000-0000-000000000008',
      v_tenant_id,
      'kc-00000000-0000-0000-0000-000000000008',
-     'lisa.patel@primaryplus.com',
+     'lisa.patel@primusdemo.com',
      'Lisa', 'Patel', 'billing', NULL, NULL, NULL,
      '(212) 555-0206', 'ACTIVE', 'system', 'system')
   ON CONFLICT (keycloak_user_id) DO NOTHING;

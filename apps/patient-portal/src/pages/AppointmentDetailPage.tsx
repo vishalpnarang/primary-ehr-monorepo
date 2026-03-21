@@ -62,7 +62,7 @@ const MOCK_APPOINTMENTS: Record<string, Appointment> = {
     status: 'confirmed',
     reason: 'Annual Wellness Visit',
     location: {
-      name: 'Primary Plus — Main Street',
+      name: 'Primus Demo Clinic — Main Street',
       address: '1200 Main Street, Suite 300',
       city: 'Springfield',
       state: 'IL',
@@ -86,7 +86,7 @@ const MOCK_APPOINTMENTS: Record<string, Appointment> = {
     status: 'confirmed',
     reason: 'Follow-up: Hypertension Management',
     location: {
-      name: 'Primary Plus — Northside',
+      name: 'Primus Demo Clinic — Northside',
       address: '870 Elm Avenue, Suite 101',
       city: 'Springfield',
       state: 'IL',
@@ -112,7 +112,7 @@ const FALLBACK_APPOINTMENT: Appointment = {
   status: 'confirmed',
   reason: 'New Patient Visit',
   location: {
-    name: 'Primary Plus — Downtown',
+    name: 'Primus Demo — Downtown',
     address: '500 Oak Street',
     city: 'Springfield',
     state: 'IL',

@@ -10,11 +10,11 @@
 
 ## Executive Summary
 
-Primus is a multi-tenant SaaS EHR (Electronic Health Record) platform purpose-built for primary care clinics in the USA. It replaces fragmented, slow, click-heavy legacy EHRs (Elation, Athenahealth, eClinicalWorks) with a single-screen, keyboard-first clinical experience that eliminates the "pajama time" epidemic — the 22.5% of physicians who spend 8+ hours per week on EHR work after clinic hours.
+Primus is a multi-tenant SaaS EHR (Electronic Health Record) platform purpose-built for primary care clinics in the USA. It replaces fragmented, slow, click-heavy legacy EHRs (legacy EHR, Athenahealth, eClinicalWorks) with a single-screen, keyboard-first clinical experience that eliminates the "pajama time" epidemic — the 22.5% of physicians who spend 8+ hours per week on EHR work after clinic hours.
 
 **The core insight:** The $12.9B US EHR market is dominated by systems that score in the bottom 9% of all technologies for usability. 62% of burned-out clinicians blame their EHR. A product that saves even one hour per day generates referral-driven adoption that no sales team can match.
 
-**Initial client:** Primary Plus (3–4 clinic locations) — migrating from Elation EMR.  
+**Initial client:** Primus Demo Clinic (3–4 clinic locations) — migrating from legacy EHR systems.  
 **SaaS expansion:** Multi-tenant platform serving 50+ primary care practices.
 
 ---
@@ -182,7 +182,7 @@ Full phase plan: `CLAUDE.md`
 
 ## Competitive Differentiation
 
-| Feature | Primus | Epic | Athenahealth | Elation |
+| Feature | Primus | Epic | Athenahealth | legacy EHR |
 |---------|--------|------|-------------|---------|
 | Command palette (Ctrl+K) | ✅ | ❌ | ❌ | ❌ |
 | Single-screen patient chart | ✅ | ❌ (multi-tab) | ❌ | Partial |
@@ -204,7 +204,7 @@ Full phase plan: `CLAUDE.md`
 | Scope creep during UI phase | High | Medium | Strict P0/P1/P2 framework; sign-off before next phase |
 | HIPAA compliance gaps | Medium | Critical | Compliance review at each phase gate |
 | Integration delays (ScriptSure DEA audit) | High | Medium | Start EPCS certification process in Phase 4 |
-| Keycloak complexity in multi-tenant | Medium | High | Proven pattern from Primary Plus |
+| Keycloak complexity in multi-tenant | Medium | High | Proven pattern from Primus Demo Clinic |
 | Over-engineering early | Medium | Medium | Monolith-first rule; no microservices until needed |
 | Change Healthcare/Availity outage risk | Medium | High | Dual clearinghouse option (Waystar as backup) |
 

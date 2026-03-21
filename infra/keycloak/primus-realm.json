@@ -142,12 +142,12 @@
       "redirectUris": [
         "http://localhost:3000/*",
         "http://localhost:5173/*",
-        "https://app.primaryplus.primus.health/*"
+        "https://app.primusdemo.primus.health/*"
       ],
       "webOrigins": [
         "http://localhost:3000",
         "http://localhost:5173",
-        "https://app.primaryplus.primus.health"
+        "https://app.primusdemo.primus.health"
       ],
       "attributes": {
         "pkce.code.challenge.method": "S256",
@@ -217,12 +217,12 @@
       "redirectUris": [
         "http://localhost:3001/*",
         "http://localhost:5174/*",
-        "https://patient.primaryplus.primus.health/*"
+        "https://patient.primusdemo.primus.health/*"
       ],
       "webOrigins": [
         "http://localhost:3001",
         "http://localhost:5174",
-        "https://patient.primaryplus.primus.health"
+        "https://patient.primusdemo.primus.health"
       ],
       "attributes": {
         "pkce.code.challenge.method": "S256",
@@ -308,7 +308,7 @@
     {
       "id": "kc-00000000-0000-0000-0000-000000000002",
       "username": "james.wilson",
-      "email": "james.wilson@primaryplus.com",
+      "email": "james.wilson@primusdemo.com",
       "firstName": "James",
       "lastName": "Wilson",
       "enabled": true,
@@ -330,7 +330,7 @@
     {
       "id": "kc-00000000-0000-0000-0000-000000000003",
       "username": "maria.garcia",
-      "email": "maria.garcia@primaryplus.com",
+      "email": "maria.garcia@primusdemo.com",
       "firstName": "Maria",
       "lastName": "Garcia",
       "enabled": true,
@@ -352,7 +352,7 @@
     {
       "id": "kc-00000000-0000-0000-0000-000000000004",
       "username": "emily.chen",
-      "email": "emily.chen@primaryplus.com",
+      "email": "emily.chen@primusdemo.com",
       "firstName": "Emily",
       "lastName": "Chen",
       "enabled": true,
@@ -377,7 +377,7 @@
     {
       "id": "kc-00000000-0000-0000-0000-000000000005",
       "username": "kevin.torres",
-      "email": "kevin.torres@primaryplus.com",
+      "email": "kevin.torres@primusdemo.com",
       "firstName": "Kevin",
       "lastName": "Torres",
       "enabled": true,
@@ -402,7 +402,7 @@
     {
       "id": "kc-00000000-0000-0000-0000-000000000006",
       "username": "sarah.thompson",
-      "email": "sarah.thompson@primaryplus.com",
+      "email": "sarah.thompson@primusdemo.com",
       "firstName": "Sarah",
       "lastName": "Thompson",
       "enabled": true,
@@ -425,7 +425,7 @@
     {
       "id": "kc-00000000-0000-0000-0000-000000000007",
       "username": "david.kim",
-      "email": "david.kim@primaryplus.com",
+      "email": "david.kim@primusdemo.com",
       "firstName": "David",
       "lastName": "Kim",
       "enabled": true,
@@ -447,7 +447,7 @@
     {
       "id": "kc-00000000-0000-0000-0000-000000000008",
       "username": "lisa.patel",
-      "email": "lisa.patel@primaryplus.com",
+      "email": "lisa.patel@primusdemo.com",
       "firstName": "Lisa",
       "lastName": "Patel",
       "enabled": true,

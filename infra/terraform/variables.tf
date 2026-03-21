@@ -22,7 +22,7 @@ variable "environment" {
 }
 
 variable "instance_name" {
-  description = "Unique slug for this demo instance (e.g. 'acme', 'primaryplus'). Used in resource names."
+  description = "Unique slug for this demo instance (e.g. 'acme', 'primusdemo'). Used in resource names."
   type        = string
 
   validation {

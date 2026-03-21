@@ -130,7 +130,7 @@ Architecture:
 
 **Target cost: ~$1,000–2,000/month (5–10 tenants)**
 
-At this point, move to proper multi-environment setup matching Primary Plus reference:
+At this point, move to proper multi-environment setup matching Primus Demo Clinic reference:
 
 ```
 Environments:
@@ -152,7 +152,7 @@ The DDD monolith packages map directly to future microservices:
 | `telehealth` | Telehealth Service | Video scaling needed |
 | `analytics` | Analytics Service | Complex reporting load |
 
-**Rule:** Don't extract until you feel the pain. The monolith with DDD packages handles Primary Plus scale easily (3–4 clinics, ~50 providers). Extract only when:
+**Rule:** Don't extract until you feel the pain. The monolith with DDD packages handles Primus Demo Clinic scale easily (3–4 clinics, ~50 providers). Extract only when:
 1. A specific domain has dramatically different scaling needs, OR
 2. A team of 3+ engineers works exclusively on one domain, OR
 3. A module needs different deployment frequency from the rest
@@ -229,7 +229,7 @@ Bastion: SSM Session Manager only — no SSH keys anywhere
 Developer access: Client VPN (AWS Client VPN or Tailscale)
 ```
 
-**Security (same as Primary Plus):**
+**Security (same as Primus Demo Clinic):**
 - WAF: OWASP Core Rule Set, SQL injection, XSS, path traversal
 - Geo-restriction: US only + Thinkitive office IPs allowlisted
 - Rate limiting: 2,000 req/5min/IP (WAF)

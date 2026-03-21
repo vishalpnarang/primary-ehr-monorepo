@@ -2,7 +2,7 @@
 
 ## What is Primus?
 
-Primus is a multi-tenant SaaS EHR (Electronic Health Record) platform purpose-built for primary care clinics in the USA. It is being developed by Thinkitive Technologies. The product replaces Elation EMR for the initial client (Primary Plus, 3–4 clinic locations) and will expand to a full multi-tenant SaaS offering.
+Primus is a multi-tenant SaaS EHR (Electronic Health Record) platform purpose-built for primary care clinics in the USA. It is being developed by Thinkitive Technologies. The product replaces legacy EHR systems for the initial client (Primus Demo Clinic, 3–4 clinic locations) and will expand to a full multi-tenant SaaS offering.
 
 **Product name:** Primus  
 **Company:** Thinkitive Technologies  
@@ -82,12 +82,12 @@ primus/
 
 | Layer | Choice | Rationale |
 |-------|--------|-----------|
-| Frontend | React 18 + Vite + TypeScript | Same as Primary Plus reference |
+| Frontend | React 18 + Vite + TypeScript | Same as Primus Demo Clinic reference |
 | Styling | Tailwind CSS + shadcn/ui | Fast, accessible, consistent |
 | State | Zustand + TanStack Query | Lightweight, scales to real API |
 | Backend (Phase 2+) | Spring Boot 3 (Java 21) monolith | DDD structure, extractable to services |
 | Database | PostgreSQL (Aurora in prod) | Proven, multi-tenant RLS ready |
-| Auth | Keycloak 24 on ECS Fargate | Same as Primary Plus |
+| Auth | Keycloak 24 on ECS Fargate | Same as Primus Demo Clinic |
 | Video (local) | Jitsi Docker | Free, zero cost for dev |
 | Video (prod) | Amazon Chime SDK | Pay-per-use, $0 idle, HIPAA BAA |
 | SMS | Twilio | Confirmed |
@@ -95,8 +95,8 @@ primus/
 | E-prescribing | ScriptSure (EPCS) | Confirmed |
 | Labs | Quest + HL7 | Confirmed |
 | Clearinghouse | Availity (primary) | Confirmed |
-| IaC | Terraform | Same as Primary Plus |
-| CI/CD | GitHub Actions | Same as Primary Plus |
+| IaC | Terraform | Same as Primus Demo Clinic |
+| CI/CD | GitHub Actions | Same as Primus Demo Clinic |
 
 ---
 

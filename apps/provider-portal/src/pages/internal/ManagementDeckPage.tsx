@@ -94,8 +94,8 @@ const HeroSection = () => (
       </p>
       <p className="text-slate-400 text-lg max-w-2xl leading-relaxed mb-10">
         A multi-tenant SaaS Electronic Health Record platform purpose-built for
-        US primary care clinics. Replacing legacy EMRs — starting with Elation
-        at Primary Plus — then scaling to a full SaaS offering.
+        US primary care clinics. Replacing legacy EMRs — starting with legacy EHR
+        at Primus Demo Clinic — then scaling to a full SaaS offering.
       </p>
       <div className="flex flex-wrap gap-4">
         {[
@@ -165,7 +165,7 @@ const MarketSection = () => (
         <h3 className="font-bold text-slate-900 mb-4 text-lg">Legacy EHR Pain Points</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {[
-            'Elation — good but aging UI, limited customization',
+            'legacy EHR — good but aging UI, limited customization',
             'athenahealth — complex, expensive, hard to implement',
             'Epic — built for hospitals, overkill for primary care',
             'No modern, primary-care-first, multi-tenant SaaS player',
@@ -573,11 +573,11 @@ const GTMSection = () => (
         <div>
           <h3 className="text-blue-400 font-semibold mb-4 text-sm uppercase tracking-widest">Phase 1 — First Client</h3>
           <div className="bg-white/10 border border-white/10 rounded-2xl p-6">
-            <div className="text-2xl font-bold text-white mb-2">Primary Plus</div>
+            <div className="text-2xl font-bold text-white mb-2">Primus Demo Clinic</div>
             <div className="text-slate-400 text-sm mb-4">3–4 clinic locations · USA · Primary Care</div>
             <div className="space-y-2">
               {[
-                'Replacing Elation EMR',
+                'Replacing legacy EHR systems',
                 'Full deployment across all locations',
                 'Thinkitive support team embedded',
                 'Live feedback loop into product',
@@ -597,7 +597,7 @@ const GTMSection = () => (
             {[
               { step: '1', title: 'SaaS Hardening', desc: 'RLS, audit logs, pen test, HIPAA BAA' },
               { step: '2', title: 'Self-serve onboarding', desc: 'Tenant provisioning in < 5 minutes' },
-              { step: '3', title: 'Inbound via referrals', desc: 'Primary Plus → peer clinics' },
+              { step: '3', title: 'Inbound via referrals', desc: 'Primus Demo Clinic → peer clinics' },
               { step: '4', title: 'Channel partnerships', desc: 'Billing companies, MSOs, GPOs' },
               { step: '5', title: 'Target: 10 tenants', desc: '$15K–25K MRR at Year 1 SaaS' },
             ].map((step) => (
@@ -652,13 +652,13 @@ const TeamSection = () => (
         <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6">
           <h3 className="font-bold text-slate-900 mb-4">Why We're Building This</h3>
           <p className="text-slate-600 text-sm leading-relaxed mb-4">
-            We've integrated with every major EHR — Epic, Elation, athenahealth,
+            We've integrated with every major EHR — Epic, legacy EHR, athenahealth,
             Kareo. We know exactly what's broken. Primus is the EHR we always
             wished existed: modern, fast, keyboard-driven, and built for how
             primary care actually works.
           </p>
           <p className="text-slate-600 text-sm leading-relaxed">
-            Starting with a real client (Primary Plus) gives us battle-tested
+            Starting with a real client (Primus Demo Clinic) gives us battle-tested
             software from day one — not vaporware.
           </p>
         </div>
@@ -666,7 +666,7 @@ const TeamSection = () => (
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-6 text-white text-center">
         <div className="text-2xl font-bold mb-2">Ready to Build the Future of Primary Care EHR</div>
         <div className="text-blue-200 text-sm">
-          Phase 0 complete · Phase 1 starting · Primary Plus deployment target: Q3 2026
+          Phase 0 complete · Phase 1 starting · Primus Demo Clinic deployment target: Q3 2026
         </div>
       </div>
     </div>

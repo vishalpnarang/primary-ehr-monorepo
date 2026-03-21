@@ -338,7 +338,7 @@ const ComparisonSection = () => (
             <tr className="border-b border-white/10">
               <th className="text-left px-4 py-4 text-slate-400 font-medium w-1/2">Feature</th>
               <th className="px-4 py-4 text-blue-400 font-bold text-center">Primus</th>
-              <th className="px-4 py-4 text-slate-500 font-medium text-center">Elation</th>
+              <th className="px-4 py-4 text-slate-500 font-medium text-center">legacy EHR</th>
               <th className="px-4 py-4 text-slate-500 font-medium text-center">athena</th>
               <th className="px-4 py-4 text-slate-500 font-medium text-center">Epic</th>
             </tr>

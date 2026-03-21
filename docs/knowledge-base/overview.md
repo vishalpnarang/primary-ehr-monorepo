@@ -4,7 +4,7 @@
 - **Name:** Primus
 - **Company:** Thinkitive Technologies
 - **Domain:** Multi-tenant SaaS EHR for US primary care clinics
-- **Initial client:** Primary Plus (3-4 clinic locations, migrating from Elation EMR)
+- **Initial client:** Primus Demo Clinic (3-4 clinic locations, migrating from legacy EHR systems)
 - **Target:** 50+ primary care practices (SaaS expansion)
 - **Current phase:** Phase 0 — UI-first (React simulation with mock data, no backend)
 

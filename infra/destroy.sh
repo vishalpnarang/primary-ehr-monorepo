@@ -5,7 +5,7 @@
 # Usage:
 #   ./destroy.sh <instance-name> [aws-region]
 #   ./destroy.sh demo-acme
-#   ./destroy.sh demo-primaryplus us-west-2
+#   ./destroy.sh demo-primusdemo us-west-2
 #
 # What this does:
 #   1. Confirm intent (interactive prompt unless CI=true)
@@ -66,7 +66,7 @@ if [[ -z "${INSTANCE_NAME}" ]]; then
 
   Examples:
     ./destroy.sh demo-acme
-    ./destroy.sh demo-primaryplus us-west-2
+    ./destroy.sh demo-primusdemo us-west-2
 
   This will permanently delete ALL AWS resources for the specified instance.
   Cost after completion: \$0.

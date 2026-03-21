@@ -12,7 +12,7 @@ export const mockUsers: User[] = [
   },
   {
     id: 'USR-00002',
-    email: 'james.wilson@primaryplusmedical.com',
+    email: 'james.wilson@primusdemomedical.com',
     firstName: 'James',
     lastName: 'Wilson',
     role: 'tenant_admin',
@@ -21,7 +21,7 @@ export const mockUsers: User[] = [
   },
   {
     id: 'USR-00003',
-    email: 'maria.garcia@primaryplusmedical.com',
+    email: 'maria.garcia@primusdemomedical.com',
     firstName: 'Maria',
     lastName: 'Garcia',
     role: 'practice_admin',
@@ -30,7 +30,7 @@ export const mockUsers: User[] = [
   },
   {
     id: 'USR-00004',
-    email: 'emily.chen@primaryplusmedical.com',
+    email: 'emily.chen@primusdemomedical.com',
     firstName: 'Emily',
     lastName: 'Chen',
     role: 'provider',
@@ -42,7 +42,7 @@ export const mockUsers: User[] = [
   },
   {
     id: 'USR-00005',
-    email: 'sarah.thompson@primaryplusmedical.com',
+    email: 'sarah.thompson@primusdemomedical.com',
     firstName: 'Sarah',
     lastName: 'Thompson',
     role: 'nurse',
@@ -51,7 +51,7 @@ export const mockUsers: User[] = [
   },
   {
     id: 'USR-00006',
-    email: 'david.kim@primaryplusmedical.com',
+    email: 'david.kim@primusdemomedical.com',
     firstName: 'David',
     lastName: 'Kim',
     role: 'front_desk',
@@ -59,7 +59,7 @@ export const mockUsers: User[] = [
   },
   {
     id: 'USR-00007',
-    email: 'lisa.patel@primaryplusmedical.com',
+    email: 'lisa.patel@primusdemomedical.com',
     firstName: 'Lisa',
     lastName: 'Patel',
     role: 'billing',
