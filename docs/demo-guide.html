@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Primus EHR — Demo &amp; Testing Guide</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:        #2563EB;
+      --blue-dark:   #1D4ED8;
+      --blue-light:  #DBEAFE;
+      --blue-50:     #EFF6FF;
+      --indigo:      #4F46E5;
+      --green:       #16A34A;
+      --green-light: #DCFCE7;
+      --amber:       #D97706;
+      --amber-light: #FEF3C7;
+      --red:         #DC2626;
+      --red-light:   #FEE2E2;
+      --purple:      #7C3AED;
+      --purple-light:#EDE9FE;
+      --gray-50:     #F9FAFB;
+      --gray-100:    #F3F4F6;
+      --gray-200:    #E5E7EB;
+      --gray-300:    #D1D5DB;
+      --gray-400:    #9CA3AF;
+      --gray-500:    #6B7280;
+      --gray-600:    #4B5563;
+      --gray-700:    #374151;
+      --gray-800:    #1F2937;
+      --gray-900:    #111827;
+      --white:       #FFFFFF;
+    }
+
+    html {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 16px;
+      color: var(--gray-800);
+      background: var(--gray-50);
+      line-height: 1.6;
+    }
+
+    body {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    /* ── HEADER ── */
+    .doc-header {
+      background: linear-gradient(135deg, #1E3A8A 0%, #4F46E5 100%);
+      color: var(--white);
+      padding: 48px 52px;
+      margin: 0 -20px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .doc-header::after {
+      content: '';
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      pointer-events: none;
+    }
+
+    .doc-header::before {
+      content: '';
+      position: absolute;
+      right: 60px;
+      bottom: -60px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.03);
+      pointer-events: none;
+    }
+
+    .header-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 100px;
+      padding: 4px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #C7D2FE;
+    }
+
+    .confidential-badge {
+      background: rgba(220,38,38,0.25);
+      border-color: rgba(220,38,38,0.4);
+      color: #FCA5A5;
+    }
+
+    .doc-header h1 {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .doc-header p {
+      font-size: 15px;
+      color: #A5B4FC;
+    }
+
+    /* ── TABLE OF CONTENTS ── */
+    .toc {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 40px;
+    }
+
+    .toc h2 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gray-500);
+      margin-bottom: 16px;
+    }
+
+    .toc-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px 24px;
+    }
+
+    .toc-list li a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 4px 0;
+      transition: color 0.2s;
+    }
+
+    .toc-list li a:hover {
+      color: var(--blue-dark);
+    }
+
+    .toc-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gray-400);
+      min-width: 22px;
+    }
+
+    /* ── SECTION WRAPPER ── */
+    .section {
+      margin-bottom: 36px;
+    }
+
+    /* ── DETAILS / SUMMARY ── */
+    details {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    details[open] {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+
+    summary {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 20px 28px;
+      cursor: pointer;
+      user-select: none;
+      list-style: none;
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--gray-900);
+      transition: background 0.15s;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+    summary::marker { display: none; }
+
+    summary:hover {
+      background: var(--gray-50);
+    }
+
+    .summary-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .summary-arrow {
+      margin-left: auto;
+      width: 20px;
+      height: 20px;
+      color: var(--gray-400);
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    details[open] summary .summary-arrow {
+      transform: rotate(180deg);
+    }
+
+    .summary-subtitle {
+      font-size: 13px;
+      color: var(--gray-500);
+      font-weight: 400;
+      margin-left: auto;
+      margin-right: 8px;
+    }
+
+    .details-body {
+      padding: 0 28px 28px;
+      border-top: 1px solid var(--gray-100);
+    }
+
+    .details-body-pt {
+      padding-top: 24px;
+    }
+
+    /* ── SECTION HEADER (inside details) ── */
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 4px;
+      margin-top: 24px;
+    }
+
+    .section-label:first-child {
+      margin-top: 0;
+    }
+
+    /* ── CODE BLOCKS ── */
+    pre {
+      background: var(--gray-900);
+      color: #E2E8F0;
+      border-radius: 12px;
+      padding: 20px 24px;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Menlo, Monaco, Consolas, monospace;
+      font-size: 13.5px;
+      line-height: 1.7;
+      overflow-x: auto;
+      margin: 16px 0;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    code {
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      background: var(--gray-100);
+      color: var(--indigo);
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+
+    pre code {
+      background: none;
+      color: inherit;
+      padding: 0;
+      font-size: inherit;
+    }
+
+    /* ── SYNTAX COLORS IN CODE BLOCKS ── */
+    .cmd-comment { color: #64748B; }
+    .cmd-prompt  { color: #818CF8; }
+    .cmd-path    { color: #A5B4FC; }
+    .cmd-flag    { color: #86EFAC; }
+    .cmd-port    { color: #FCD34D; }
+
+    /* ── TABLES ── */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--gray-200);
+      margin: 16px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    thead tr {
+      background: var(--gray-800);
+      color: var(--white);
+    }
+
+    thead th {
+      padding: 13px 16px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    tbody tr:nth-child(even) {
+      background: var(--gray-50);
+    }
+
+    tbody tr:hover {
+      background: var(--blue-50);
+    }
+
+    tbody td {
+      padding: 12px 16px;
+      border-top: 1px solid var(--gray-200);
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    /* ── ROLE BADGES ── */
+    .role-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    .role-provider   { background: var(--blue-light); color: var(--blue-dark); }
+    .role-nurse      { background: var(--green-light); color: var(--green); }
+    .role-frontdesk  { background: var(--amber-light); color: var(--amber); }
+    .role-billing    { background: #FEF9C3; color: #854D0E; }
+    .role-admin      { background: var(--purple-light); color: var(--purple); }
+    .role-superadmin { background: #FFE4E6; color: #BE123C; }
+    .role-patient    { background: #F0FDF4; color: #15803D; }
+    .role-tenantadmin{ background: #FFF7ED; color: #C2410C; }
+
+    .portal-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--gray-100);
+      color: var(--gray-600);
+    }
+
+    /* ── URL TABLE ── */
+    .url-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .url-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .url-card-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--gray-500);
+    }
+
+    .url-card-url {
+      font-family: 'SF Mono', 'Fira Code', Menlo, monospace;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--blue);
+    }
+
+    .url-card-desc {
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+
+    /* ── DEMO FLOW ── */
+    .demo-flow {
+      margin: 16px 0;
+    }
+
+    .demo-flow-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      border-radius: 12px 12px 0 0;
+      border: 1px solid var(--gray-200);
+      border-bottom: none;
+    }
+
+    .demo-flow-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .demo-flow-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--gray-900);
+    }
+
+    .demo-flow-duration {
+      margin-left: auto;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-500);
+      background: var(--gray-100);
+      padding: 3px 10px;
+      border-radius: 100px;
+    }
+
+    .demo-steps {
+      list-style: none;
+      border: 1px solid var(--gray-200);
+      border-radius: 0 0 12px 12px;
+      overflow: hidden;
+    }
+
+    .demo-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 14px 20px;
+      border-top: 1px solid var(--gray-100);
+      font-size: 14px;
+      color: var(--gray-700);
+      transition: background 0.15s;
+    }
+
+    .demo-step:hover { background: var(--gray-50); }
+
+    .step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .step-text {
+      flex: 1;
+      line-height: 1.5;
+    }
+
+    .step-action {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--blue);
+      background: var(--blue-50);
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-left: 8px;
+      white-space: nowrap;
+    }
+
+    /* ── TROUBLESHOOTING ── */
+    .trouble-item {
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .trouble-problem {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      background: var(--red-light);
+      border-bottom: 1px solid #FECACA;
+    }
+
+    .trouble-problem-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .trouble-problem-text {
+      font-weight: 700;
+      font-size: 14px;
+      color: #991B1B;
+    }
+
+    .trouble-fix {
+      padding: 14px 20px;
+      font-size: 14px;
+      color: var(--gray-700);
+      background: var(--white);
+      line-height: 1.5;
+    }
+
+    /* ── CALLOUT BOXES ── */
+    .callout {
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      display: flex;
+      gap: 14px;
+    }
+
+    .callout-info {
+      background: var(--blue-50);
+      border: 1px solid #BFDBFE;
+    }
+
+    .callout-warn {
+      background: var(--amber-light);
+      border: 1px solid #FDE68A;
+    }
+
+    .callout-success {
+      background: var(--green-light);
+      border: 1px solid #BBF7D0;
+    }
+
+    .callout-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .callout-body { font-size: 14px; line-height: 1.6; }
+    .callout-body strong { display: block; margin-bottom: 4px; font-size: 14px; }
+
+    .callout-info .callout-body { color: #1E40AF; }
+    .callout-warn .callout-body { color: #92400E; }
+    .callout-success .callout-body { color: #166534; }
+
+    /* ── CREDENTIAL HIGHLIGHT ── */
+    .cred {
+      font-family: 'SF Mono', 'Fira Code', Menlo, monospace;
+      font-size: 13px;
+      background: var(--gray-900);
+      color: #86EFAC;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    /* ── PRINT STYLES ── */
+    @media print {
+      html { font-size: 13px; background: white; }
+      body { max-width: 100%; padding: 0; }
+      .doc-header { margin: 0 0 32px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      details { border: 1px solid var(--gray-300); break-inside: avoid; }
+      details[open] summary ~ * { display: block !important; }
+      summary { pointer-events: none; }
+      .summary-arrow { display: none; }
+      pre { white-space: pre-wrap; word-break: break-word; }
+      a { color: inherit; text-decoration: none; }
+      .toc { break-after: page; }
+      .section { break-inside: avoid; }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .doc-header { padding: 32px 24px; margin: 0 -20px 32px; }
+      .toc-list { grid-template-columns: 1fr; }
+      .url-grid { grid-template-columns: 1fr; }
+      .demo-flow-header { flex-wrap: wrap; }
+    }
+
+    /* ── MISC ── */
+    p { margin: 10px 0; font-size: 15px; color: var(--gray-700); }
+    h3 { font-size: 16px; font-weight: 700; color: var(--gray-900); margin: 20px 0 8px; }
+    ul { padding-left: 20px; }
+    ul li { font-size: 14px; color: var(--gray-700); margin: 4px 0; }
+    strong { color: var(--gray-900); }
+    a { color: var(--blue); }
+
+    /* ── PAGE ANCHOR TARGET OFFSET ── */
+    [id] { scroll-margin-top: 24px; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
+<header class="doc-header">
+  <div class="header-meta">
+    <span class="header-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Primus EHR
+    </span>
+    <span class="header-badge">v0.1 — Phase 0 UI</span>
+    <span class="header-badge">March 2026</span>
+    <span class="header-badge confidential-badge">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Confidential — Internal Use Only
+    </span>
+  </div>
+  <h1>Demo &amp; Testing Guide</h1>
+  <p>Step-by-step instructions for running demos, switching roles, and testing every workflow in Primus EHR.</p>
+</header>
+
+<!-- ═══════════════════════════ TABLE OF CONTENTS ═══════════════════════════ -->
+<div class="toc" id="toc">
+  <h2>Table of Contents</h2>
+  <ol class="toc-list">
+    <li><a href="#quick-start"><span class="toc-num">1.</span> Quick Start</a></li>
+    <li><a href="#credentials"><span class="toc-num">2.</span> Login Credentials</a></li>
+    <li><a href="#demo-flows"><span class="toc-num">3.</span> Demo Scripts</a></li>
+    <li><a href="#key-urls"><span class="toc-num">4.</span> Key URLs</a></li>
+    <li><a href="#troubleshooting"><span class="toc-num">5.</span> Troubleshooting</a></li>
+  </ol>
+</div>
+
+<!-- ═══════════════════════════ SECTION 1 — QUICK START ═══════════════════════════ -->
+<section class="section" id="quick-start">
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:#EFF6FF;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </div>
+      1 &nbsp;— Quick Start
+      <span class="summary-subtitle">Get everything running in 4 steps</span>
+      <svg class="summary-arrow" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+    </summary>
+    <div class="details-body details-body-pt">
+
+      <div class="callout callout-info">
+        <span class="callout-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </span>
+        <div class="callout-body">
+          <strong>Phase 0 — UI Only</strong>
+          The current phase is a fully interactive React UI simulation. No real backend is required. Steps 1 and 2 below (Docker + Spring Boot) apply to full-stack testing. For UI-only demos, skip to Step 3.
+        </div>
+      </div>
+
+      <div class="section-label">Step 1 — Start Infrastructure (Docker)</div>
+      <pre><code><span class="cmd-comment"># From the project root — starts PostgreSQL, Keycloak, Mailhog, Redis</span>
+<span class="cmd-prompt">$</span> docker compose up -d
+
+<span class="cmd-comment"># Verify all containers are healthy</span>
+<span class="cmd-prompt">$</span> docker compose ps</code></pre>
+
+      <div class="section-label">Step 2 — Start Backend (Spring Boot)</div>
+      <pre><code><span class="cmd-prompt">$</span> cd backend
+<span class="cmd-prompt">$</span> mvn spring-boot:run <span class="cmd-flag">-Dspring-boot.run.profiles=dev</span>
+
+<span class="cmd-comment"># Backend ready when you see:</span>
+<span class="cmd-comment"># Started PrimusApplication in X.XXX seconds (JVM running for X.XXX)</span>
+<span class="cmd-comment"># API available at http://localhost:8080</span></code></pre>
+
+      <div class="section-label">Step 3 — Start Provider Portal</div>
+      <pre><code><span class="cmd-prompt">$</span> cd apps/provider-portal
+<span class="cmd-prompt">$</span> npm install       <span class="cmd-comment"># first time only</span>
+<span class="cmd-prompt">$</span> npm run dev
+
+<span class="cmd-comment"># Running at http://localhost:5173</span></code></pre>
+
+      <div class="section-label">Step 4 — Start Patient Portal</div>
+      <pre><code><span class="cmd-prompt">$</span> cd apps/patient-portal
+<span class="cmd-prompt">$</span> npm install       <span class="cmd-comment"># first time only</span>
+<span class="cmd-prompt">$</span> npm run dev
+
+<span class="cmd-comment"># Running at http://localhost:5174</span></code></pre>
+
+      <div class="callout callout-success">
+        <span class="callout-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </span>
+        <div class="callout-body">
+          <strong>Ready to demo!</strong>
+          Provider Portal: <code>http://localhost:5173</code> &nbsp;|&nbsp; Patient Portal: <code>http://localhost:5174</code> &nbsp;|&nbsp; Backend API: <code>http://localhost:8080</code>
+        </div>
+      </div>
+
+    </div>
+  </details>
+</section>
+
+<!-- ═══════════════════════════ SECTION 2 — CREDENTIALS ═══════════════════════════ -->
+<section class="section" id="credentials">
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:#F5F3FF;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      2 &nbsp;— Login Credentials
+      <span class="summary-subtitle">All 8 roles</span>
+      <svg class="summary-arrow" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+    </summary>
+    <div class="details-body details-body-pt">
+
+      <div class="callout callout-warn">
+        <span class="callout-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#92400E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </span>
+        <div class="callout-body">
+          <strong>Development credentials only</strong>
+          These credentials are for development and demo environments only. Never use in production. All passwords are intentionally simple for demo purposes.
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Password</th>
+              <th>Role</th>
+              <th>Portal</th>
+              <th>What to Demo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>emily.chen@primaryplus.com</code></td>
+              <td><span class="cred">password123</span></td>
+              <td><span class="role-badge role-provider">Provider (MD)</span></td>
+              <td><span class="portal-badge">Provider</span></td>
+              <td>Dashboard, patient chart, encounter editor (SOAP notes), inbox, order management, smart phrases</td>
+            </tr>
+            <tr>
+              <td><code>sarah.thompson@primaryplus.com</code></td>
+              <td><span class="cred">password123</span></td>
+              <td><span class="role-badge role-nurse">Nurse / MA</span></td>
+              <td><span class="portal-badge">Provider</span></td>
+              <td>Room status board, rooming checklist, vitals entry, task queue, medication reconciliation</td>
+            </tr>
+            <tr>
+              <td><code>david.kim@primaryplus.com</code></td>
+              <td><span class="cred">password123</span></td>
+              <td><span class="role-badge role-frontdesk">Front Desk</span></td>
+              <td><span class="portal-badge">Provider</span></td>
+              <td>Check-in queue, scheduling calendar, patient registration, insurance verification</td>
+            </tr>
+            <tr>
+              <td><code>lisa.patel@primaryplus.com</code></td>
+              <td><span class="cred">password123</span></td>
+              <td><span class="role-badge role-billing">Billing Staff</span></td>
+              <td><span class="portal-badge">Provider</span></td>
+              <td>Billing KPI dashboard, claims queue, denial management, A/R aging, ERA posting</td>
+            </tr>
+            <tr>
+              <td><code>maria.garcia@primaryplus.com</code></td>
+              <td><span class="cred">password123</span></td>
+              <td><span class="role-badge role-admin">Practice Admin</span></td>
+              <td><span class="portal-badge">Provider</span></td>
+              <td>Ops metrics, staff task management, reports, schedule templates, referral tracking</td>
+            </tr>
+            <tr>
+              <td><code>james.wilson@primaryplus.com</code></td>
+              <td><span class="cred">password123</span></td>
+              <td><span class="role-badge role-tenantadmin">Tenant Admin</span></td>
+              <td><span class="portal-badge">Provider</span></td>
+              <td>Org settings, user management, locations, provider configuration, integrations</td>
+            </tr>
+            <tr>
+              <td><code>alex.morgan@thinkitive.com</code></td>
+              <td><span class="cred">password123</span></td>
+              <td><span class="role-badge role-superadmin">Super Admin</span></td>
+              <td><span class="portal-badge">Provider</span></td>
+              <td>Tenant management, platform health monitor, feature flags, audit logs, system config</td>
+            </tr>
+            <tr>
+              <td><code>robert.johnson@email.com</code></td>
+              <td><span class="cred">password123</span></td>
+              <td><span class="role-badge role-patient">Patient</span></td>
+              <td><span class="portal-badge">Patient</span></td>
+              <td>Home dashboard, upcoming appointments, secure messaging, lab results, billing &amp; payments</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </details>
+</section>
+
+<!-- ═══════════════════════════ SECTION 3 — DEMO FLOWS ═══════════════════════════ -->
+<section class="section" id="demo-flows">
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:#F0FDF4;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </div>
+      3 &nbsp;— Demo Scripts
+      <span class="summary-subtitle">5 role-based demo flows</span>
+      <svg class="summary-arrow" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+    </summary>
+    <div class="details-body details-body-pt">
+
+      <!-- FLOW A -->
+      <div class="demo-flow">
+        <div class="demo-flow-header" style="background:#EFF6FF;">
+          <div class="demo-flow-icon" style="background:#BFDBFE;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          </div>
+          <div>
+            <div class="demo-flow-title">Flow A — Provider Workflow</div>
+            <div style="font-size:12px;color:#1D4ED8;margin-top:2px;">Login as <code>emily.chen@primaryplus.com</code></div>
+          </div>
+          <span class="demo-flow-duration">10 minutes</span>
+        </div>
+        <ol class="demo-steps">
+          <li class="demo-step"><span class="step-num">1</span><span class="step-text">Navigate to <code>http://localhost:5173</code> and log in as Dr. Emily Chen (Provider).</span></li>
+          <li class="demo-step"><span class="step-num">2</span><span class="step-text">On the dashboard, point out today's appointment schedule, the inbox notification count, and the care gap alerts panel.</span></li>
+          <li class="demo-step"><span class="step-num">3</span><span class="step-text">Click any patient on the day's schedule to open the Patient Chart. <span class="step-action">Show card-grid layout</span></span></li>
+          <li class="demo-step"><span class="step-num">4</span><span class="step-text">Walk through the sticky patient header — name, DOB, MRN, allergies, risk flags, and quick-action buttons are always visible, even when scrolled.</span></li>
+          <li class="demo-step"><span class="step-num">5</span><span class="step-text">Demonstrate the chart tabs — active problems, medications, allergies, vitals, and past encounters — all accessible from one screen without navigation.</span></li>
+          <li class="demo-step"><span class="step-num">6</span><span class="step-text">Click "New Note" to open the 3-column Encounter Editor (subjective/objective/assessment). <span class="step-action">Show smart phrases</span></span></li>
+          <li class="demo-step"><span class="step-num">7</span><span class="step-text">In the HPI field, type <code>.hpi</code> followed by Tab or Enter — a full HPI template expands inline. Try <code>.ros</code> for Review of Systems, <code>.pe</code> for Physical Exam.</span></li>
+          <li class="demo-step"><span class="step-num">8</span><span class="step-text">Check off ROS systems and physical exam findings in the structured middle column. Demonstrate keyboard-driven multi-select.</span></li>
+          <li class="demo-step"><span class="step-num">9</span><span class="step-text">In the Assessment &amp; Plan column, type a diagnosis name or ICD-10 code — show the autocomplete dropdown with descriptions. <span class="step-action">Add a diagnosis</span></span></li>
+          <li class="demo-step"><span class="step-num">10</span><span class="step-text">Click "Sign &amp; Close" — the encounter is finalized and the chart returns to the patient summary.</span></li>
+          <li class="demo-step"><span class="step-num">11</span><span class="step-text">Press <strong>Ctrl+K</strong> to open the Command Palette. Search for a patient name or action (e.g., "new prescription") to show global keyboard navigation.</span></li>
+          <li class="demo-step"><span class="step-num">12</span><span class="step-text">Navigate to Inbox — show the 5 filter tabs: Lab Results, Refill Requests, Patient Messages, Tasks, and Alerts. Demonstrate priority triage.</span></li>
+        </ol>
+      </div>
+
+      <!-- FLOW B -->
+      <div class="demo-flow">
+        <div class="demo-flow-header" style="background:#FFF7ED;">
+          <div class="demo-flow-icon" style="background:#FED7AA;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </div>
+          <div>
+            <div class="demo-flow-title">Flow B — Front Desk Workflow</div>
+            <div style="font-size:12px;color:#C2410C;margin-top:2px;">Login as <code>david.kim@primaryplus.com</code></div>
+          </div>
+          <span class="demo-flow-duration">5 minutes</span>
+        </div>
+        <ol class="demo-steps">
+          <li class="demo-step"><span class="step-num">1</span><span class="step-text">Log in as David Kim (Front Desk). Note the role-specific dashboard — check-in queue is the primary widget, no clinical data visible.</span></li>
+          <li class="demo-step"><span class="step-num">2</span><span class="step-text">On the check-in queue, show patients with "Arrived", "Checked In", and "Scheduled" statuses. Click a patient to start check-in.</span></li>
+          <li class="demo-step"><span class="step-num">3</span><span class="step-text">Walk through the check-in flow: Demographics verification → Insurance card scan → Outstanding balance prompt → Intake forms → Consent signature.</span></li>
+          <li class="demo-step"><span class="step-num">4</span><span class="step-text">Navigate to Schedule. Show the day/week/month toggle. Demonstrate drag-and-drop appointment rescheduling.</span></li>
+          <li class="demo-step"><span class="step-num">5</span><span class="step-text">Click "+ New Appointment" — show the booking modal: patient search, provider selection, appointment type, duration, and time slot picker.</span></li>
+          <li class="demo-step"><span class="step-num">6</span><span class="step-text">Navigate to Patients → search for "Johnson" → open Robert Johnson's chart. Point out limited clinical data visibility based on Front Desk role permissions.</span></li>
+        </ol>
+      </div>
+
+      <!-- FLOW C -->
+      <div class="demo-flow">
+        <div class="demo-flow-header" style="background:#F0FDF4;">
+          <div class="demo-flow-icon" style="background:#BBF7D0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#15803D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </div>
+          <div>
+            <div class="demo-flow-title">Flow C — Patient Portal</div>
+            <div style="font-size:12px;color:#15803D;margin-top:2px;">Open <code>http://localhost:5174</code> — login as <code>robert.johnson@email.com</code></div>
+          </div>
+          <span class="demo-flow-duration">5 minutes</span>
+        </div>
+        <ol class="demo-steps">
+          <li class="demo-step"><span class="step-num">1</span><span class="step-text">Open a separate browser window and navigate to <code>http://localhost:5174</code> (Patient Portal). Log in as Robert Johnson.</span></li>
+          <li class="demo-step"><span class="step-num">2</span><span class="step-text">Show the patient home dashboard — upcoming appointment card, recent lab result summary, outstanding balance, and unread message count.</span></li>
+          <li class="demo-step"><span class="step-num">3</span><span class="step-text">Click "Messages" → open the secure message thread with Dr. Emily Chen. Show the compose interface and message history.</span></li>
+          <li class="demo-step"><span class="step-num">4</span><span class="step-text">Navigate to "Records" → Lab Results. Show the results list with normal/abnormal color indicators. Click a result to expand the full panel with trend graph.</span></li>
+          <li class="demo-step"><span class="step-num">5</span><span class="step-text">Click "Appointments" — show upcoming and past appointments. Demonstrate the self-scheduling flow (request an appointment, provider, reason).</span></li>
+          <li class="demo-step"><span class="step-num">6</span><span class="step-text">Navigate to "Billing" — show outstanding balance, itemized charges, and the "Pay Now" button. Walk through the Stripe payment form (test mode — does not charge).</span></li>
+          <li class="demo-step"><span class="step-num">7</span><span class="step-text">Demonstrate mobile responsiveness by resizing the browser to 375px width — the portal is fully mobile-first.</span></li>
+        </ol>
+      </div>
+
+      <!-- FLOW D -->
+      <div class="demo-flow">
+        <div class="demo-flow-header" style="background:#FEFCE8;">
+          <div class="demo-flow-icon" style="background:#FEF08A;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#854D0E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+          <div>
+            <div class="demo-flow-title">Flow D — Billing Staff Workflow</div>
+            <div style="font-size:12px;color:#854D0E;margin-top:2px;">Login as <code>lisa.patel@primaryplus.com</code></div>
+          </div>
+          <span class="demo-flow-duration">3 minutes</span>
+        </div>
+        <ol class="demo-steps">
+          <li class="demo-step"><span class="step-num">1</span><span class="step-text">Log in as Lisa Patel (Billing Staff). The dashboard opens to the Billing KPI overview — total charges, collections, AR aging buckets, and denial rate.</span></li>
+          <li class="demo-step"><span class="step-num">2</span><span class="step-text">Click "Claims" — show the claim queue with status columns: Pending, Submitted, Accepted, Rejected, Paid. Filter by date range and payer.</span></li>
+          <li class="demo-step"><span class="step-num">3</span><span class="step-text">Click any rejected claim — show the claim detail view with rejection reason code, suggested fix, and "Resubmit" action.</span></li>
+          <li class="demo-step"><span class="step-num">4</span><span class="step-text">Navigate to "Denials" — show the denial management table with payer name, denial reason, days outstanding, and AI-suggested correction actions.</span></li>
+          <li class="demo-step"><span class="step-num">5</span><span class="step-text">Click "A/R Aging" — show the aging report broken into 0–30, 31–60, 61–90, 90+ day buckets by payer and provider.</span></li>
+        </ol>
+      </div>
+
+      <!-- FLOW E -->
+      <div class="demo-flow">
+        <div class="demo-flow-header" style="background:#F5F3FF;">
+          <div class="demo-flow-icon" style="background:#DDD6FE;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6D28D9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <div class="demo-flow-title">Flow E — Admin Workflow</div>
+            <div style="font-size:12px;color:#6D28D9;margin-top:2px;">Tenant Admin then Super Admin</div>
+          </div>
+          <span class="demo-flow-duration">3 minutes</span>
+        </div>
+        <ol class="demo-steps">
+          <li class="demo-step"><span class="step-num">1</span><span class="step-text">Log in as James Wilson (<code>james.wilson@primaryplus.com</code> — Tenant Admin). Show the Settings section with full org control.</span></li>
+          <li class="demo-step"><span class="step-num">2</span><span class="step-text">Navigate to Settings → Organization — show the practice profile, NPI, Tax ID, and logo configuration.</span></li>
+          <li class="demo-step"><span class="step-num">3</span><span class="step-text">Click Settings → Users — show user management: invite user, assign role, deactivate. Demonstrate the provider configuration (specialty, NPI, signature).</span></li>
+          <li class="demo-step"><span class="step-num">4</span><span class="step-text">Click Settings → Locations — show multi-location support with address, hours, and room configuration for each clinic site.</span></li>
+          <li class="demo-step"><span class="step-num">5</span><span class="step-text">Switch to Super Admin: log in as Alex Morgan (<code>alex.morgan@thinkitive.com</code>). Show the platform-level Tenants list.</span></li>
+          <li class="demo-step"><span class="step-num">6</span><span class="step-text">Click "Platform Health" — show the system metrics: active tenants, API response times, error rates, and background job status.</span></li>
+          <li class="demo-step"><span class="step-num">7</span><span class="step-text">Click "Feature Flags" — show the feature toggle list. Demonstrate enabling/disabling a feature per tenant.</span></li>
+        </ol>
+      </div>
+
+    </div>
+  </details>
+</section>
+
+<!-- ═══════════════════════════ SECTION 4 — KEY URLS ═══════════════════════════ -->
+<section class="section" id="key-urls">
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:#EFF6FF;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      </div>
+      4 &nbsp;— Key URLs
+      <span class="summary-subtitle">All local service endpoints</span>
+      <svg class="summary-arrow" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+    </summary>
+    <div class="details-body details-body-pt">
+
+      <div class="url-grid">
+        <div class="url-card">
+          <div class="url-card-label">Provider Portal</div>
+          <div class="url-card-url">http://localhost:5173</div>
+          <div class="url-card-desc">React app — providers, nurses, front desk, admin, billing, super admin</div>
+        </div>
+        <div class="url-card">
+          <div class="url-card-label">Patient Portal</div>
+          <div class="url-card-url">http://localhost:5174</div>
+          <div class="url-card-desc">React app — patient-facing portal, mobile-first</div>
+        </div>
+        <div class="url-card">
+          <div class="url-card-label">Backend API</div>
+          <div class="url-card-url">http://localhost:8080</div>
+          <div class="url-card-desc">Spring Boot REST API — all /api/v1 endpoints</div>
+        </div>
+        <div class="url-card">
+          <div class="url-card-label">Swagger UI</div>
+          <div class="url-card-url">http://localhost:8080/swagger-ui.html</div>
+          <div class="url-card-desc">Interactive API documentation — test endpoints directly</div>
+        </div>
+        <div class="url-card">
+          <div class="url-card-label">Keycloak Admin Console</div>
+          <div class="url-card-url">http://localhost:8180</div>
+          <div class="url-card-desc">Identity provider admin — realm config, users, clients. Login: <span class="cred">admin / admin</span></div>
+        </div>
+        <div class="url-card">
+          <div class="url-card-label">Mailhog (Dev Email)</div>
+          <div class="url-card-url">http://localhost:8025</div>
+          <div class="url-card-desc">Catches all outbound email from the dev environment — review notifications, invites</div>
+        </div>
+        <div class="url-card">
+          <div class="url-card-label">Health Check</div>
+          <div class="url-card-url">http://localhost:8080/actuator/health</div>
+          <div class="url-card-desc">Spring Actuator — reports DB connection, disk space, all component status</div>
+        </div>
+        <div class="url-card">
+          <div class="url-card-label">OpenAPI JSON Spec</div>
+          <div class="url-card-url">http://localhost:8080/v3/api-docs</div>
+          <div class="url-card-desc">Raw OpenAPI 3.0 spec — importable into Postman or Insomnia</div>
+        </div>
+      </div>
+
+    </div>
+  </details>
+</section>
+
+<!-- ═══════════════════════════ SECTION 5 — TROUBLESHOOTING ═══════════════════════════ -->
+<section class="section" id="troubleshooting">
+  <details open>
+    <summary>
+      <div class="summary-icon" style="background:#FEF2F2;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      5 &nbsp;— Troubleshooting
+      <span class="summary-subtitle">Common issues and fixes</span>
+      <svg class="summary-arrow" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+    </summary>
+    <div class="details-body details-body-pt">
+
+      <div class="trouble-item">
+        <div class="trouble-problem">
+          <span class="trouble-problem-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </span>
+          <span class="trouble-problem-text">Docker containers fail to start or crash immediately</span>
+        </div>
+        <div class="trouble-fix">
+          <strong>Check Docker Desktop is running</strong> — it must be open before <code>docker compose up</code>.<br>
+          <strong>Free up port conflicts:</strong> PostgreSQL uses <code>:5432</code>, Keycloak uses <code>:8180</code>, Redis uses <code>:6379</code>.<br>
+          Check for conflicts: <code>lsof -i :5432</code> and kill any blocking processes.<br>
+          <strong>Low memory:</strong> Allocate at least 6 GB RAM to Docker Desktop in Settings → Resources.
+          <pre><code><span class="cmd-comment"># Reset all containers and volumes (last resort)</span>
+<span class="cmd-prompt">$</span> docker compose down -v
+<span class="cmd-prompt">$</span> docker compose up -d</code></pre>
+        </div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-problem">
+          <span class="trouble-problem-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </span>
+          <span class="trouble-problem-text">Port 5173 or 5174 already in use — Vite fails to start</span>
+        </div>
+        <div class="trouble-fix">
+          Another Vite dev server is likely running. Kill it:
+          <pre><code><span class="cmd-prompt">$</span> lsof -ti:5173 | xargs kill -9
+<span class="cmd-prompt">$</span> lsof -ti:5174 | xargs kill -9</code></pre>
+          Or start on a different port: <code>npm run dev -- --port 5175</code>
+        </div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-problem">
+          <span class="trouble-problem-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </span>
+          <span class="trouble-problem-text">Spring Boot fails: "Unable to acquire JDBC Connection" or "Connection refused"</span>
+        </div>
+        <div class="trouble-fix">
+          PostgreSQL container is not ready yet. Wait 15–20 seconds after <code>docker compose up -d</code> before starting the backend.
+          <pre><code><span class="cmd-comment"># Verify PostgreSQL is accepting connections</span>
+<span class="cmd-prompt">$</span> docker compose exec postgres pg_isready -U primus
+<span class="cmd-comment"># Should output: /var/run/postgresql:5432 - accepting connections</span></code></pre>
+        </div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-problem">
+          <span class="trouble-problem-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </span>
+          <span class="trouble-problem-text">npm install fails with ERESOLVE or peer dependency errors</span>
+        </div>
+        <div class="trouble-fix">
+          Node.js version mismatch. Primus requires Node 20+.
+          <pre><code><span class="cmd-prompt">$</span> node -v   <span class="cmd-comment"># must be v20.x.x or higher</span>
+
+<span class="cmd-comment"># If using nvm:</span>
+<span class="cmd-prompt">$</span> nvm install 20 &amp;&amp; nvm use 20
+
+<span class="cmd-comment"># Then retry:</span>
+<span class="cmd-prompt">$</span> rm -rf node_modules package-lock.json
+<span class="cmd-prompt">$</span> npm install</code></pre>
+        </div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-problem">
+          <span class="trouble-problem-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </span>
+          <span class="trouble-problem-text">Login fails or redirects to Keycloak with an error</span>
+        </div>
+        <div class="trouble-fix">
+          In Phase 0 (UI-only), login uses mock authentication — no real Keycloak call is made. If you see a Keycloak redirect, the portal is mistakenly pointing to a real auth endpoint.<br><br>
+          Check that <code>VITE_USE_MOCK_AUTH=true</code> is set in <code>apps/provider-portal/.env.development</code> and <code>apps/patient-portal/.env.development</code>.
+          <pre><code><span class="cmd-comment"># .env.development</span>
+VITE_USE_MOCK_AUTH=true
+VITE_API_BASE_URL=http://localhost:8080</code></pre>
+        </div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-problem">
+          <span class="trouble-problem-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </span>
+          <span class="trouble-problem-text">Maven build fails: "Java version 17 required but 21 found" or similar</span>
+        </div>
+        <div class="trouble-fix">
+          Primus backend requires Java 21. Check your active JDK:
+          <pre><code><span class="cmd-prompt">$</span> java -version
+<span class="cmd-comment"># Should show: openjdk 21.x.x</span>
+
+<span class="cmd-comment"># Switch JDK with SDKMAN:</span>
+<span class="cmd-prompt">$</span> sdk use java 21.0.3-tem</code></pre>
+        </div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-problem">
+          <span class="trouble-problem-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </span>
+          <span class="trouble-problem-text">Page shows blank screen or React error boundary in browser</span>
+        </div>
+        <div class="trouble-fix">
+          Open the browser DevTools console (F12) and look for the specific error. Common causes:<br>
+          <ul style="margin-top:8px;">
+            <li><strong>Missing env variable:</strong> Copy <code>.env.example</code> to <code>.env.development</code> in the portal directory.</li>
+            <li><strong>Stale cache:</strong> Hard reload with Ctrl+Shift+R (or Cmd+Shift+R on Mac).</li>
+            <li><strong>Module not found:</strong> Run <code>npm install</code> again — a dependency may be missing.</li>
+            <li><strong>TypeScript error:</strong> Run <code>npm run type-check</code> to see all type errors before starting dev server.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="trouble-item">
+        <div class="trouble-problem">
+          <span class="trouble-problem-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#991B1B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          </span>
+          <span class="trouble-problem-text">Swagger UI shows no endpoints or "Failed to fetch" errors</span>
+        </div>
+        <div class="trouble-fix">
+          The Spring Boot backend must be running. Check:
+          <pre><code><span class="cmd-comment"># Verify backend is up</span>
+<span class="cmd-prompt">$</span> curl http://localhost:8080/actuator/health
+<span class="cmd-comment"># Expected: {"status":"UP",...}</span></code></pre>
+          If the health check returns a connection error, the backend process is not running — restart it with <code>mvn spring-boot:run -Dspring-boot.run.profiles=dev</code>.
+        </div>
+      </div>
+
+      <div class="callout callout-info" style="margin-top:24px;">
+        <span class="callout-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </span>
+        <div class="callout-body">
+          <strong>Still stuck?</strong>
+          Run <code>docker compose logs --tail=50</code> to see container logs. For backend issues, check <code>backend/logs/application.log</code>. For frontend issues, check the browser DevTools console. Contact the Thinkitive team at <a href="mailto:dev@thinkitive.com">dev@thinkitive.com</a>.
+        </div>
+      </div>
+
+    </div>
+  </details>
+</section>
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer style="margin-top:60px;padding:28px 0;border-top:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;flex-wrap:gap;gap:12px;">
+  <div style="font-size:13px;color:var(--gray-500);">
+    <strong style="color:var(--gray-700);">Primus EHR — Demo &amp; Testing Guide</strong><br>
+    Version 0.1 &nbsp;|&nbsp; Phase 0 UI &nbsp;|&nbsp; March 2026 &nbsp;|&nbsp; Confidential — Thinkitive Technologies
+  </div>
+  <a href="#toc" style="font-size:13px;color:var(--blue);font-weight:600;text-decoration:none;display:flex;align-items:center;gap:6px;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    Back to top
+  </a>
+</footer>
+
+</body>
+</html>
