@@ -1,0 +1,719 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-create-patients
+      author: primus
+      changes:
+        - createTable:
+            tableName: patients
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_patients_tenant
+                    references: tenants(id)
+              - column:
+                  name: mrn
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: preferred_name
+                  type: VARCHAR(100)
+              - column:
+                  name: dob
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sex
+                  type: VARCHAR(20)
+              - column:
+                  name: gender
+                  type: VARCHAR(50)
+              - column:
+                  name: pronouns
+                  type: VARCHAR(50)
+              - column:
+                  name: phone
+                  type: VARCHAR(20)
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+              - column:
+                  name: address_line1
+                  type: VARCHAR(255)
+              - column:
+                  name: address_line2
+                  type: VARCHAR(255)
+              - column:
+                  name: city
+                  type: VARCHAR(100)
+              - column:
+                  name: state
+                  type: VARCHAR(50)
+              - column:
+                  name: zip
+                  type: VARCHAR(10)
+              - column:
+                  name: emergency_contact_name
+                  type: VARCHAR(200)
+              - column:
+                  name: emergency_contact_relation
+                  type: VARCHAR(100)
+              - column:
+                  name: emergency_contact_phone
+                  type: VARCHAR(20)
+              - column:
+                  name: primary_provider_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_patients_primary_provider
+                    references: users(id)
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  defaultValue: ACTIVE
+              - column:
+                  name: photo_url
+                  type: VARCHAR(1024)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 003-patients-unique-mrn-per-tenant
+      author: primus
+      changes:
+        - addUniqueConstraint:
+            tableName: patients
+            columnNames: tenant_id, mrn
+            constraintName: uq_patients_tenant_mrn
+
+  - changeSet:
+      id: 003-patients-indexes
+      author: primus
+      changes:
+        - createIndex:
+            tableName: patients
+            indexName: idx_patients_tenant_mrn
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: mrn
+        - createIndex:
+            tableName: patients
+            indexName: idx_patients_tenant_name
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: last_name
+              - column:
+                  name: first_name
+        - createIndex:
+            tableName: patients
+            indexName: idx_patients_tenant_dob
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: dob
+
+  - changeSet:
+      id: 003-create-patient-insurances
+      author: primus
+      changes:
+        - createTable:
+            tableName: patient_insurances
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_patient_insurances_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_patient_insurances_patient
+                    references: patients(id)
+              - column:
+                  name: payer_name
+                  type: VARCHAR(255)
+              - column:
+                  name: payer_id
+                  type: VARCHAR(50)
+              - column:
+                  name: member_id
+                  type: VARCHAR(100)
+              - column:
+                  name: group_number
+                  type: VARCHAR(100)
+              - column:
+                  name: plan_type
+                  type: VARCHAR(50)
+              - column:
+                  name: copay
+                  type: DECIMAL(10,2)
+              - column:
+                  name: is_primary
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: verified
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: verified_at
+                  type: TIMESTAMP
+              - column:
+                  name: card_front_url
+                  type: VARCHAR(1024)
+              - column:
+                  name: card_back_url
+                  type: VARCHAR(1024)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 003-create-allergies
+      author: primus
+      changes:
+        - createTable:
+            tableName: allergies
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_allergies_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_allergies_patient
+                    references: patients(id)
+              - column:
+                  name: substance
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reaction
+                  type: VARCHAR(255)
+              - column:
+                  name: severity
+                  type: VARCHAR(50)
+              - column:
+                  name: type
+                  type: VARCHAR(50)
+              - column:
+                  name: onset_date
+                  type: DATE
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 003-create-problems
+      author: primus
+      changes:
+        - createTable:
+            tableName: problems
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_problems_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_problems_patient
+                    references: patients(id)
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: icd_code
+                  type: VARCHAR(20)
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  defaultValue: ACTIVE
+              - column:
+                  name: onset_date
+                  type: DATE
+              - column:
+                  name: resolved_date
+                  type: DATE
+              - column:
+                  name: added_by
+                  type: VARCHAR(255)
+              - column:
+                  name: added_at
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 003-create-vital-signs
+      author: primus
+      changes:
+        - createTable:
+            tableName: vital_signs
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_vital_signs_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_vital_signs_patient
+                    references: patients(id)
+              - column:
+                  name: encounter_id
+                  type: BIGINT
+              - column:
+                  name: systolic
+                  type: INT
+              - column:
+                  name: diastolic
+                  type: INT
+              - column:
+                  name: heart_rate
+                  type: INT
+              - column:
+                  name: temperature
+                  type: DECIMAL(4,1)
+              - column:
+                  name: o2_saturation
+                  type: INT
+              - column:
+                  name: weight
+                  type: DECIMAL(5,1)
+              - column:
+                  name: height
+                  type: DECIMAL(4,1)
+              - column:
+                  name: bmi
+                  type: DECIMAL(4,1)
+              - column:
+                  name: pain_scale
+                  type: INT
+              - column:
+                  name: respiratory_rate
+                  type: INT
+              - column:
+                  name: recorded_at
+                  type: TIMESTAMP
+              - column:
+                  name: recorded_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 003-create-immunizations
+      author: primus
+      changes:
+        - createTable:
+            tableName: immunizations
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_immunizations_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_immunizations_patient
+                    references: patients(id)
+              - column:
+                  name: vaccine_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cvx_code
+                  type: VARCHAR(10)
+              - column:
+                  name: dose_number
+                  type: INT
+              - column:
+                  name: dose_in_series
+                  type: INT
+              - column:
+                  name: administered_date
+                  type: DATE
+              - column:
+                  name: administered_by
+                  type: VARCHAR(255)
+              - column:
+                  name: site
+                  type: VARCHAR(50)
+              - column:
+                  name: lot_number
+                  type: VARCHAR(50)
+              - column:
+                  name: manufacturer
+                  type: VARCHAR(255)
+              - column:
+                  name: expiration_date
+                  type: DATE
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 003-create-care-gaps
+      author: primus
+      changes:
+        - createTable:
+            tableName: care_gaps
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_care_gaps_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_care_gaps_patient
+                    references: patients(id)
+              - column:
+                  name: measure
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+              - column:
+                  name: last_date
+                  type: DATE
+              - column:
+                  name: due_date
+                  type: DATE
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  defaultValue: OPEN
+              - column:
+                  name: priority
+                  type: VARCHAR(20)
+                  defaultValue: MEDIUM
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 003-create-documents
+      author: primus
+      changes:
+        - createTable:
+            tableName: documents
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_documents_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_documents_patient
+                    references: patients(id)
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: VARCHAR(100)
+              - column:
+                  name: uploaded_by
+                  type: VARCHAR(255)
+              - column:
+                  name: size
+                  type: BIGINT
+              - column:
+                  name: mime_type
+                  type: VARCHAR(100)
+              - column:
+                  name: url
+                  type: VARCHAR(1024)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false

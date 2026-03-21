@@ -1,0 +1,69 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: primus-ehr
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:primus_ehr}
+    username: ${DB_USER:primus}
+    password: ${DB_PASSWORD:primus}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 300000
+      pool-name: PrimusHikariPool
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        default_schema: public
+    open-in-view: false
+
+  liquibase:
+    change-log: classpath:db/master.yaml
+    enabled: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8180/realms/primus}
+          jwk-set-uri: ${KEYCLOAK_JWK_URI:http://localhost:8180/realms/primus/protocol/openid-connect/certs}
+
+keycloak:
+  base-url: ${KEYCLOAK_BASE_URL:http://localhost:8180}
+  realm: ${KEYCLOAK_REALM:primus}
+  client-id: ${KEYCLOAK_CLIENT_ID:primus-backend}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET:secret}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    tryItOutEnabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+logging:
+  level:
+    com.thinkitive.primus: DEBUG
+    org.springframework.security: INFO
+    org.springframework.web: INFO

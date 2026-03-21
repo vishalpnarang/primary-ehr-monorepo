@@ -1,0 +1,145 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-create-appointments
+      author: primus
+      changes:
+        - createTable:
+            tableName: appointments
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_appointments_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_appointments_patient
+                    references: patients(id)
+              - column:
+                  name: provider_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_appointments_provider
+                    references: users(id)
+              - column:
+                  name: location_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_appointments_location
+                    references: locations(id)
+              - column:
+                  name: room_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_appointments_room
+                    references: rooms(id)
+              - column:
+                  name: type
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  defaultValue: SCHEDULED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_time
+                  type: TIME
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_time
+                  type: TIME
+              - column:
+                  name: duration
+                  type: INT
+              - column:
+                  name: reason
+                  type: TEXT
+              - column:
+                  name: notes
+                  type: TEXT
+              - column:
+                  name: intake_completed
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: insurance_verified
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: telehealth
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: balance
+                  type: DECIMAL(10,2)
+                  defaultValueNumeric: 0.00
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 004-appointments-indexes
+      author: primus
+      changes:
+        - createIndex:
+            tableName: appointments
+            indexName: idx_appointments_tenant_date_provider
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: date
+              - column:
+                  name: provider_id
+        - createIndex:
+            tableName: appointments
+            indexName: idx_appointments_tenant_patient
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: patient_id

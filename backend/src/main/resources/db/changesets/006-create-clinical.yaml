@@ -1,0 +1,501 @@
+databaseChangeLog:
+  - changeSet:
+      id: 006-create-lab-orders
+      author: primus
+      changes:
+        - createTable:
+            tableName: lab_orders
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_lab_orders_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_lab_orders_patient
+                    references: patients(id)
+              - column:
+                  name: provider_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_lab_orders_provider
+                    references: users(id)
+              - column:
+                  name: facility
+                  type: VARCHAR(255)
+              - column:
+                  name: priority
+                  type: VARCHAR(20)
+                  defaultValue: ROUTINE
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  defaultValue: PENDING
+              - column:
+                  name: ordered_at
+                  type: TIMESTAMP
+              - column:
+                  name: resulted_at
+                  type: TIMESTAMP
+              - column:
+                  name: indication
+                  type: VARCHAR(500)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 006-create-lab-order-tests
+      author: primus
+      changes:
+        - createTable:
+            tableName: lab_order_tests
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_lab_order_tests_tenant
+                    references: tenants(id)
+              - column:
+                  name: lab_order_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_lab_order_tests_order
+                    references: lab_orders(id)
+              - column:
+                  name: test_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: loinc_code
+                  type: VARCHAR(20)
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  defaultValue: PENDING
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 006-create-lab-results
+      author: primus
+      changes:
+        - createTable:
+            tableName: lab_results
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_lab_results_tenant
+                    references: tenants(id)
+              - column:
+                  name: order_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_lab_results_order
+                    references: lab_orders(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_lab_results_patient
+                    references: patients(id)
+              - column:
+                  name: test_name
+                  type: VARCHAR(255)
+              - column:
+                  name: value
+                  type: VARCHAR(255)
+              - column:
+                  name: unit
+                  type: VARCHAR(50)
+              - column:
+                  name: reference_range
+                  type: VARCHAR(100)
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  defaultValue: PRELIMINARY
+              - column:
+                  name: loinc_code
+                  type: VARCHAR(20)
+              - column:
+                  name: result_date
+                  type: TIMESTAMP
+              - column:
+                  name: reviewed_by
+                  type: VARCHAR(255)
+              - column:
+                  name: reviewed_at
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 006-create-referrals
+      author: primus
+      changes:
+        - createTable:
+            tableName: referrals
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_referrals_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_referrals_patient
+                    references: patients(id)
+              - column:
+                  name: referring_provider_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_referrals_provider
+                    references: users(id)
+              - column:
+                  name: specialty
+                  type: VARCHAR(100)
+              - column:
+                  name: referred_to
+                  type: VARCHAR(255)
+              - column:
+                  name: urgency
+                  type: VARCHAR(20)
+                  defaultValue: ROUTINE
+              - column:
+                  name: reason
+                  type: TEXT
+              - column:
+                  name: clinical_notes
+                  type: TEXT
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  defaultValue: PENDING
+              - column:
+                  name: scheduled_date
+                  type: DATE
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 006-create-medications
+      author: primus
+      changes:
+        - createTable:
+            tableName: medications
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_medications_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_medications_patient
+                    references: patients(id)
+              - column:
+                  name: drug_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: generic_name
+                  type: VARCHAR(255)
+              - column:
+                  name: strength
+                  type: VARCHAR(100)
+              - column:
+                  name: dosage_form
+                  type: VARCHAR(100)
+              - column:
+                  name: directions
+                  type: TEXT
+              - column:
+                  name: quantity
+                  type: INT
+              - column:
+                  name: refills
+                  type: INT
+                  defaultValueNumeric: 0
+              - column:
+                  name: prescribed_by
+                  type: VARCHAR(255)
+              - column:
+                  name: prescribed_at
+                  type: TIMESTAMP
+              - column:
+                  name: pharmacy
+                  type: VARCHAR(255)
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  defaultValue: ACTIVE
+              - column:
+                  name: start_date
+                  type: DATE
+              - column:
+                  name: end_date
+                  type: DATE
+              - column:
+                  name: is_controlled
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: schedule
+                  type: VARCHAR(10)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 006-create-prescriptions
+      author: primus
+      changes:
+        - createTable:
+            tableName: prescriptions
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_prescriptions_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_prescriptions_patient
+                    references: patients(id)
+              - column:
+                  name: medication_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_prescriptions_medication
+                    references: medications(id)
+              - column:
+                  name: provider_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_prescriptions_provider
+                    references: users(id)
+              - column:
+                  name: pharmacy_name
+                  type: VARCHAR(255)
+              - column:
+                  name: pharmacy_id
+                  type: VARCHAR(100)
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  defaultValue: PENDING
+              - column:
+                  name: sent_at
+                  type: TIMESTAMP
+              - column:
+                  name: filled_at
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false

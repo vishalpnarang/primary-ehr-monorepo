@@ -1,0 +1,563 @@
+databaseChangeLog:
+  - changeSet:
+      id: 008-create-message-threads
+      author: primus
+      changes:
+        - createTable:
+            tableName: message_threads
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_message_threads_tenant
+                    references: tenants(id)
+              - column:
+                  name: subject
+                  type: VARCHAR(500)
+              - column:
+                  name: type
+                  type: VARCHAR(50)
+              - column:
+                  name: last_message_at
+                  type: TIMESTAMP
+              - column:
+                  name: last_message_text
+                  type: VARCHAR(500)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 008-create-messages
+      author: primus
+      changes:
+        - createTable:
+            tableName: messages
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_messages_tenant
+                    references: tenants(id)
+              - column:
+                  name: thread_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_messages_thread
+                    references: message_threads(id)
+              - column:
+                  name: sender_user_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_messages_sender
+                    references: users(id)
+              - column:
+                  name: sender_name
+                  type: VARCHAR(255)
+              - column:
+                  name: sender_role
+                  type: VARCHAR(50)
+              - column:
+                  name: body
+                  type: TEXT
+              - column:
+                  name: sent_at
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: read_at
+                  type: TIMESTAMP
+              - column:
+                  name: has_attachment
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 008-messages-index
+      author: primus
+      changes:
+        - createIndex:
+            tableName: messages
+            indexName: idx_messages_thread_sent_at
+            columns:
+              - column:
+                  name: thread_id
+              - column:
+                  name: sent_at
+
+  - changeSet:
+      id: 008-create-thread-participants
+      author: primus
+      changes:
+        - createTable:
+            tableName: thread_participants
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_thread_participants_tenant
+                    references: tenants(id)
+              - column:
+                  name: thread_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_thread_participants_thread
+                    references: message_threads(id)
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_thread_participants_user
+                    references: users(id)
+              - column:
+                  name: unread_count
+                  type: INT
+                  defaultValueNumeric: 0
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 008-create-notifications
+      author: primus
+      changes:
+        - createTable:
+            tableName: notifications
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_notifications_tenant
+                    references: tenants(id)
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_notifications_user
+                    references: users(id)
+              - column:
+                  name: type
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+              - column:
+                  name: body
+                  type: TEXT
+              - column:
+                  name: read
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: action_url
+                  type: VARCHAR(1024)
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 008-notifications-index
+      author: primus
+      changes:
+        - createIndex:
+            tableName: notifications
+            indexName: idx_notifications_user_read
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: read
+
+  - changeSet:
+      id: 008-create-inbox-items
+      author: primus
+      changes:
+        - createTable:
+            tableName: inbox_items
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_inbox_items_tenant
+                    references: tenants(id)
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_inbox_items_user
+                    references: users(id)
+              - column:
+                  name: type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: subtitle
+                  type: VARCHAR(500)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_inbox_items_patient
+                    references: patients(id)
+              - column:
+                  name: patient_name
+                  type: VARCHAR(255)
+              - column:
+                  name: priority
+                  type: VARCHAR(20)
+                  defaultValue: NORMAL
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  defaultValue: PENDING
+              - column:
+                  name: due_at
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 008-create-tasks
+      author: primus
+      changes:
+        - createTable:
+            tableName: tasks
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_tasks_tenant
+                    references: tenants(id)
+              - column:
+                  name: title
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: assigned_to_user_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_tasks_assigned_to
+                    references: users(id)
+              - column:
+                  name: assigned_by_user_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_tasks_assigned_by
+                    references: users(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_tasks_patient
+                    references: patients(id)
+              - column:
+                  name: patient_name
+                  type: VARCHAR(255)
+              - column:
+                  name: priority
+                  type: VARCHAR(20)
+                  defaultValue: NORMAL
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  defaultValue: OPEN
+              - column:
+                  name: due_at
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 008-create-audit-log
+      author: primus
+      changes:
+        - createTable:
+            tableName: audit_log
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_audit_log_tenant
+                    references: tenants(id)
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_audit_log_user
+                    references: users(id)
+              - column:
+                  name: user_name
+                  type: VARCHAR(255)
+              - column:
+                  name: action
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: resource_type
+                  type: VARCHAR(100)
+              - column:
+                  name: resource_id
+                  type: VARCHAR(100)
+              - column:
+                  name: ip_address
+                  type: VARCHAR(50)
+              - column:
+                  name: details
+                  type: JSONB
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 008-audit-log-indexes
+      author: primus
+      changes:
+        - createIndex:
+            tableName: audit_log
+            indexName: idx_audit_log_tenant_created
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: created
+        - createIndex:
+            tableName: audit_log
+            indexName: idx_audit_log_user_created
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: created

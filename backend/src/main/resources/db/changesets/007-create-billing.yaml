@@ -1,0 +1,337 @@
+databaseChangeLog:
+  - changeSet:
+      id: 007-create-claims
+      author: primus
+      changes:
+        - createTable:
+            tableName: claims
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_claims_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_claims_patient
+                    references: patients(id)
+              - column:
+                  name: encounter_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_claims_encounter
+                    references: encounters(id)
+              - column:
+                  name: provider_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_claims_provider
+                    references: users(id)
+              - column:
+                  name: date_of_service
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payer_name
+                  type: VARCHAR(255)
+              - column:
+                  name: payer_id
+                  type: VARCHAR(50)
+              - column:
+                  name: total_charge
+                  type: DECIMAL(10,2)
+                  defaultValueNumeric: 0.00
+              - column:
+                  name: allowed_amount
+                  type: DECIMAL(10,2)
+              - column:
+                  name: paid_amount
+                  type: DECIMAL(10,2)
+              - column:
+                  name: patient_responsibility
+                  type: DECIMAL(10,2)
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  defaultValue: DRAFT
+              - column:
+                  name: submitted_at
+                  type: TIMESTAMP
+              - column:
+                  name: paid_at
+                  type: TIMESTAMP
+              - column:
+                  name: denial_reason
+                  type: TEXT
+              - column:
+                  name: denial_code
+                  type: VARCHAR(50)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 007-claims-indexes
+      author: primus
+      changes:
+        - createIndex:
+            tableName: claims
+            indexName: idx_claims_tenant_status
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: status
+        - createIndex:
+            tableName: claims
+            indexName: idx_claims_tenant_patient
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: patient_id
+
+  - changeSet:
+      id: 007-create-claim-lines
+      author: primus
+      changes:
+        - createTable:
+            tableName: claim_lines
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_claim_lines_tenant
+                    references: tenants(id)
+              - column:
+                  name: claim_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_claim_lines_claim
+                    references: claims(id)
+              - column:
+                  name: cpt_code
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+              - column:
+                  name: modifier
+                  type: VARCHAR(20)
+              - column:
+                  name: units
+                  type: INT
+                  defaultValueNumeric: 1
+              - column:
+                  name: charge
+                  type: DECIMAL(10,2)
+                  defaultValueNumeric: 0.00
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 007-create-payments
+      author: primus
+      changes:
+        - createTable:
+            tableName: payments
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_payments_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_payments_patient
+                    references: patients(id)
+              - column:
+                  name: claim_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_payments_claim
+                    references: claims(id)
+              - column:
+                  name: amount
+                  type: DECIMAL(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: method
+                  type: VARCHAR(50)
+              - column:
+                  name: stripe_payment_intent_id
+                  type: VARCHAR(255)
+              - column:
+                  name: status
+                  type: VARCHAR(50)
+                  defaultValue: PENDING
+              - column:
+                  name: paid_at
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 007-create-fee-schedules
+      author: primus
+      changes:
+        - createTable:
+            tableName: fee_schedules
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_fee_schedules_tenant
+                    references: tenants(id)
+              - column:
+                  name: cpt_code
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+              - column:
+                  name: default_fee
+                  type: DECIMAL(10,2)
+                  defaultValueNumeric: 0.00
+              - column:
+                  name: medicare_rate
+                  type: DECIMAL(10,2)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false

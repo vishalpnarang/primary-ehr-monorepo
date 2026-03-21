@@ -1,0 +1,13 @@
+spring:
+  jpa:
+    show-sql: true
+  liquibase:
+    enabled: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+    com.thinkitive.primus: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
