@@ -42,11 +42,19 @@ const providerRoles: UserRole[] = ['super_admin', 'tenant_admin', 'practice_admi
 export const LoginPage: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState<UserRole>('provider');
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const { loginWithKeycloak, loginMock, loading, error } = useAuthStore();
 
-  const handleLogin = () => {
-    login(mockUsers[selectedRole]);
-    navigate('/dashboard');
+  const handleLogin = async () => {
+    const user = mockUsers[selectedRole];
+    try {
+      // Try real Keycloak login first
+      await loginWithKeycloak(user.email, 'password123');
+      navigate('/dashboard');
+    } catch {
+      // Fall back to mock login if Keycloak is down
+      loginMock(user);
+      navigate('/dashboard');
+    }
   };
 
   return (
@@ -85,15 +93,20 @@ export const LoginPage: React.FC = () => {
         ))}
       </div>
 
+      {error ? (
+        <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-3">{error}</p>
+      ) : null}
+
       <button
         onClick={handleLogin}
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        disabled={loading}
+        className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-3 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
-        Sign in as {roleLabels[selectedRole]}
+        {loading ? 'Signing in...' : `Sign in as ${roleLabels[selectedRole]}`}
       </button>
 
       <p className="text-xs text-gray-400 text-center mt-4">
-        Mock login for UI development — Phase 0
+        Authenticates via Keycloak — falls back to mock if unavailable
       </p>
     </LoginLayout>
   );
