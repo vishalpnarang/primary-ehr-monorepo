@@ -50,14 +50,59 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Response interceptor — handle 401 and 403
+// Response interceptor — handle 401 with silent refresh, then redirect on failure
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (value: unknown) => void;
+  reject: (reason: unknown) => void;
+}> = [];
+
+function processQueue(error: unknown) {
+  failedQueue.forEach(({ reject }) => reject(error));
+  failedQueue = [];
+}
+
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
+  async (error) => {
+    const originalRequest = error.config;
+
+    // If 401 and we haven't already retried this request
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        // Queue this request until the refresh completes
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      try {
+        // Attempt silent refresh via the auth store
+        const { useAuthStore } = await import('@/stores/authStore');
+        const refreshed = await useAuthStore.getState().silentRefresh();
+
+        if (refreshed) {
+          // Retry the original request with the new token
+          const raw = sessionStorage.getItem('primus-auth');
+          if (raw) {
+            const { state } = JSON.parse(raw);
+            originalRequest.headers.Authorization = `Bearer ${state.token}`;
+          }
+          isRefreshing = false;
+          return api(originalRequest);
+        }
+      } catch {
+        processQueue(error);
+      }
+
+      isRefreshing = false;
       sessionStorage.removeItem('primus-auth');
       window.location.href = '/login';
     }
+
     return Promise.reject(error);
   }
 );
@@ -88,52 +133,10 @@ export const authApi = {
     api.post<ApiResponse>('/api/v1/auth/switch-role', { role }),
 };
 
-// ─── Keycloak token endpoint (direct, bypasses Spring) ───────────────────────
-
-const KC_BASE = import.meta.env.VITE_KEYCLOAK_URL || 'http://localhost:8180';
-const KC_REALM = import.meta.env.VITE_KEYCLOAK_REALM || 'primus';
-const KC_CLIENT = import.meta.env.VITE_KEYCLOAK_CLIENT || 'primus-frontend';
-
-export const keycloakAuth = {
-  /**
-   * Get JWT token from Keycloak using Resource Owner Password flow.
-   * For production, use PKCE Authorization Code flow instead.
-   */
-  getToken: async (username: string, password: string) => {
-    const params = new URLSearchParams({
-      grant_type: 'password',
-      client_id: KC_CLIENT,
-      username,
-      password,
-    });
-
-    const response = await fetch(
-      `${KC_BASE}/realms/${KC_REALM}/protocol/openid-connect/token`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: params,
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error('Authentication failed');
-    }
-
-    return response.json() as Promise<{
-      access_token: string;
-      refresh_token: string;
-      expires_in: number;
-      token_type: string;
-    }>;
-  },
-
-  /** Decode JWT payload without verification (client-side only) */
-  decodeToken: (token: string) => {
-    const payload = token.split('.')[1];
-    return JSON.parse(atob(payload));
-  },
-};
+// ─── PKCE Auth ──────────────────────────────────────────────────────────────
+// PKCE Authorization Code flow is implemented in @/lib/pkce.ts
+// The old ROPC (Resource Owner Password) flow has been removed for security.
+// See: pkce.ts for startPkceLogin(), exchangeCodeForTokens(), refreshAccessToken()
 
 // ─── Patient API ─────────────────────────────────────────────────────────────
 

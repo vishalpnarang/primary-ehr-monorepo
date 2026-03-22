@@ -42,18 +42,18 @@ const providerRoles: UserRole[] = ['super_admin', 'tenant_admin', 'practice_admi
 export const LoginPage: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState<UserRole>('provider');
   const navigate = useNavigate();
-  const { loginWithKeycloak, loginMock, loading, error } = useAuthStore();
+  const { loginWithPkce, loginMock, loading, error } = useAuthStore();
 
   const handleLogin = async () => {
-    const user = mockUsers[selectedRole];
-    try {
-      // Try real Keycloak login first
-      await loginWithKeycloak(user.email, 'password123');
-      navigate('/dashboard');
-    } catch {
-      // Fall back to mock login if Keycloak is down
+    if (import.meta.env.DEV) {
+      // In development, use mock login for convenience
+      const user = mockUsers[selectedRole];
       loginMock(user);
       navigate('/dashboard');
+    } else {
+      // In production, redirect to Keycloak PKCE flow
+      await loginWithPkce();
+      // Browser will redirect — this code won't execute
     }
   };
 
@@ -106,7 +106,9 @@ export const LoginPage: React.FC = () => {
       </button>
 
       <p className="text-xs text-gray-400 text-center mt-4">
-        Authenticates via Keycloak — falls back to mock if unavailable
+        {import.meta.env.DEV
+          ? 'Development mode — mock login (PKCE in production)'
+          : 'Redirects to Keycloak for secure PKCE authentication'}
       </p>
     </LoginLayout>
   );

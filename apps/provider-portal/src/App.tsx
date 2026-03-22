@@ -11,6 +11,9 @@ const ManagementDeckPage = lazy(() => import('@/pages/internal/ManagementDeckPag
 const ClientDeckPage = lazy(() => import('@/pages/internal/ClientDeckPage'));
 const DemoGuidePage = lazy(() => import('@/pages/internal/DemoGuidePage'));
 
+// Auth callback (PKCE flow)
+const AuthCallbackPage = lazy(() => import('@/pages/AuthCallbackPage'));
+
 // Lazy-loaded pages
 const DashboardPage = lazy(() => import('@/pages/DashboardPage'));
 const SchedulePage = lazy(() => import('@/pages/SchedulePage'));
@@ -56,6 +59,7 @@ const App = () => (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/auth/callback" element={<Suspense fallback={<PageLoader />}><AuthCallbackPage /></Suspense>} />
         <Route
           element={
             <ProtectedRoute>

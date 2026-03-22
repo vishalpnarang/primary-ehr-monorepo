@@ -1,0 +1,92 @@
+# OWASP ZAP Automation Framework Configuration
+# Run: docker run -v $(pwd):/zap/wrk owasp/zap2docker-stable zap.sh -cmd -autorun /zap/wrk/e2e/security/zap-config.yaml
+#
+# This scans the Primus EHR API for OWASP Top 10 vulnerabilities:
+# - SQL Injection, XSS, CSRF, Broken Auth, Security Misconfiguration
+# - Sensitive Data Exposure, XXE, Broken Access Control, SSRF
+#
+# Prerequisites:
+#   1. Backend running on localhost:8080
+#   2. Keycloak running on localhost:8180
+#   3. docker pull owasp/zap2docker-stable
+
+env:
+  contexts:
+    - name: "Primus EHR API"
+      urls:
+        - "http://localhost:8080"
+      includePaths:
+        - "http://localhost:8080/api/.*"
+      excludePaths:
+        - "http://localhost:8080/actuator/.*"
+        - "http://localhost:8080/swagger-ui/.*"
+        - "http://localhost:8080/v3/api-docs/.*"
+      authentication:
+        method: "json"
+        parameters:
+          loginPageUrl: "http://localhost:8080/api/v1/auth/login"
+          loginRequestUrl: "http://localhost:8080/api/v1/auth/login"
+          loginRequestBody: '{"username":"emily.chen@primusdemo.com","password":"password123"}'
+          usernameParameter: "username"
+          passwordParameter: "password"
+        verification:
+          method: "response"
+          loggedInRegex: "accessToken"
+      users:
+        - name: "provider"
+          credentials:
+            username: "emily.chen@primusdemo.com"
+            password: "password123"
+
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+
+jobs:
+  # Spider the API to discover endpoints
+  - type: spider
+    parameters:
+      context: "Primus EHR API"
+      user: "provider"
+      maxDuration: 5
+      maxDepth: 5
+
+  # Import OpenAPI spec for better coverage
+  - type: openapi
+    parameters:
+      apiUrl: "http://localhost:8080/v3/api-docs"
+      context: "Primus EHR API"
+
+  # Active scan — tests for real vulnerabilities
+  - type: activeScan
+    parameters:
+      context: "Primus EHR API"
+      user: "provider"
+      maxRuleDurationInMins: 10
+      maxScanDurationInMins: 60
+      policy: "Default Policy"
+
+  # Passive scan rules (headers, cookies, content)
+  - type: passiveScan-config
+    parameters:
+      maxAlertsPerRule: 10
+      scanOnlyInScope: true
+
+  # Generate reports
+  - type: report
+    parameters:
+      template: "risk-confidence-html"
+      reportDir: "/zap/wrk/e2e/security/reports"
+      reportFile: "zap-report"
+      reportTitle: "Primus EHR Security Scan"
+      reportDescription: "OWASP ZAP automated scan results"
+    risks:
+      - high
+      - medium
+      - low
+      - info
+    confidences:
+      - high
+      - medium
+      - low
