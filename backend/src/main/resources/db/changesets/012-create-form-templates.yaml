@@ -1,0 +1,211 @@
+databaseChangeLog:
+
+  # ── form_templates ──────────────────────────────────────────────────────────
+
+  - changeSet:
+      id: 012-create-form-templates
+      author: primus
+      comment: Dynamic form templates — schema stored as JSONB
+      changes:
+        - createTable:
+            tableName: form_templates
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: category
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: schema_data
+                  type: JSONB
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: INTEGER
+                  defaultValueNumeric: 1
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  defaultValue: DRAFT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_form_templates_tenant
+                    references: tenants(id)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 012-form-templates-unique-constraint
+      author: primus
+      comment: Template name must be unique within a tenant per version
+      changes:
+        - addUniqueConstraint:
+            tableName: form_templates
+            columnNames: tenant_id, name, version
+            constraintName: uq_form_template_tenant_name_version
+
+  - changeSet:
+      id: 012-form-templates-indexes
+      author: primus
+      comment: Index for tenant + category + status lookups
+      changes:
+        - createIndex:
+            tableName: form_templates
+            indexName: idx_form_templates_tenant_category_status
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: category
+              - column:
+                  name: status
+
+  # ── form_submissions ─────────────────────────────────────────────────────────
+
+  - changeSet:
+      id: 012-create-form-submissions
+      author: primus
+      comment: Patient form submissions — response data stored as JSONB
+      changes:
+        - createTable:
+            tableName: form_submissions
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: template_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_form_submissions_template
+                    references: form_templates(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_form_submissions_patient
+                    references: patients(id)
+              - column:
+                  name: submitted_by
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: submission_data
+                  type: JSONB
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  defaultValue: SUBMITTED
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reviewed_by
+                  type: VARCHAR(255)
+              - column:
+                  name: reviewed_at
+                  type: TIMESTAMP
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_form_submissions_tenant
+                    references: tenants(id)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 012-form-submissions-indexes
+      author: primus
+      comment: Indexes for submissions by template and by patient
+      changes:
+        - createIndex:
+            tableName: form_submissions
+            indexName: idx_form_submissions_template_id
+            columns:
+              - column:
+                  name: template_id
+        - createIndex:
+            tableName: form_submissions
+            indexName: idx_form_submissions_patient_tenant
+            columns:
+              - column:
+                  name: patient_id
+              - column:
+                  name: tenant_id

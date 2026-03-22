@@ -33,7 +33,7 @@ resource "aws_lb" "main" {
 
 # Backend target group — Spring Boot Actuator health check
 resource "aws_lb_target_group" "backend" {
-  name        = "${local.name_prefix}-tg-backend"
+  name        = "${local.name_prefix}-be"
   port        = 8080
   protocol    = "HTTP"
   vpc_id      = aws_vpc.main.id
@@ -54,12 +54,12 @@ resource "aws_lb_target_group" "backend" {
   # Drain quickly for demo deploys
   deregistration_delay = 30
 
-  tags = { Name = "${local.name_prefix}-tg-backend" }
+  tags = { Name = "${local.name_prefix}-be" }
 }
 
 # Keycloak target group — Keycloak health check endpoint
 resource "aws_lb_target_group" "keycloak" {
-  name        = "${local.name_prefix}-tg-keycloak"
+  name        = "${local.name_prefix}-kc"
   port        = 8080
   protocol    = "HTTP"
   vpc_id      = aws_vpc.main.id
@@ -79,7 +79,7 @@ resource "aws_lb_target_group" "keycloak" {
 
   deregistration_delay = 30
 
-  tags = { Name = "${local.name_prefix}-tg-keycloak" }
+  tags = { Name = "${local.name_prefix}-kc" }
 }
 
 # ---------------------------------------------------------------------------

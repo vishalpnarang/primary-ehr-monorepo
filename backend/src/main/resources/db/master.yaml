@@ -15,3 +15,7 @@ databaseChangeLog:
       file: db/changesets/007-create-billing.yaml
   - include:
       file: db/changesets/008-create-messaging.yaml
+  - include:
+      file: db/changesets/010-enhance-patients.yaml
+  - include:
+      file: db/changesets/011-enhance-scheduling.yaml

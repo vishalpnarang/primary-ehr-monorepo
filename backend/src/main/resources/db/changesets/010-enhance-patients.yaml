@@ -1,0 +1,944 @@
+databaseChangeLog:
+
+  # ─── family_history ───────────────────────────────────────────────────────
+  - changeSet:
+      id: 010-create-family-history
+      author: primus
+      changes:
+        - createTable:
+            tableName: family_history
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_family_history_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_family_history_patient
+                    references: patients(id)
+              - column:
+                  name: relationship
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: condition
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: icd10_code
+                  type: VARCHAR(20)
+              - column:
+                  name: onset_age
+                  type: INTEGER
+              - column:
+                  name: deceased
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: notes
+                  type: TEXT
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 010-family-history-index
+      author: primus
+      changes:
+        - createIndex:
+            tableName: family_history
+            indexName: idx_family_history_patient_id
+            columns:
+              - column:
+                  name: patient_id
+
+  # ─── social_history ───────────────────────────────────────────────────────
+  - changeSet:
+      id: 010-create-social-history
+      author: primus
+      changes:
+        - createTable:
+            tableName: social_history
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_social_history_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_social_history_patient
+                    references: patients(id)
+              - column:
+                  name: smoking_status
+                  type: VARCHAR(50)
+              - column:
+                  name: alcohol_use
+                  type: VARCHAR(50)
+              - column:
+                  name: drug_use
+                  type: VARCHAR(50)
+              - column:
+                  name: exercise_frequency
+                  type: VARCHAR(50)
+              - column:
+                  name: diet
+                  type: VARCHAR(100)
+              - column:
+                  name: occupation
+                  type: VARCHAR(255)
+              - column:
+                  name: education_level
+                  type: VARCHAR(100)
+              - column:
+                  name: marital_status
+                  type: VARCHAR(50)
+              - column:
+                  name: sexual_orientation
+                  type: VARCHAR(50)
+              - column:
+                  name: gender_identity
+                  type: VARCHAR(50)
+              - column:
+                  name: housing_status
+                  type: VARCHAR(50)
+              - column:
+                  name: notes
+                  type: TEXT
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 010-social-history-unique-per-patient-tenant
+      author: primus
+      changes:
+        - addUniqueConstraint:
+            tableName: social_history
+            columnNames: patient_id, tenant_id
+            constraintName: uq_social_history_patient_tenant
+
+  - changeSet:
+      id: 010-social-history-index
+      author: primus
+      changes:
+        - createIndex:
+            tableName: social_history
+            indexName: idx_social_history_patient_id
+            columns:
+              - column:
+                  name: patient_id
+
+  # ─── past_surgical_history ────────────────────────────────────────────────
+  - changeSet:
+      id: 010-create-past-surgical-history
+      author: primus
+      changes:
+        - createTable:
+            tableName: past_surgical_history
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_past_surgical_history_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_past_surgical_history_patient
+                    references: patients(id)
+              - column:
+                  name: procedure_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: procedure_date
+                  type: DATE
+              - column:
+                  name: cpt_code
+                  type: VARCHAR(20)
+              - column:
+                  name: surgeon
+                  type: VARCHAR(255)
+              - column:
+                  name: facility
+                  type: VARCHAR(255)
+              - column:
+                  name: notes
+                  type: TEXT
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 010-past-surgical-history-index
+      author: primus
+      changes:
+        - createIndex:
+            tableName: past_surgical_history
+            indexName: idx_past_surgical_history_patient_id
+            columns:
+              - column:
+                  name: patient_id
+
+  # ─── past_medical_history ─────────────────────────────────────────────────
+  - changeSet:
+      id: 010-create-past-medical-history
+      author: primus
+      changes:
+        - createTable:
+            tableName: past_medical_history
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_past_medical_history_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_past_medical_history_patient
+                    references: patients(id)
+              - column:
+                  name: condition
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: icd10_code
+                  type: VARCHAR(20)
+              - column:
+                  name: onset_date
+                  type: DATE
+              - column:
+                  name: resolution_date
+                  type: DATE
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  defaultValue: ACTIVE
+              - column:
+                  name: notes
+                  type: TEXT
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 010-past-medical-history-index
+      author: primus
+      changes:
+        - createIndex:
+            tableName: past_medical_history
+            indexName: idx_past_medical_history_patient_id
+            columns:
+              - column:
+                  name: patient_id
+
+  # ─── emergency_contacts ───────────────────────────────────────────────────
+  - changeSet:
+      id: 010-create-emergency-contacts
+      author: primus
+      changes:
+        - createTable:
+            tableName: emergency_contacts
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_emergency_contacts_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_emergency_contacts_patient
+                    references: patients(id)
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: relationship
+                  type: VARCHAR(50)
+              - column:
+                  name: phone
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+              - column:
+                  name: is_primary
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 010-emergency-contacts-index
+      author: primus
+      changes:
+        - createIndex:
+            tableName: emergency_contacts
+            indexName: idx_emergency_contacts_patient_id
+            columns:
+              - column:
+                  name: patient_id
+
+  # ─── patient_flags ────────────────────────────────────────────────────────
+  - changeSet:
+      id: 010-create-patient-flags
+      author: primus
+      changes:
+        - createTable:
+            tableName: patient_flags
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_patient_flags_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_patient_flags_patient
+                    references: patients(id)
+              - column:
+                  name: flag_type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: label
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: severity
+                  type: VARCHAR(20)
+              - column:
+                  name: active
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+              - column:
+                  name: notes
+                  type: TEXT
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 010-patient-flags-index
+      author: primus
+      changes:
+        - createIndex:
+            tableName: patient_flags
+            indexName: idx_patient_flags_patient_active
+            columns:
+              - column:
+                  name: patient_id
+              - column:
+                  name: active
+
+  # ─── pharmacies ───────────────────────────────────────────────────────────
+  - changeSet:
+      id: 010-create-pharmacies
+      author: primus
+      changes:
+        - createTable:
+            tableName: pharmacies
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_pharmacies_tenant
+                    references: tenants(id)
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: npi
+                  type: VARCHAR(20)
+              - column:
+                  name: ncpdp_id
+                  type: VARCHAR(20)
+              - column:
+                  name: phone
+                  type: VARCHAR(20)
+              - column:
+                  name: fax
+                  type: VARCHAR(20)
+              - column:
+                  name: address_line1
+                  type: VARCHAR(255)
+              - column:
+                  name: city
+                  type: VARCHAR(100)
+              - column:
+                  name: state
+                  type: VARCHAR(50)
+              - column:
+                  name: zip
+                  type: VARCHAR(10)
+              - column:
+                  name: is_24_hour
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 010-pharmacies-index
+      author: primus
+      changes:
+        - createIndex:
+            tableName: pharmacies
+            indexName: idx_pharmacies_npi
+            columns:
+              - column:
+                  name: npi
+
+  # ─── patient_linked_pharmacies ────────────────────────────────────────────
+  - changeSet:
+      id: 010-create-patient-linked-pharmacies
+      author: primus
+      changes:
+        - createTable:
+            tableName: patient_linked_pharmacies
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_patient_linked_pharmacies_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_patient_linked_pharmacies_patient
+                    references: patients(id)
+              - column:
+                  name: pharmacy_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_patient_linked_pharmacies_pharmacy
+                    references: pharmacies(id)
+              - column:
+                  name: is_preferred
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 010-patient-linked-pharmacies-unique
+      author: primus
+      changes:
+        - addUniqueConstraint:
+            tableName: patient_linked_pharmacies
+            columnNames: patient_id, pharmacy_id
+            constraintName: uq_patient_linked_pharmacies_patient_pharmacy
+
+  # ─── contacts ─────────────────────────────────────────────────────────────
+  - changeSet:
+      id: 010-create-contacts
+      author: primus
+      changes:
+        - createTable:
+            tableName: contacts
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_contacts_tenant
+                    references: tenants(id)
+              - column:
+                  name: type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: specialty
+                  type: VARCHAR(100)
+              - column:
+                  name: organization
+                  type: VARCHAR(255)
+              - column:
+                  name: npi
+                  type: VARCHAR(20)
+              - column:
+                  name: phone
+                  type: VARCHAR(20)
+              - column:
+                  name: fax
+                  type: VARCHAR(20)
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+              - column:
+                  name: address_line1
+                  type: VARCHAR(255)
+              - column:
+                  name: city
+                  type: VARCHAR(100)
+              - column:
+                  name: state
+                  type: VARCHAR(50)
+              - column:
+                  name: zip
+                  type: VARCHAR(10)
+              - column:
+                  name: notes
+                  type: TEXT
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 010-contacts-index
+      author: primus
+      changes:
+        - createIndex:
+            tableName: contacts
+            indexName: idx_contacts_type_tenant
+            columns:
+              - column:
+                  name: type
+              - column:
+                  name: tenant_id
+
+  # ─── educational_materials ────────────────────────────────────────────────
+  - changeSet:
+      id: 010-create-educational-materials
+      author: primus
+      changes:
+        - createTable:
+            tableName: educational_materials
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_educational_materials_tenant
+                    references: tenants(id)
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category
+                  type: VARCHAR(100)
+              - column:
+                  name: content_url
+                  type: VARCHAR(1024)
+              - column:
+                  name: content_type
+                  type: VARCHAR(50)
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  # ─── patient_educational_materials ────────────────────────────────────────
+  - changeSet:
+      id: 010-create-patient-educational-materials
+      author: primus
+      changes:
+        - createTable:
+            tableName: patient_educational_materials
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_patient_educational_materials_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_patient_educational_materials_patient
+                    references: patients(id)
+              - column:
+                  name: material_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_patient_educational_materials_material
+                    references: educational_materials(id)
+              - column:
+                  name: assigned_by
+                  type: VARCHAR(255)
+              - column:
+                  name: assigned_date
+                  type: TIMESTAMP
+              - column:
+                  name: viewed_date
+                  type: TIMESTAMP
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false

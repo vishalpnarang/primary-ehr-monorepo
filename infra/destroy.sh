@@ -35,6 +35,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TF_DIR="${SCRIPT_DIR}/terraform"
 
 INSTANCE_NAME="${1:-}"
+export AWS_PROFILE="primus"
 AWS_REGION="${2:-us-east-1}"
 CI="${CI:-false}" # Set to true in CI pipelines to skip confirmation prompt
 

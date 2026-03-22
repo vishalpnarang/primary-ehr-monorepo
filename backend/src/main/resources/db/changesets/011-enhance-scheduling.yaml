@@ -1,0 +1,518 @@
+databaseChangeLog:
+
+  # ─── appointment_types ────────────────────────────────────────────────────
+  - changeSet:
+      id: 011-create-appointment-types
+      author: primus
+      changes:
+        - createTable:
+            tableName: appointment_types
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_appointment_types_tenant
+                    references: tenants(id)
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: duration_minutes
+                  type: INTEGER
+                  defaultValueNumeric: 30
+                  constraints:
+                    nullable: false
+              - column:
+                  name: color
+                  type: VARCHAR(7)
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+              - column:
+                  name: allow_online_booking
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 011-appointment-types-unique
+      author: primus
+      changes:
+        - addUniqueConstraint:
+            tableName: appointment_types
+            columnNames: tenant_id, name
+            constraintName: uq_appointment_types_tenant_name
+
+  # ─── provider_availability ────────────────────────────────────────────────
+  - changeSet:
+      id: 011-create-provider-availability
+      author: primus
+      changes:
+        - createTable:
+            tableName: provider_availability
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_provider_availability_tenant
+                    references: tenants(id)
+              - column:
+                  name: provider_id
+                  type: VARCHAR(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: day_of_week
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_time
+                  type: TIME
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_time
+                  type: TIME
+                  constraints:
+                    nullable: false
+              - column:
+                  name: location_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_provider_availability_location
+                    references: locations(id)
+              - column:
+                  name: appointment_type_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_provider_availability_appt_type
+                    references: appointment_types(id)
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 011-provider-availability-index
+      author: primus
+      changes:
+        - createIndex:
+            tableName: provider_availability
+            indexName: idx_provider_availability_provider_dow
+            columns:
+              - column:
+                  name: provider_id
+              - column:
+                  name: day_of_week
+
+  # ─── block_days ───────────────────────────────────────────────────────────
+  - changeSet:
+      id: 011-create-block-days
+      author: primus
+      changes:
+        - createTable:
+            tableName: block_days
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_block_days_tenant
+                    references: tenants(id)
+              - column:
+                  name: provider_id
+                  type: VARCHAR(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: block_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_time
+                  type: TIME
+              - column:
+                  name: end_time
+                  type: TIME
+              - column:
+                  name: reason
+                  type: VARCHAR(255)
+              - column:
+                  name: is_all_day
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 011-block-days-index
+      author: primus
+      changes:
+        - createIndex:
+            tableName: block_days
+            indexName: idx_block_days_provider_date
+            columns:
+              - column:
+                  name: provider_id
+              - column:
+                  name: block_date
+
+  # ─── recurring_appointments ───────────────────────────────────────────────
+  - changeSet:
+      id: 011-create-recurring-appointments
+      author: primus
+      changes:
+        - createTable:
+            tableName: recurring_appointments
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_recurring_appointments_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_recurring_appointments_patient
+                    references: patients(id)
+              - column:
+                  name: provider_id
+                  type: VARCHAR(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: appointment_type_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_recurring_appointments_appt_type
+                    references: appointment_types(id)
+              - column:
+                  name: recurrence_pattern
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: day_of_week
+                  type: INTEGER
+              - column:
+                  name: preferred_time
+                  type: TIME
+              - column:
+                  name: start_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_date
+                  type: DATE
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  defaultValue: ACTIVE
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 011-recurring-appointments-index
+      author: primus
+      changes:
+        - createIndex:
+            tableName: recurring_appointments
+            indexName: idx_recurring_appointments_patient_id
+            columns:
+              - column:
+                  name: patient_id
+
+  # ─── cancellations ────────────────────────────────────────────────────────
+  - changeSet:
+      id: 011-create-cancellations
+      author: primus
+      changes:
+        - createTable:
+            tableName: cancellations
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_cancellations_tenant
+                    references: tenants(id)
+              - column:
+                  name: appointment_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_cancellations_appointment
+                    references: appointments(id)
+              - column:
+                  name: cancelled_by
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reason
+                  type: VARCHAR(500)
+              - column:
+                  name: cancelled_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_no_show
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 011-cancellations-index
+      author: primus
+      changes:
+        - createIndex:
+            tableName: cancellations
+            indexName: idx_cancellations_appointment_id
+            columns:
+              - column:
+                  name: appointment_id
+
+  # ─── status_configurations ────────────────────────────────────────────────
+  - changeSet:
+      id: 011-create-status-configurations
+      author: primus
+      changes:
+        - createTable:
+            tableName: status_configurations
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_status_configurations_tenant
+                    references: tenants(id)
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: from_status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: to_status
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: allowed_roles
+                  type: TEXT
+              - column:
+                  name: color
+                  type: VARCHAR(7)
+              - column:
+                  name: display_order
+                  type: INTEGER
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 011-status-configurations-unique
+      author: primus
+      changes:
+        - addUniqueConstraint:
+            tableName: status_configurations
+            columnNames: tenant_id, name, from_status, to_status
+            constraintName: uq_status_configurations_tenant_transition

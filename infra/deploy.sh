@@ -38,6 +38,7 @@ TF_DIR="${SCRIPT_DIR}/terraform"
 
 INSTANCE_NAME="${1:-}"
 AWS_REGION="${2:-us-east-1}"
+export AWS_PROFILE="primus"
 
 # ---------------------------------------------------------------------------
 # Colors and logging
