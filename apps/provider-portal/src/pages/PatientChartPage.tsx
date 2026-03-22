@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { usePatient, usePatientTimeline } from '@/hooks/useApi';
+import {
+  usePatient, usePatientTimeline,
+  useFamilyHistory, useSocialHistory, useMedicalHistory,
+  usePatientFlags, useEmergencyContacts, usePatientCarePlans,
+} from '@/hooks/useApi';
 import {
   FileText, AlertTriangle, FlaskConical,
   ChevronRight, Plus, MessageSquare, Calendar,
@@ -286,6 +290,21 @@ const PatientChartPage: React.FC = () => {
   // Real API data (falls back to inline mock if backend is down)
   const { data: apiPatient } = usePatient(patientId ?? '');
   const { data: apiTimeline } = usePatientTimeline(patientId ?? '');
+  const { data: apiFamilyHistory } = useFamilyHistory(patientId ?? '');
+  const { data: apiSocialHistory } = useSocialHistory(patientId ?? '');
+  const { data: apiMedicalHistory } = useMedicalHistory(patientId ?? '');
+  const { data: apiFlags } = usePatientFlags(patientId ?? '');
+  const { data: apiEmergencyContacts } = useEmergencyContacts(patientId ?? '');
+  const { data: apiCarePlans } = usePatientCarePlans(patientId ?? '');
+
+  // Resolved data: prefer API, fall back to inline mock
+  const resolvedFamilyHistory = (apiFamilyHistory as typeof familyHistory | undefined) ?? familyHistory;
+  const resolvedPastMedical = (apiMedicalHistory as typeof pastMedical | undefined) ?? pastMedical;
+  const resolvedFlags = (apiFlags as typeof patient.riskFlags | undefined) ?? patient.riskFlags;
+  void apiSocialHistory; // available for future social history card
+  void apiEmergencyContacts; // available for future emergency contacts card
+  void apiCarePlans; // available for future care plans card
+
   const [headerTab, setHeaderTab] = useState<string>('home');
   const [subTab, setSubTab] = useState<string>('facesheet');
   const [viewAll, setViewAll] = useState<string | null>(null);
@@ -311,7 +330,7 @@ const PatientChartPage: React.FC = () => {
             <span className="text-[10px] text-gray-500">Provider: <strong>{patient.provider}</strong> <Edit3 className="w-3 h-3 inline text-gray-400 cursor-pointer" /></span>
           </div>
           <div className="ml-auto hidden md:flex items-center gap-2">
-            {patient.riskFlags.map((f, i) => (
+            {resolvedFlags.map((f, i) => (
               <span key={i} className={cn('text-[10px] px-1.5 py-0.5 rounded font-medium flex items-center gap-1', f.severity === 'critical' ? 'bg-rose-50 text-rose-600 border border-red-200' : 'bg-amber-50/80 text-amber-600 border border-amber-200')}>
                 <AlertTriangle className="w-3 h-3" /> {f.label}
               </span>
@@ -419,7 +438,7 @@ const PatientChartPage: React.FC = () => {
               {/* Family History */}
               <Card title="Family History" onViewAll={() => setViewAll('family')} onAdd={() => {}}>
                 <div className="divide-y divide-gray-50">
-                  {familyHistory.map((f, i) => (
+                  {resolvedFamilyHistory.map((f, i) => (
                     <div key={i} className="px-3 py-1.5 hover:bg-slate-50 cursor-pointer"><p className="text-[11px] font-medium text-gray-900">{f.condition}</p><p className="text-[11px] text-gray-400">{f.relation} · {f.age}</p></div>
                   ))}
                 </div>
@@ -454,7 +473,7 @@ const PatientChartPage: React.FC = () => {
               {/* Past Medical History */}
               <Card title="Past Medical History" onViewAll={() => setViewAll('pmh')} onAdd={() => {}}>
                 <div className="divide-y divide-gray-50">
-                  {pastMedical.map((h, i) => (
+                  {resolvedPastMedical.map((h, i) => (
                     <div key={i} className="px-3 py-1.5 hover:bg-slate-50 cursor-pointer flex items-center justify-between">
                       <div><p className="text-[11px] font-medium text-gray-900">{h.condition}</p><p className="text-[11px] text-gray-400">Onset: {h.onset}</p></div>
                       <span className={cn('text-[11px] px-1.5 py-0.5 rounded font-medium', h.status === 'Active' ? 'bg-slate-100 text-slate-600' : 'bg-slate-100 text-slate-500')}>{h.status}</span>

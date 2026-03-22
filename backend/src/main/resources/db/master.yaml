@@ -16,6 +16,42 @@ databaseChangeLog:
   - include:
       file: db/changesets/008-create-messaging.yaml
   - include:
+      file: db/changesets/009-create-rbac.yaml
+  - include:
       file: db/changesets/010-enhance-patients.yaml
   - include:
       file: db/changesets/011-enhance-scheduling.yaml
+  - include:
+      file: db/changesets/012-create-form-templates.yaml
+  - include:
+      file: db/changesets/013-create-clinical-templates.yaml
+  - include:
+      file: db/changesets/014-enhance-encounters.yaml
+  - include:
+      file: db/changesets/015-create-care-plans.yaml
+  - include:
+      file: db/changesets/016-enhance-labs.yaml
+  - include:
+      file: db/changesets/017-enhance-imaging.yaml
+  - include:
+      file: db/changesets/018-create-inventory.yaml
+  - include:
+      file: db/changesets/019-create-invoices.yaml
+  - include:
+      file: db/changesets/020-enhance-payments.yaml
+  - include:
+      file: db/changesets/021-create-plans.yaml
+  - include:
+      file: db/changesets/022-enhance-messaging.yaml
+  - include:
+      file: db/changesets/023-create-notifications-enhanced.yaml
+  - include:
+      file: db/changesets/024-create-analytics.yaml
+  - include:
+      file: db/changesets/025-create-crm.yaml
+  - include:
+      file: db/changesets/026-create-employer.yaml
+  - include:
+      file: db/changesets/027-create-affiliate-broker.yaml
+  - include:
+      file: db/changesets/028-seed-data.yaml

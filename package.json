@@ -5,14 +5,23 @@
   "workspaces": [
     "apps/shared",
     "apps/provider-portal",
-    "apps/patient-portal"
+    "apps/patient-portal",
+    "apps/employer-portal",
+    "apps/affiliate-portal",
+    "apps/broker-portal"
   ],
   "scripts": {
     "dev:provider": "npm run dev --workspace=apps/provider-portal",
     "dev:patient": "npm run dev --workspace=apps/patient-portal",
+    "dev:employer": "npm run dev --workspace=apps/employer-portal",
+    "dev:affiliate": "npm run dev --workspace=apps/affiliate-portal",
+    "dev:broker": "npm run dev --workspace=apps/broker-portal",
     "build:provider": "npm run build --workspace=apps/provider-portal",
     "build:patient": "npm run build --workspace=apps/patient-portal",
-    "build": "npm run build:provider && npm run build:patient",
+    "build:employer": "npm run build --workspace=apps/employer-portal",
+    "build:affiliate": "npm run build --workspace=apps/affiliate-portal",
+    "build:broker": "npm run build --workspace=apps/broker-portal",
+    "build": "npm run build:provider && npm run build:patient && npm run build:employer && npm run build:affiliate && npm run build:broker",
     "test": "npm run test --workspace=apps/provider-portal",
     "test:e2e": "npx playwright test",
     "test:all": "npm run test && npm run test:e2e",

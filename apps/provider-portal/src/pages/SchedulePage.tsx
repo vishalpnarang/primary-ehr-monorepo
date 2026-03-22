@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTodaysAppointments } from '@/hooks/useApi';
+import { useTodaysAppointments, useAppointmentTypes } from '@/hooks/useApi';
 import {
   ChevronLeft,
   ChevronRight,
@@ -715,7 +715,9 @@ const SchedulePage: React.FC = () => {
 
   // Fetch from real API; fall back to inline mock data if backend is unavailable
   const { data: apiAppointments } = useTodaysAppointments();
+  const { data: apiAppointmentTypes } = useAppointmentTypes();
   const allAppointments: ScheduleAppointment[] = (apiAppointments as ScheduleAppointment[] | undefined) ?? MOCK_APPOINTMENTS;
+  void apiAppointmentTypes; // consumed by Legend and NewAppointmentPage via shared query cache
 
   const filteredAppointments = useMemo(() => {
     return allAppointments.filter((a) => {

@@ -12,7 +12,7 @@ import {
   X,
 } from 'lucide-react';
 import { cn } from '@primus/ui/lib';
-import { useCreateAppointment } from '@/hooks/useApi';
+import { useCreateAppointment, useAppointmentTypes } from '@/hooks/useApi';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -433,6 +433,16 @@ const ConfirmationCard: React.FC<ConfirmationCardProps> = ({
 const NewAppointmentPage: React.FC = () => {
   const navigate = useNavigate();
   const createAppointment = useCreateAppointment();
+  const { data: apiApptTypes } = useAppointmentTypes();
+
+  // Use real appointment types from API if available; fall back to inline mock
+  const resolvedApptTypes = (apiApptTypes as { name: string; duration_minutes: number; color: string }[] | undefined)
+    ?.map((t) => ({
+      id: t.name.toLowerCase().replace(/\s+/g, '-') as ApptType,
+      label: t.name,
+      duration: `${t.duration_minutes} min`,
+      color: 'bg-blue-50 text-blue-700 border-blue-200',
+    })) ?? APPT_TYPES;
 
   const [selectedPatient, setSelectedPatient] = useState<PatientResult | null>(null);
   const [apptType, setApptType]               = useState<ApptType | ''>('');
@@ -559,7 +569,7 @@ const NewAppointmentPage: React.FC = () => {
           {/* Appointment Type */}
           <SectionCard title="Appointment Type">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {APPT_TYPES.map((a) => (
+              {resolvedApptTypes.map((a) => (
                 <button
                   key={a.id}
                   onClick={() => setApptType(a.id)}

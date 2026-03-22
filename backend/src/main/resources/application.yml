@@ -67,3 +67,64 @@ logging:
     com.thinkitive.primus: DEBUG
     org.springframework.security: INFO
     org.springframework.web: INFO
+
+# =============================================================================
+# Primus EHR — Integration & Security Configuration
+# =============================================================================
+primus:
+
+  # ---------------------------------------------------------------------------
+  # Third-party integrations — all disabled by default.
+  # Enable per-environment via env vars or application-{profile}.yml overrides.
+  # ---------------------------------------------------------------------------
+  integrations:
+
+    stripe:
+      enabled: false
+      # STRIPE_API_KEY — secret key (sk_live_… / sk_test_…).  Never commit.
+      api-key: ${STRIPE_API_KEY:}
+      # STRIPE_WEBHOOK_SECRET — signing secret for webhook signature verification.
+      webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
+
+    firebase:
+      enabled: false
+      # FIREBASE_SERVICE_ACCOUNT_PATH — absolute path to the service account JSON.
+      service-account-path: ${FIREBASE_SERVICE_ACCOUNT_PATH:}
+
+    aws:
+      ses:
+        enabled: false
+        sender-email: ${SES_SENDER_EMAIL:noreply@primus-ehr.com}
+        configuration-set: ${SES_CONFIGURATION_SET:primus-email-tracking}
+      sns:
+        enabled: false
+        # ARN of the SNS topic used for appointment reminder dispatches.
+        appointment-topic: ${SNS_TOPIC_APPOINTMENT_REMINDERS:}
+        # ARN of the SNS topic used for general notification fan-out.
+        notification-topic: ${SNS_TOPIC_NOTIFICATION_DISPATCH:}
+      s3:
+        enabled: false
+        # S3 bucket name for patient document / attachment storage.
+        uploads-bucket: ${AWS_S3_UPLOADS_BUCKET:primus-uploads}
+
+  # ---------------------------------------------------------------------------
+  # Security hardening
+  # ---------------------------------------------------------------------------
+  security:
+
+    rate-limit:
+      # Maximum API requests per minute per authenticated user (or IP if unauthenticated).
+      requests-per-minute: 100
+      # Tighter limit for /api/v1/auth/** endpoints — prevents brute-force attacks.
+      auth-requests-per-minute: 5
+
+    cors:
+      # Comma-separated list of allowed CORS origins.
+      # Override in production: CORS_ALLOWED_ORIGINS=https://app.primus-ehr.com
+      allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:5176,http://localhost:5177}
+
+    encryption:
+      # Base64-encoded 32-byte AES-256 key for PHI field-level encryption at rest.
+      # Generate: openssl rand -base64 32
+      # In production, inject from AWS Secrets Manager — never commit this value.
+      key: ${ENCRYPTION_KEY:}

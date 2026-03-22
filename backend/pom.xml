@@ -24,6 +24,9 @@
         <liquibase.version>4.30.0</liquibase.version>
         <hibernate-types.version>2.21.1</hibernate-types.version>
         <resilience4j.version>2.2.0</resilience4j.version>
+        <aws-sdk.version>2.26.12</aws-sdk.version>
+        <stripe.version>25.3.0</stripe.version>
+        <firebase.version>9.3.0</firebase.version>
     </properties>
 
     <dependencyManagement>
@@ -32,6 +35,14 @@
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
                 <version>1.20.4</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- AWS SDK v2 BOM — manages all aws-sdk-java-v2 module versions -->
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${aws-sdk.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -126,6 +137,47 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
+        <!-- ================================================================== -->
+        <!-- Integration dependencies (all optional — conditional on properties) -->
+        <!-- ================================================================== -->
+
+        <!-- Stripe Java SDK — payment processing -->
+        <dependency>
+            <groupId>com.stripe</groupId>
+            <artifactId>stripe-java</artifactId>
+            <version>${stripe.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Firebase Admin SDK — push notifications (FCM) -->
+        <dependency>
+            <groupId>com.google.firebase</groupId>
+            <artifactId>firebase-admin</artifactId>
+            <version>${firebase.version}</version>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- AWS SDK v2 — SES (email) -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>ses</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- AWS SDK v2 — SNS (SMS / fan-out) -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sns</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- AWS SDK v2 — S3 (document storage) -->
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- Test -->

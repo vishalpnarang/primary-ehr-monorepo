@@ -1,0 +1,633 @@
+databaseChangeLog:
+
+  # ── 028 Comprehensive seed data for demo environment ─────────────────────────
+  # All INSERTs are idempotent via ON CONFLICT DO NOTHING.
+  # Tenant is resolved by subdomain = 'primusdemo' so this works regardless of
+  # what auto-generated id the BIGSERIAL assigned during provisioning.
+
+  - changeSet:
+      id: 028-seed-appointment-types
+      author: primus
+      comment: 5 standard appointment types for Primus Think demo tenant
+      changes:
+        - sql:
+            sql: |
+              DO $$
+              DECLARE
+                v_tenant_id BIGINT;
+              BEGIN
+                SELECT id INTO v_tenant_id FROM tenants WHERE subdomain = 'primusdemo';
+                IF v_tenant_id IS NULL THEN RETURN; END IF;
+
+                INSERT INTO appointment_types
+                  (tenant_id, name, duration_minutes, color, description, allow_online_booking, created_by, modified_by)
+                VALUES
+                  (v_tenant_id, 'New Patient',       60, '#3B82F6',
+                   'Initial visit for new patients — comprehensive history and physical', true,  'system', 'system'),
+                  (v_tenant_id, 'Follow-Up',         20, '#10B981',
+                   'Return visit for established patients — ongoing care and medication management', true,  'system', 'system'),
+                  (v_tenant_id, 'Annual Wellness',   45, '#14B8A6',
+                   'Annual wellness exam — preventive care, screenings, and HEDIS measures', true,  'system', 'system'),
+                  (v_tenant_id, 'Telehealth',        20, '#8B5CF6',
+                   'Virtual visit via video — follow-ups, prescription refills, minor concerns', true,  'system', 'system'),
+                  (v_tenant_id, 'Urgent',            30, '#EF4444',
+                   'Same-day urgent visit — acute illness, injury, or concerning symptoms', false, 'system', 'system')
+                ON CONFLICT ON CONSTRAINT uq_appointment_types_tenant_name DO NOTHING;
+              END $$;
+
+  - changeSet:
+      id: 028-seed-pharmacies
+      author: primus
+      comment: 5 pharmacies for Primus Think demo tenant
+      changes:
+        - sql:
+            sql: |
+              DO $$
+              DECLARE
+                v_tenant_id BIGINT;
+              BEGIN
+                SELECT id INTO v_tenant_id FROM tenants WHERE subdomain = 'primusdemo';
+                IF v_tenant_id IS NULL THEN RETURN; END IF;
+
+                INSERT INTO pharmacies
+                  (tenant_id, name, npi, ncpdp_id, phone, fax,
+                   address_line1, city, state, zip, is_24_hour, created_by, modified_by)
+                VALUES
+                  (v_tenant_id, 'CVS Pharmacy #4821',      '1376543210', '4821001',
+                   '(212) 555-1001', '(212) 555-1002',
+                   '1301 6th Ave',             'New York',  'NY', '10019', false, 'system', 'system'),
+                  (v_tenant_id, 'Walgreens #3345',         '1387654321', '3345001',
+                   '(212) 555-2001', '(212) 555-2002',
+                   '874 6th Ave',              'New York',  'NY', '10001', true,  'system', 'system'),
+                  (v_tenant_id, 'Rite Aid #0567',          '1398765432', '0567001',
+                   '(212) 555-3001', '(212) 555-3002',
+                   '210 Broadway',             'New York',  'NY', '10007', false, 'system', 'system'),
+                  (v_tenant_id, 'Costco Pharmacy #1142',   '1409876543', '1142001',
+                   '(212) 555-4001', '(212) 555-4002',
+                   '1 Costco Way',             'Brooklyn',  'NY', '11201', false, 'system', 'system'),
+                  (v_tenant_id, 'Walmart Pharmacy #2089',  '1410987654', '2089001',
+                   '(212) 555-5001', '(212) 555-5002',
+                   '40-24 College Point Blvd', 'Flushing',  'NY', '11354', false, 'system', 'system')
+                ON CONFLICT DO NOTHING;
+              END $$;
+
+  - changeSet:
+      id: 028-seed-macros
+      author: primus
+      comment: 3 smart-phrase macros for common documentation patterns
+      changes:
+        - sql:
+            sql: |
+              DO $$
+              DECLARE
+                v_tenant_id BIGINT;
+              BEGIN
+                SELECT id INTO v_tenant_id FROM tenants WHERE subdomain = 'primusdemo';
+                IF v_tenant_id IS NULL THEN RETURN; END IF;
+
+                INSERT INTO macros
+                  (tenant_id, name, abbreviation, expansion, category, is_shared, created_by, modified_by)
+                VALUES
+                  (v_tenant_id,
+                   'Hypertension Management',
+                   '.htn',
+                   'Patient has a history of hypertension, currently managed with [MEDICATION]. Blood pressure today is [BP]. Patient reports [SYMPTOMS]. Counseled on low-sodium diet, regular aerobic exercise, and medication adherence. Plan: [PLAN].',
+                   'chronic_disease', true, 'system', 'system'),
+                  (v_tenant_id,
+                   'Type 2 Diabetes Management',
+                   '.dm2',
+                   'Type 2 Diabetes Mellitus, HbA1c [VALUE]% (last checked [DATE]). Patient is [ADHERENT/NON-ADHERENT] with medications. Reports [SYMPTOMS]. SMBG: [READINGS]. Reviewed diet and physical activity. Plan: [PLAN]. Recheck HbA1c in [INTERVAL].',
+                   'chronic_disease', true, 'system', 'system'),
+                  (v_tenant_id,
+                   'Annual Wellness Visit',
+                   '.wellvisit',
+                   'Annual wellness visit. Patient appears [well/unwell] and is in [no/mild/moderate] distress. Reviewed preventive care measures including immunizations, cancer screenings, and cardiovascular risk. Social history and functional status reviewed. Advance directives discussed. Personalized health plan provided.',
+                   'wellness', true, 'system', 'system')
+                ON CONFLICT ON CONSTRAINT uq_macros_tenant_abbreviation DO NOTHING;
+              END $$;
+
+  - changeSet:
+      id: 028-seed-soap-note-templates
+      author: primus
+      comment: 2 SOAP note templates — H&P and Progress Note
+      changes:
+        - sql:
+            sql: |
+              DO $$
+              DECLARE
+                v_tenant_id BIGINT;
+              BEGIN
+                SELECT id INTO v_tenant_id FROM tenants WHERE subdomain = 'primusdemo';
+                IF v_tenant_id IS NULL THEN RETURN; END IF;
+
+                INSERT INTO soap_note_templates
+                  (tenant_id, name, category, subjective_template, objective_template,
+                   assessment_template, plan_template, is_default, created_by, modified_by)
+                VALUES
+                  (v_tenant_id,
+                   'History & Physical (H&P)',
+                   'H&P',
+                   'Chief Complaint: [CC]
+
+HPI: [PATIENT NAME] is a [AGE]-year-old [SEX] who presents for [REASON]. [History of present illness with onset, duration, character, associated symptoms, modifying factors, and relevant context.]
+
+Past Medical History: [PMH]
+Past Surgical History: [PSH]
+Medications: [MED LIST]
+Allergies: [ALLERGIES]
+Family History: [FH]
+Social History: [SH]
+Review of Systems: [ROS]',
+                   'Vital Signs: BP [BP], HR [HR], RR [RR], Temp [TEMP], O2 Sat [O2]%, Weight [WT] lbs, BMI [BMI]
+
+General: [Alert/oriented, in no acute distress]
+HEENT: [WNL/findings]
+Cardiovascular: [RRR, no murmurs/findings]
+Pulmonary: [CTAB/findings]
+Abdomen: [Soft, NT, ND/findings]
+Extremities: [No edema/findings]
+Neurological: [A&Ox3/findings]',
+                   '[ASSESSMENT — numbered problem list with ICD-10 codes]
+1. [Problem 1] — [ICD code]
+2. [Problem 2] — [ICD code]',
+                   '[PLAN — numbered to match assessment]
+1. [Plan for Problem 1]: [medications, orders, referrals, counseling]
+2. [Plan for Problem 2]: [medications, orders, referrals, counseling]
+
+Follow-up: [INTERVAL]
+Patient education provided: [TOPICS]
+Return precautions discussed.',
+                   true, 'system', 'system'),
+                  (v_tenant_id,
+                   'Progress Note (SOAP)',
+                   'SOAP',
+                   'Chief Complaint: [CC]
+
+S: Patient presents for [REASON]. [Brief HPI — interval history since last visit, symptom changes, medication tolerance, adherence.]',
+                   'O: Vitals: BP [BP], HR [HR], Temp [TEMP], O2 [O2]%, Wt [WT] lbs
+Exam: [Pertinent physical findings]',
+                   'A:
+1. [Primary diagnosis] — [ICD code] — [stable/improving/worsening]
+2. [Secondary diagnosis] — [ICD code]',
+                   'P:
+1. [Medication changes / refills]
+2. [Orders placed]
+3. [Referrals]
+4. [Patient education]
+
+Return in [INTERVAL] or sooner if [SYMPTOMS].',
+                   false, 'system', 'system')
+                ON CONFLICT DO NOTHING;
+              END $$;
+
+  - changeSet:
+      id: 028-seed-lab-order-sets
+      author: primus
+      comment: 3 common lab order sets — BMP, CBC, Lipid Panel
+      changes:
+        - sql:
+            sql: |
+              DO $$
+              DECLARE
+                v_tenant_id BIGINT;
+              BEGIN
+                SELECT id INTO v_tenant_id FROM tenants WHERE subdomain = 'primusdemo';
+                IF v_tenant_id IS NULL THEN RETURN; END IF;
+
+                INSERT INTO lab_order_sets
+                  (tenant_id, name, description, tests, default_icd_codes, is_active, created_by, modified_by)
+                VALUES
+                  (v_tenant_id,
+                   'Basic Metabolic Panel (BMP)',
+                   'Evaluates kidney function, electrolytes, blood sugar, and acid-base balance. Order for hypertension, diabetes, and CKD monitoring.',
+                   '[
+                     {"code": "80048", "name": "Basic Metabolic Panel", "loinc": "24320-4"},
+                     {"code": "82565", "name": "Creatinine", "loinc": "2160-0"},
+                     {"code": "82310", "name": "Calcium", "loinc": "17861-6"},
+                     {"code": "82947", "name": "Glucose", "loinc": "2345-7"},
+                     {"code": "84520", "name": "BUN", "loinc": "3094-0"},
+                     {"code": "84132", "name": "Potassium", "loinc": "2823-3"},
+                     {"code": "84295", "name": "Sodium", "loinc": "2951-2"}
+                   ]',
+                   '["E11.9", "I10", "N18.3"]',
+                   true, 'system', 'system'),
+                  (v_tenant_id,
+                   'Complete Blood Count (CBC)',
+                   'Evaluates red blood cells, white blood cells, and platelets. Order for anemia workup, infection screening, and routine wellness.',
+                   '[
+                     {"code": "85025", "name": "CBC with Differential", "loinc": "58410-2"},
+                     {"code": "85018", "name": "Hemoglobin", "loinc": "718-7"},
+                     {"code": "85041", "name": "RBC Count", "loinc": "789-8"},
+                     {"code": "85048", "name": "WBC Count", "loinc": "6690-2"},
+                     {"code": "85049", "name": "Platelet Count", "loinc": "777-3"}
+                   ]',
+                   '["D50.9", "Z00.00"]',
+                   true, 'system', 'system'),
+                  (v_tenant_id,
+                   'Lipid Panel',
+                   'Measures cholesterol and triglycerides for cardiovascular risk assessment. Order for hyperlipidemia monitoring, diabetes, and preventive care.',
+                   '[
+                     {"code": "80061", "name": "Lipid Panel", "loinc": "57698-3"},
+                     {"code": "82465", "name": "Total Cholesterol", "loinc": "2093-3"},
+                     {"code": "83718", "name": "HDL Cholesterol", "loinc": "2085-9"},
+                     {"code": "83721", "name": "LDL Cholesterol (calc)", "loinc": "13457-7"},
+                     {"code": "84478", "name": "Triglycerides", "loinc": "2571-8"}
+                   ]',
+                   '["E78.5", "E11.9", "Z00.00"]',
+                   true, 'system', 'system')
+                ON CONFLICT ON CONSTRAINT uq_lab_order_sets_tenant_name DO NOTHING;
+              END $$;
+
+  - changeSet:
+      id: 028-seed-formulary
+      author: primus
+      comment: 5 common primary care formulary drugs
+      changes:
+        - sql:
+            sql: |
+              DO $$
+              DECLARE
+                v_tenant_id BIGINT;
+              BEGIN
+                SELECT id INTO v_tenant_id FROM tenants WHERE subdomain = 'primusdemo';
+                IF v_tenant_id IS NULL THEN RETURN; END IF;
+
+                INSERT INTO formulary
+                  (tenant_id, drug_name, generic_name, ndc, rxnorm_code,
+                   strength, form, route, drug_class, schedule,
+                   requires_pa, tier, cost, is_active, created_by, modified_by)
+                VALUES
+                  (v_tenant_id,
+                   'Metformin HCl', 'metformin', '00378-2202-05', '861007',
+                   '1000 mg', 'Tablet', 'Oral', 'Biguanide Antidiabetic', NULL,
+                   false, 1, 4.00, true, 'system', 'system'),
+                  (v_tenant_id,
+                   'Lisinopril', 'lisinopril', '00116-2094-01', '29046',
+                   '20 mg', 'Tablet', 'Oral', 'ACE Inhibitor', NULL,
+                   false, 1, 5.00, true, 'system', 'system'),
+                  (v_tenant_id,
+                   'Atorvastatin Calcium', 'atorvastatin', '00069-0156-68', '83367',
+                   '40 mg', 'Tablet', 'Oral', 'HMG-CoA Reductase Inhibitor (Statin)', NULL,
+                   false, 1, 12.00, true, 'system', 'system'),
+                  (v_tenant_id,
+                   'Amlodipine Besylate', 'amlodipine', '69097-153-12', '17767',
+                   '5 mg', 'Tablet', 'Oral', 'Calcium Channel Blocker', NULL,
+                   false, 1, 6.00, true, 'system', 'system'),
+                  (v_tenant_id,
+                   'Omeprazole', 'omeprazole', '00093-3270-01', '7646',
+                   '20 mg', 'Capsule, Delayed Release', 'Oral', 'Proton Pump Inhibitor', NULL,
+                   false, 1, 8.00, true, 'system', 'system')
+                ON CONFLICT DO NOTHING;
+              END $$;
+
+  - changeSet:
+      id: 028-seed-membership-plans
+      author: primus
+      comment: 2 Direct Primary Care membership plans
+      changes:
+        - sql:
+            sql: |
+              DO $$
+              DECLARE
+                v_tenant_id BIGINT;
+              BEGIN
+                SELECT id INTO v_tenant_id FROM tenants WHERE subdomain = 'primusdemo';
+                IF v_tenant_id IS NULL THEN RETURN; END IF;
+
+                INSERT INTO membership_plans
+                  (tenant_id, name, description, price_monthly, price_annual,
+                   features, max_visits_per_year, includes_telehealth,
+                   is_active, created_by, modified_by)
+                VALUES
+                  (v_tenant_id,
+                   'Basic',
+                   'Essential primary care membership — unlimited office visits, same-day appointments, and secure messaging with your care team.',
+                   99.00, 999.00,
+                   '["Unlimited office visits", "Same-day appointments", "Secure patient messaging", "Annual wellness exam", "Basic lab panel included"]',
+                   NULL, false, true, 'system', 'system'),
+                  (v_tenant_id,
+                   'Premium',
+                   'Comprehensive care membership — everything in Basic plus telehealth, specialist care coordination, and advanced preventive care.',
+                   199.00, 1999.00,
+                   '["Everything in Basic", "Unlimited telehealth visits", "Specialist care coordination", "Advanced preventive screenings", "Home visit option", "24/7 provider hotline", "Chronic disease management program"]',
+                   NULL, true, true, 'system', 'system')
+                ON CONFLICT DO NOTHING;
+              END $$;
+
+  - changeSet:
+      id: 028-seed-questionnaire-definitions
+      author: primus
+      comment: 3 validated clinical questionnaires — PHQ-9, GAD-7, AUDIT
+      changes:
+        - sql:
+            sql: |
+              DO $$
+              DECLARE
+                v_tenant_id BIGINT;
+              BEGIN
+                SELECT id INTO v_tenant_id FROM tenants WHERE subdomain = 'primusdemo';
+                IF v_tenant_id IS NULL THEN RETURN; END IF;
+
+                INSERT INTO questionnaire_definitions
+                  (tenant_id, name, description, category, questions, scoring_logic,
+                   is_published, created_by, modified_by)
+                VALUES
+                  (v_tenant_id,
+                   'PHQ-9 Depression Scale',
+                   'Patient Health Questionnaire-9 — validated 9-item depression screening tool. Score 0-27. Used for depression screening and monitoring.',
+                   'mental_health',
+                   '[
+                     {"id": 1, "text": "Little interest or pleasure in doing things?", "type": "scale", "options": ["Not at all (0)", "Several days (1)", "More than half the days (2)", "Nearly every day (3)"]},
+                     {"id": 2, "text": "Feeling down, depressed, or hopeless?", "type": "scale", "options": ["Not at all (0)", "Several days (1)", "More than half the days (2)", "Nearly every day (3)"]},
+                     {"id": 3, "text": "Trouble falling or staying asleep, or sleeping too much?", "type": "scale", "options": ["Not at all (0)", "Several days (1)", "More than half the days (2)", "Nearly every day (3)"]},
+                     {"id": 4, "text": "Feeling tired or having little energy?", "type": "scale", "options": ["Not at all (0)", "Several days (1)", "More than half the days (2)", "Nearly every day (3)"]},
+                     {"id": 5, "text": "Poor appetite or overeating?", "type": "scale", "options": ["Not at all (0)", "Several days (1)", "More than half the days (2)", "Nearly every day (3)"]},
+                     {"id": 6, "text": "Feeling bad about yourself — or that you are a failure or have let yourself or your family down?", "type": "scale", "options": ["Not at all (0)", "Several days (1)", "More than half the days (2)", "Nearly every day (3)"]},
+                     {"id": 7, "text": "Trouble concentrating on things, such as reading the newspaper or watching television?", "type": "scale", "options": ["Not at all (0)", "Several days (1)", "More than half the days (2)", "Nearly every day (3)"]},
+                     {"id": 8, "text": "Moving or speaking so slowly that other people could have noticed? Or so fidgety or restless that you have been moving a lot more than usual?", "type": "scale", "options": ["Not at all (0)", "Several days (1)", "More than half the days (2)", "Nearly every day (3)"]},
+                     {"id": 9, "text": "Thoughts that you would be better off dead, or thoughts of hurting yourself in some way?", "type": "scale", "options": ["Not at all (0)", "Several days (1)", "More than half the days (2)", "Nearly every day (3)"]}
+                   ]',
+                   '{"ranges": [{"min": 0, "max": 4, "label": "Minimal depression"}, {"min": 5, "max": 9, "label": "Mild depression"}, {"min": 10, "max": 14, "label": "Moderate depression"}, {"min": 15, "max": 19, "label": "Moderately severe depression"}, {"min": 20, "max": 27, "label": "Severe depression"}]}',
+                   true, 'system', 'system'),
+                  (v_tenant_id,
+                   'GAD-7 Anxiety Scale',
+                   'Generalized Anxiety Disorder 7-item scale — validated screening tool for generalized anxiety disorder. Score 0-21.',
+                   'mental_health',
+                   '[
+                     {"id": 1, "text": "Feeling nervous, anxious, or on edge?", "type": "scale", "options": ["Not at all (0)", "Several days (1)", "More than half the days (2)", "Nearly every day (3)"]},
+                     {"id": 2, "text": "Not being able to stop or control worrying?", "type": "scale", "options": ["Not at all (0)", "Several days (1)", "More than half the days (2)", "Nearly every day (3)"]},
+                     {"id": 3, "text": "Worrying too much about different things?", "type": "scale", "options": ["Not at all (0)", "Several days (1)", "More than half the days (2)", "Nearly every day (3)"]},
+                     {"id": 4, "text": "Trouble relaxing?", "type": "scale", "options": ["Not at all (0)", "Several days (1)", "More than half the days (2)", "Nearly every day (3)"]},
+                     {"id": 5, "text": "Being so restless that it is hard to sit still?", "type": "scale", "options": ["Not at all (0)", "Several days (1)", "More than half the days (2)", "Nearly every day (3)"]},
+                     {"id": 6, "text": "Becoming easily annoyed or irritable?", "type": "scale", "options": ["Not at all (0)", "Several days (1)", "More than half the days (2)", "Nearly every day (3)"]},
+                     {"id": 7, "text": "Feeling afraid as if something awful might happen?", "type": "scale", "options": ["Not at all (0)", "Several days (1)", "More than half the days (2)", "Nearly every day (3)"]}
+                   ]',
+                   '{"ranges": [{"min": 0, "max": 4, "label": "Minimal anxiety"}, {"min": 5, "max": 9, "label": "Mild anxiety"}, {"min": 10, "max": 14, "label": "Moderate anxiety"}, {"min": 15, "max": 21, "label": "Severe anxiety"}]}',
+                   true, 'system', 'system'),
+                  (v_tenant_id,
+                   'AUDIT Alcohol Screening',
+                   'Alcohol Use Disorders Identification Test — 10-item WHO-validated tool for alcohol use disorder screening. Score 0-40.',
+                   'substance_use',
+                   '[
+                     {"id": 1, "text": "How often do you have a drink containing alcohol?", "type": "choice", "options": ["Never (0)", "Monthly or less (1)", "2-4 times a month (2)", "2-3 times a week (3)", "4 or more times a week (4)"]},
+                     {"id": 2, "text": "How many drinks containing alcohol do you have on a typical day when you are drinking?", "type": "choice", "options": ["1-2 (0)", "3-4 (1)", "5-6 (2)", "7-9 (3)", "10 or more (4)"]},
+                     {"id": 3, "text": "How often do you have six or more drinks on one occasion?", "type": "choice", "options": ["Never (0)", "Less than monthly (1)", "Monthly (2)", "Weekly (3)", "Daily or almost daily (4)"]},
+                     {"id": 4, "text": "How often during the last year have you found that you were not able to stop drinking once you had started?", "type": "choice", "options": ["Never (0)", "Less than monthly (1)", "Monthly (2)", "Weekly (3)", "Daily or almost daily (4)"]},
+                     {"id": 5, "text": "How often during the last year have you failed to do what was normally expected from you because of drinking?", "type": "choice", "options": ["Never (0)", "Less than monthly (1)", "Monthly (2)", "Weekly (3)", "Daily or almost daily (4)"]},
+                     {"id": 6, "text": "How often during the last year have you needed a first drink in the morning to get yourself going after a heavy drinking session?", "type": "choice", "options": ["Never (0)", "Less than monthly (1)", "Monthly (2)", "Weekly (3)", "Daily or almost daily (4)"]},
+                     {"id": 7, "text": "How often during the last year have you had a feeling of guilt or remorse after drinking?", "type": "choice", "options": ["Never (0)", "Less than monthly (1)", "Monthly (2)", "Weekly (3)", "Daily or almost daily (4)"]},
+                     {"id": 8, "text": "How often during the last year have you been unable to remember what happened the night before because you had been drinking?", "type": "choice", "options": ["Never (0)", "Less than monthly (1)", "Monthly (2)", "Weekly (3)", "Daily or almost daily (4)"]},
+                     {"id": 9, "text": "Have you or someone else been injured as a result of your drinking?", "type": "choice", "options": ["No (0)", "Yes, but not in the last year (2)", "Yes, during the last year (4)"]},
+                     {"id": 10, "text": "Has a relative or friend, or a doctor or other health worker, been concerned about your drinking or suggested you cut down?", "type": "choice", "options": ["No (0)", "Yes, but not in the last year (2)", "Yes, during the last year (4)"]}
+                   ]',
+                   '{"ranges": [{"min": 0, "max": 7, "label": "Low risk"}, {"min": 8, "max": 15, "label": "Hazardous drinking"}, {"min": 16, "max": 19, "label": "Harmful drinking"}, {"min": 20, "max": 40, "label": "Possible alcohol dependence"}]}',
+                   true, 'system', 'system')
+                ON CONFLICT DO NOTHING;
+              END $$;
+
+  - changeSet:
+      id: 028-seed-email-templates
+      author: primus
+      comment: 2 patient-facing email templates — appointment reminder and lab results
+      changes:
+        - sql:
+            sql: |
+              DO $$
+              DECLARE
+                v_tenant_id BIGINT;
+              BEGIN
+                SELECT id INTO v_tenant_id FROM tenants WHERE subdomain = 'primusdemo';
+                IF v_tenant_id IS NULL THEN RETURN; END IF;
+
+                INSERT INTO email_templates
+                  (tenant_id, name, subject_template, body_template, category, created_by, modified_by)
+                VALUES
+                  (v_tenant_id,
+                   'Appointment Reminder',
+                   'Appointment Reminder — {{appointmentDate}} at {{clinicName}}',
+                   'Dear {{patientFirstName}},
+
+This is a friendly reminder that you have an upcoming appointment scheduled with {{providerName}} at {{clinicName}}.
+
+Appointment Details:
+  Date:     {{appointmentDate}}
+  Time:     {{appointmentTime}}
+  Type:     {{appointmentType}}
+  Location: {{locationName}}
+             {{locationAddress}}
+
+To confirm, cancel, or reschedule your appointment, please reply to this email or call us at {{clinicPhone}}.
+
+If this is a telehealth appointment, your video link will be sent 15 minutes before your scheduled time.
+
+Please arrive 10 minutes early to complete any paperwork if this is your first visit.
+
+Thank you for choosing {{clinicName}}. We look forward to seeing you.
+
+Warm regards,
+{{clinicName}} Care Team
+{{clinicPhone}} | {{clinicEmail}}',
+                   'scheduling', 'system', 'system'),
+                  (v_tenant_id,
+                   'Lab Results Available',
+                   'Your Lab Results Are Ready — {{clinicName}} Patient Portal',
+                   'Dear {{patientFirstName}},
+
+Your recent lab results are now available in your patient portal.
+
+Lab Order Details:
+  Ordered By: {{providerName}}
+  Order Date: {{orderDate}}
+  Results Date: {{resultsDate}}
+
+To view your results, please log in to the patient portal at {{portalUrl}}.
+
+If you have any questions about your results, please send a secure message to your care team through the portal or call us at {{clinicPhone}} to schedule a follow-up appointment.
+
+IMPORTANT: Do not reply to this email. For clinical questions, please use the secure messaging feature in your patient portal or call our office directly.
+
+Thank you for trusting {{clinicName}} with your care.
+
+Warm regards,
+{{clinicName}} Care Team
+{{clinicPhone}} | {{clinicEmail}}',
+                   'clinical', 'system', 'system')
+                ON CONFLICT ON CONSTRAINT uq_email_templates_tenant_name DO NOTHING;
+              END $$;
+
+  - changeSet:
+      id: 028-seed-patient-family-history
+      author: primus
+      comment: Family history for PAT-10001 (Sarah Johnson) and PAT-10002 (Marcus Rivera)
+      changes:
+        - sql:
+            sql: |
+              DO $$
+              DECLARE
+                v_tenant_id BIGINT;
+                v_pat1_id   BIGINT;
+                v_pat2_id   BIGINT;
+              BEGIN
+                SELECT id INTO v_tenant_id FROM tenants WHERE subdomain = 'primusdemo';
+                IF v_tenant_id IS NULL THEN RETURN; END IF;
+
+                SELECT id INTO v_pat1_id FROM patients WHERE mrn = 'PAT-10001' AND tenant_id = v_tenant_id;
+                SELECT id INTO v_pat2_id FROM patients WHERE mrn = 'PAT-10002' AND tenant_id = v_tenant_id;
+
+                -- Sarah Johnson family history
+                IF v_pat1_id IS NOT NULL THEN
+                  INSERT INTO family_history
+                    (tenant_id, patient_id, relationship, condition, icd10_code, onset_age, deceased, notes, created_by, modified_by)
+                  VALUES
+                    (v_tenant_id, v_pat1_id, 'Father',          'Hypertension',           'I10',    45, false, 'Diagnosed at age 45, managed with medication', 'system', 'system'),
+                    (v_tenant_id, v_pat1_id, 'Mother',          'Type 2 Diabetes',        'E11.9',  52, false, 'Diet controlled, no insulin', 'system', 'system'),
+                    (v_tenant_id, v_pat1_id, 'Maternal Grandmother', 'Breast Cancer',     'C50.9',  63, true,  'Deceased age 71, post-mastectomy', 'system', 'system'),
+                    (v_tenant_id, v_pat1_id, 'Brother',         'Asthma',                 'J45.909',12, false, 'Mild intermittent, uses rescue inhaler PRN', 'system', 'system'),
+                    (v_tenant_id, v_pat1_id, 'Paternal Grandfather', 'Coronary Artery Disease', 'I25.10', 58, true, 'CABG x3 at age 62, deceased at 74', 'system', 'system')
+                  ON CONFLICT DO NOTHING;
+                END IF;
+
+                -- Marcus Rivera family history
+                IF v_pat2_id IS NOT NULL THEN
+                  INSERT INTO family_history
+                    (tenant_id, patient_id, relationship, condition, icd10_code, onset_age, deceased, notes, created_by, modified_by)
+                  VALUES
+                    (v_tenant_id, v_pat2_id, 'Father',  'COPD',                  'J44.9',  60, true,  'Heavy smoker, deceased at 68', 'system', 'system'),
+                    (v_tenant_id, v_pat2_id, 'Mother',  'Hypertension',          'I10',    50, false, 'Well controlled on Lisinopril', 'system', 'system'),
+                    (v_tenant_id, v_pat2_id, 'Brother', 'Lung Cancer',           'C34.90', 55, false, 'Stage IIIA, currently in treatment', 'system', 'system')
+                  ON CONFLICT DO NOTHING;
+                END IF;
+              END $$;
+
+  - changeSet:
+      id: 028-seed-patient-social-history
+      author: primus
+      comment: Social history for PAT-10001 (Sarah Johnson) and PAT-10002 (Marcus Rivera)
+      changes:
+        - sql:
+            sql: |
+              DO $$
+              DECLARE
+                v_tenant_id BIGINT;
+                v_pat1_id   BIGINT;
+                v_pat2_id   BIGINT;
+              BEGIN
+                SELECT id INTO v_tenant_id FROM tenants WHERE subdomain = 'primusdemo';
+                IF v_tenant_id IS NULL THEN RETURN; END IF;
+
+                SELECT id INTO v_pat1_id FROM patients WHERE mrn = 'PAT-10001' AND tenant_id = v_tenant_id;
+                SELECT id INTO v_pat2_id FROM patients WHERE mrn = 'PAT-10002' AND tenant_id = v_tenant_id;
+
+                -- Sarah Johnson
+                IF v_pat1_id IS NOT NULL THEN
+                  INSERT INTO social_history
+                    (tenant_id, patient_id, smoking_status, alcohol_use, drug_use,
+                     exercise_frequency, diet, occupation, education_level,
+                     marital_status, sexual_orientation, gender_identity,
+                     housing_status, notes, created_by, modified_by)
+                  VALUES
+                    (v_tenant_id, v_pat1_id,
+                     'Never',
+                     'Social — 1-2 drinks/week',
+                     'Denies',
+                     '3x/week — walking and yoga',
+                     'Balanced — attempting low-carb per diabetes management plan',
+                     'High School Teacher',
+                     'Master''s Degree',
+                     'Married',
+                     'Heterosexual',
+                     'Female',
+                     'Homeowner — stable',
+                     'Lives with spouse and two children. No occupational hazards. Non-smoker household.',
+                     'system', 'system')
+                  ON CONFLICT ON CONSTRAINT uq_social_history_patient_tenant DO NOTHING;
+                END IF;
+
+                -- Marcus Rivera
+                IF v_pat2_id IS NOT NULL THEN
+                  INSERT INTO social_history
+                    (tenant_id, patient_id, smoking_status, alcohol_use, drug_use,
+                     exercise_frequency, diet, occupation, education_level,
+                     marital_status, sexual_orientation, gender_identity,
+                     housing_status, notes, created_by, modified_by)
+                  VALUES
+                    (v_tenant_id, v_pat2_id,
+                     'Former — quit 2019 (30 pack-year history)',
+                     'Moderate — 5-7 drinks/week',
+                     'Denies',
+                     'Minimal — limited by dyspnea',
+                     'Standard American Diet — high sodium',
+                     'Retired Construction Worker',
+                     'High School Diploma',
+                     'Divorced',
+                     'Heterosexual',
+                     'Male',
+                     'Renter — stable',
+                     'Lives alone. Son visits weekly. Occupational asbestos exposure possible (construction). Receiving SSDI.',
+                     'system', 'system')
+                  ON CONFLICT ON CONSTRAINT uq_social_history_patient_tenant DO NOTHING;
+                END IF;
+              END $$;
+
+  - changeSet:
+      id: 028-seed-patient-surgical-history
+      author: primus
+      comment: Surgical history for PAT-10001 (Sarah Johnson) and PAT-10002 (Marcus Rivera)
+      changes:
+        - sql:
+            sql: |
+              DO $$
+              DECLARE
+                v_tenant_id BIGINT;
+                v_pat1_id   BIGINT;
+                v_pat2_id   BIGINT;
+              BEGIN
+                SELECT id INTO v_tenant_id FROM tenants WHERE subdomain = 'primusdemo';
+                IF v_tenant_id IS NULL THEN RETURN; END IF;
+
+                SELECT id INTO v_pat1_id FROM patients WHERE mrn = 'PAT-10001' AND tenant_id = v_tenant_id;
+                SELECT id INTO v_pat2_id FROM patients WHERE mrn = 'PAT-10002' AND tenant_id = v_tenant_id;
+
+                -- Sarah Johnson surgical history
+                IF v_pat1_id IS NOT NULL THEN
+                  INSERT INTO past_surgical_history
+                    (tenant_id, patient_id, procedure_name, procedure_date, cpt_code,
+                     surgeon, facility, notes, created_by, modified_by)
+                  VALUES
+                    (v_tenant_id, v_pat1_id,
+                     'Cesarean Section', '2015-06-14', '59510',
+                     'Dr. Andrea Romano', 'NYU Langone Medical Center',
+                     'Primary C-section for failure to progress. Uncomplicated. Live born female infant.',
+                     'system', 'system'),
+                    (v_tenant_id, v_pat1_id,
+                     'Appendectomy', '2008-03-22', '44950',
+                     'Dr. Marcus Webb', 'NewYork-Presbyterian Hospital',
+                     'Laparoscopic appendectomy for acute appendicitis. No perforation. Uncomplicated recovery.',
+                     'system', 'system'),
+                    (v_tenant_id, v_pat1_id,
+                     'Tonsillectomy', '1995-07-01', '42826',
+                     'Unknown (childhood)', 'Unknown (childhood)',
+                     'Tonsillectomy in childhood for recurrent tonsillitis. No complications.',
+                     'system', 'system')
+                  ON CONFLICT DO NOTHING;
+                END IF;
+
+                -- Marcus Rivera surgical history
+                IF v_pat2_id IS NOT NULL THEN
+                  INSERT INTO past_surgical_history
+                    (tenant_id, patient_id, procedure_name, procedure_date, cpt_code,
+                     surgeon, facility, notes, created_by, modified_by)
+                  VALUES
+                    (v_tenant_id, v_pat2_id,
+                     'Right Knee Arthroscopy', '2012-09-10', '29881',
+                     'Dr. Steven Park', 'Hospital for Special Surgery',
+                     'Arthroscopic partial medial meniscectomy. Work-related injury. Full recovery.',
+                     'system', 'system'),
+                    (v_tenant_id, v_pat2_id,
+                     'Inguinal Hernia Repair', '2018-04-03', '49505',
+                     'Dr. Carlos Mendez', 'Montefiore Medical Center',
+                     'Laparoscopic right inguinal hernia repair with mesh. Uncomplicated.',
+                     'system', 'system')
+                  ON CONFLICT DO NOTHING;
+                END IF;
+              END $$;

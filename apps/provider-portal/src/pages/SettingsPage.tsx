@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useOrganization, useLocations, useUsers } from '@/hooks/useApi';
+import { useOrganization, useLocations, useUsers, useRbacRoles, useRbacFeatures, useAppointmentTypes } from '@/hooks/useApi';
 import {
   Building2,
   MapPin,
@@ -489,7 +489,12 @@ const AuditLogView: React.FC = () => (
 );
 
 const FeatureFlagsView: React.FC = () => {
+  const { data: apiFeatures } = useRbacFeatures();
+  // If API returns feature flags, map them; otherwise fall back to mock
+  const apiMappedFlags = (apiFeatures as { key?: string; name: string; enabled: boolean; env?: string }[] | undefined)
+    ?.map((f) => ({ key: f.key ?? f.name, label: f.name, enabled: f.enabled, env: f.env ?? 'all' }));
   const [flags, setFlags] = useState(MOCK_FLAGS);
+  const resolvedFlags = apiMappedFlags ?? flags;
   const toggle = (key: string) =>
     setFlags((prev) => prev.map((f) => (f.key === key ? { ...f, enabled: !f.enabled } : f)));
 
@@ -502,7 +507,7 @@ const FeatureFlagsView: React.FC = () => {
         </p>
       </div>
       <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden divide-y divide-gray-100">
-        {flags.map((flag) => (
+        {resolvedFlags.map((flag) => (
           <div key={flag.key} className="flex items-center justify-between px-5 py-4">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
@@ -566,11 +571,24 @@ const ROLES_DATA = [
 const MODULES = ['Dashboard', 'Scheduling', 'Patients', 'Inbox', 'Billing', 'Reports', 'Settings'] as const;
 
 const RolesView: React.FC = () => {
+  const { data: apiRoles } = useRbacRoles();
+  // Map API roles to the shape used by the table; fall back to mock
+  const resolvedRoles = (apiRoles as { name: string; description?: string; userCount?: number }[] | undefined)
+    ?.map((r) => ({
+      name: r.name,
+      description: r.description ?? '',
+      users: r.userCount ?? 0,
+      perms: ROLES_DATA.find((d) => d.name === r.name)?.perms ?? {
+        Dashboard: true, Scheduling: false, Patients: false,
+        Inbox: false, Billing: false, Reports: false, Settings: false,
+      },
+    })) ?? ROLES_DATA;
+
   const [expanded, setExpanded] = useState<string | null>(null);
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-xs text-gray-500">{ROLES_DATA.length} roles configured</p>
+        <p className="text-xs text-gray-500">{resolvedRoles.length} roles configured</p>
         <button className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
           <Plus className="w-4 h-4" />
           New Role
@@ -587,7 +605,7 @@ const RolesView: React.FC = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {ROLES_DATA.map((role) => (
+            {resolvedRoles.map((role) => (
               <React.Fragment key={role.name}>
                 <tr
                   className="hover:bg-slate-50 transition-colors cursor-pointer"
@@ -1020,10 +1038,13 @@ const MOCK_APT_TYPES = [
   { id: 'AT-006', name: 'Urgent Care / Same-day',   duration: 30, color: '#EF4444', selfSchedule: false, status: 'inactive' },
 ];
 
-const AppointmentTypesView: React.FC = () => (
+const AppointmentTypesView: React.FC = () => {
+  const { data: apiApptTypes } = useAppointmentTypes();
+  const resolvedApptTypes = (apiApptTypes as typeof MOCK_APT_TYPES | undefined) ?? MOCK_APT_TYPES;
+  return (
   <div className="space-y-4">
     <div className="flex items-center justify-between">
-      <p className="text-xs text-gray-500">{MOCK_APT_TYPES.length} appointment types</p>
+      <p className="text-xs text-gray-500">{resolvedApptTypes.length} appointment types</p>
       <button className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
         <Plus className="w-4 h-4" />
         Add Type
@@ -1042,7 +1063,7 @@ const AppointmentTypesView: React.FC = () => (
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-50">
-          {MOCK_APT_TYPES.map((t) => (
+          {resolvedApptTypes.map((t) => (
             <tr key={t.id} className="hover:bg-slate-50 transition-colors">
               <td className="px-5 py-3 font-medium text-gray-900">{t.name}</td>
               <td className="px-4 py-3 text-center text-sm text-gray-700">{t.duration} min</td>
@@ -1077,7 +1098,8 @@ const AppointmentTypesView: React.FC = () => (
       </table>
     </div>
   </div>
-);
+  );
+};
 
 // ─── Platform View (Super Admin) ──────────────────────────────────────────────
 
