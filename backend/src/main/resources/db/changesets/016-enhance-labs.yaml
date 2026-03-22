@@ -1,0 +1,490 @@
+databaseChangeLog:
+  - changeSet:
+      id: 016-create-lab-order-sets
+      author: primus
+      comment: Lab order sets — groupings of commonly ordered tests for quick ordering
+      changes:
+        - createTable:
+            tableName: lab_order_sets
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_lab_order_sets_tenant
+                    references: tenants(id)
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: tests
+                  type: JSONB
+                  constraints:
+                    nullable: false
+              - column:
+                  name: default_icd_codes
+                  type: JSONB
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 016-lab-order-sets-unique-constraint
+      author: primus
+      comment: Order set name must be unique within a tenant
+      changes:
+        - addUniqueConstraint:
+            tableName: lab_order_sets
+            columnNames: tenant_id, name
+            constraintName: uq_lab_order_sets_tenant_name
+
+  - changeSet:
+      id: 016-create-lab-catalog
+      author: primus
+      comment: Lab catalog — master list of orderable tests per tenant
+      changes:
+        - createTable:
+            tableName: lab_catalog
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_lab_catalog_tenant
+                    references: tenants(id)
+              - column:
+                  name: test_code
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: test_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: specimen_type
+                  type: VARCHAR(100)
+              - column:
+                  name: container
+                  type: VARCHAR(100)
+              - column:
+                  name: volume
+                  type: VARCHAR(50)
+              - column:
+                  name: stability
+                  type: VARCHAR(100)
+              - column:
+                  name: cpt_code
+                  type: VARCHAR(20)
+              - column:
+                  name: loinc_code
+                  type: VARCHAR(20)
+              - column:
+                  name: department
+                  type: VARCHAR(100)
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 016-lab-catalog-index
+      author: primus
+      comment: Index on test_code for fast catalog lookups
+      changes:
+        - createIndex:
+            tableName: lab_catalog
+            indexName: idx_lab_catalog_tenant_test_code
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: test_code
+
+  - changeSet:
+      id: 016-create-aoe-questions
+      author: primus
+      comment: Ask-at-order-entry questions linked to catalog items
+      changes:
+        - createTable:
+            tableName: aoe_questions
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_aoe_questions_tenant
+                    references: tenants(id)
+              - column:
+                  name: lab_catalog_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_aoe_questions_catalog
+                    references: lab_catalog(id)
+              - column:
+                  name: question
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: answer_type
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: options
+                  type: JSONB
+              - column:
+                  name: required
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: display_order
+                  type: INTEGER
+                  defaultValueNumeric: 0
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 016-create-aoe-answers
+      author: primus
+      comment: AOE answers captured at time of lab ordering
+      changes:
+        - createTable:
+            tableName: aoe_answers
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_aoe_answers_tenant
+                    references: tenants(id)
+              - column:
+                  name: lab_order_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_aoe_answers_lab_order
+                    references: lab_orders(id)
+              - column:
+                  name: question_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_aoe_answers_question
+                    references: aoe_questions(id)
+              - column:
+                  name: answer
+                  type: TEXT
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 016-aoe-answers-index
+      author: primus
+      comment: Index for fast AOE answer lookup by lab order
+      changes:
+        - createIndex:
+            tableName: aoe_answers
+            indexName: idx_aoe_answers_lab_order_id
+            columns:
+              - column:
+                  name: lab_order_id
+
+  - changeSet:
+      id: 016-create-poc-tests
+      author: primus
+      comment: Point-of-care test definitions with result field schema
+      changes:
+        - createTable:
+            tableName: poc_tests
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_poc_tests_tenant
+                    references: tenants(id)
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category
+                  type: VARCHAR(100)
+              - column:
+                  name: result_fields
+                  type: JSONB
+                  constraints:
+                    nullable: false
+              - column:
+                  name: normal_ranges
+                  type: JSONB
+              - column:
+                  name: cpt_code
+                  type: VARCHAR(20)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 016-create-poc-results
+      author: primus
+      comment: Point-of-care test results recorded per patient encounter
+      changes:
+        - createTable:
+            tableName: poc_results
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_poc_results_tenant
+                    references: tenants(id)
+              - column:
+                  name: poc_test_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_poc_results_poc_test
+                    references: poc_tests(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_poc_results_patient
+                    references: patients(id)
+              - column:
+                  name: encounter_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_poc_results_encounter
+                    references: encounters(id)
+              - column:
+                  name: results
+                  type: JSONB
+                  constraints:
+                    nullable: false
+              - column:
+                  name: performed_by
+                  type: VARCHAR(255)
+              - column:
+                  name: performed_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 016-poc-results-index
+      author: primus
+      comment: Index for fast POC result lookup by patient
+      changes:
+        - createIndex:
+            tableName: poc_results
+            indexName: idx_poc_results_patient_id
+            columns:
+              - column:
+                  name: patient_id
+              - column:
+                  name: tenant_id

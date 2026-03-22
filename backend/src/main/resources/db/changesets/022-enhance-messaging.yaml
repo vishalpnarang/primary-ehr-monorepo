@@ -1,0 +1,287 @@
+databaseChangeLog:
+
+  # ── 1. Add columns to messages ───────────────────────────────────────────────
+  - changeSet:
+      id: 022-add-message-columns
+      author: primus
+      comment: Add urgent flag, scheduled_at, and message_type to messages table
+      changes:
+        - addColumn:
+            tableName: messages
+            columns:
+              - column:
+                  name: is_urgent
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: scheduled_at
+                  type: TIMESTAMP
+              - column:
+                  name: message_type
+                  type: VARCHAR(20)
+                  defaultValue: TEXT
+
+  # ── 2. Add columns to thread_participants ─────────────────────────────────────
+  - changeSet:
+      id: 022-add-thread-participant-columns
+      author: primus
+      comment: Add last_read_at and is_pinned to thread_participants table
+      changes:
+        - addColumn:
+            tableName: thread_participants
+            columns:
+              - column:
+                  name: last_read_at
+                  type: TIMESTAMP
+              - column:
+                  name: is_pinned
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  # ── 3. message_attachments ────────────────────────────────────────────────────
+  - changeSet:
+      id: 022-create-message-attachments
+      author: primus
+      comment: File attachments linked to individual messages
+      changes:
+        - createTable:
+            tableName: message_attachments
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: message_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_msg_attachments_message
+                    references: messages(id)
+              - column:
+                  name: file_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: file_url
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: file_size
+                  type: BIGINT
+              - column:
+                  name: content_type
+                  type: VARCHAR(100)
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_msg_attachments_tenant
+                    references: tenants(id)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 022-message-attachments-index
+      author: primus
+      comment: Index for attachment lookup by message
+      changes:
+        - createIndex:
+            tableName: message_attachments
+            indexName: idx_msg_attachments_message_id
+            columns:
+              - column:
+                  name: message_id
+
+  # ── 4. message_bookmarks ──────────────────────────────────────────────────────
+  - changeSet:
+      id: 022-create-message-bookmarks
+      author: primus
+      comment: User bookmarks on specific messages
+      changes:
+        - createTable:
+            tableName: message_bookmarks
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: message_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_msg_bookmarks_message
+                    references: messages(id)
+              - column:
+                  name: user_id
+                  type: VARCHAR(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_msg_bookmarks_tenant
+                    references: tenants(id)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 022-message-bookmarks-unique
+      author: primus
+      comment: Unique constraint — one bookmark per user per message
+      changes:
+        - addUniqueConstraint:
+            tableName: message_bookmarks
+            columnNames: message_id, user_id
+            constraintName: uq_msg_bookmark_message_user
+
+  # ── 5. message_read_receipts ──────────────────────────────────────────────────
+  - changeSet:
+      id: 022-create-message-read-receipts
+      author: primus
+      comment: Per-message per-user read receipts
+      changes:
+        - createTable:
+            tableName: message_read_receipts
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: message_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_msg_read_receipts_message
+                    references: messages(id)
+              - column:
+                  name: user_id
+                  type: VARCHAR(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: read_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_msg_read_receipts_tenant
+                    references: tenants(id)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 022-message-read-receipts-unique
+      author: primus
+      comment: Unique constraint — one read receipt per user per message
+      changes:
+        - addUniqueConstraint:
+            tableName: message_read_receipts
+            columnNames: message_id, user_id
+            constraintName: uq_msg_read_receipt_message_user
+
+  - changeSet:
+      id: 022-message-read-receipts-index
+      author: primus
+      comment: Index for read receipt lookup by message
+      changes:
+        - createIndex:
+            tableName: message_read_receipts
+            indexName: idx_msg_read_receipts_message_id
+            columns:
+              - column:
+                  name: message_id

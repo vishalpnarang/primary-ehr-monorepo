@@ -1,0 +1,283 @@
+databaseChangeLog:
+
+  # ── 1. employers ──────────────────────────────────────────────────────────────
+  - changeSet:
+      id: 026-create-employers
+      author: primus
+      comment: Employer organizations enrolled with the clinic for direct primary care
+      changes:
+        - createTable:
+            tableName: employers
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tax_id
+                  type: VARCHAR(20)
+              - column:
+                  name: contact_name
+                  type: VARCHAR(255)
+              - column:
+                  name: contact_email
+                  type: VARCHAR(255)
+              - column:
+                  name: contact_phone
+                  type: VARCHAR(20)
+              - column:
+                  name: address
+                  type: TEXT
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  defaultValue: ACTIVE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: employee_count
+                  type: INTEGER
+                  defaultValueNumeric: 0
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_employers_tenant
+                    references: tenants(id)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 026-employers-index
+      author: primus
+      comment: Index for employer lookup by tenant
+      changes:
+        - createIndex:
+            tableName: employers
+            indexName: idx_employers_tenant_id
+            columns:
+              - column:
+                  name: tenant_id
+
+  # ── 2. employer_employees ─────────────────────────────────────────────────────
+  - changeSet:
+      id: 026-create-employer-employees
+      author: primus
+      comment: Junction table linking patients to employer organizations
+      changes:
+        - createTable:
+            tableName: employer_employees
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: employer_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_emp_employees_employer
+                    references: employers(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_emp_employees_patient
+                    references: patients(id)
+              - column:
+                  name: employee_id
+                  type: VARCHAR(50)
+              - column:
+                  name: department
+                  type: VARCHAR(100)
+              - column:
+                  name: start_date
+                  type: DATE
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  defaultValue: ACTIVE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_emp_employees_tenant
+                    references: tenants(id)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 026-employer-employees-unique
+      author: primus
+      comment: One patient can only be linked once per employer
+      changes:
+        - addUniqueConstraint:
+            tableName: employer_employees
+            columnNames: employer_id, patient_id
+            constraintName: uq_employer_employees_employer_patient
+
+  - changeSet:
+      id: 026-employer-employees-index
+      author: primus
+      comment: Indexes for employee lookup by employer and patient
+      changes:
+        - createIndex:
+            tableName: employer_employees
+            indexName: idx_emp_employees_employer_id
+            columns:
+              - column:
+                  name: employer_id
+        - createIndex:
+            tableName: employer_employees
+            indexName: idx_emp_employees_patient_id
+            columns:
+              - column:
+                  name: patient_id
+
+  # ── 3. employer_plans ─────────────────────────────────────────────────────────
+  - changeSet:
+      id: 026-create-employer-plans
+      author: primus
+      comment: Membership plan subscriptions negotiated with employers, with discount rates
+      changes:
+        - createTable:
+            tableName: employer_plans
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: employer_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_employer_plans_employer
+                    references: employers(id)
+              - column:
+                  name: plan_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: discount_percent
+                  type: DECIMAL(5,2)
+                  defaultValueNumeric: 0
+              - column:
+                  name: effective_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_employer_plans_tenant
+                    references: tenants(id)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 026-employer-plans-index
+      author: primus
+      comment: Index for plan lookup by employer
+      changes:
+        - createIndex:
+            tableName: employer_plans
+            indexName: idx_employer_plans_employer_id
+            columns:
+              - column:
+                  name: employer_id

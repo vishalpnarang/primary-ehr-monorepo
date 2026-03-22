@@ -1,0 +1,191 @@
+databaseChangeLog:
+
+  # ── 1. dashboard_definitions ──────────────────────────────────────────────────
+  - changeSet:
+      id: 024-create-dashboard-definitions
+      author: primus
+      comment: Configurable dashboard widget definitions with JSONB query config
+      changes:
+        - createTable:
+            tableName: dashboard_definitions
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: category
+                  type: VARCHAR(50)
+              - column:
+                  name: query_config
+                  type: JSONB
+                  constraints:
+                    nullable: false
+              - column:
+                  name: chart_type
+                  type: VARCHAR(50)
+              - column:
+                  name: display_order
+                  type: INTEGER
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: roles_allowed
+                  type: JSONB
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_dashboard_defs_tenant
+                    references: tenants(id)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 024-dashboard-definitions-index
+      author: primus
+      comment: Index for dashboard lookup by tenant and category
+      changes:
+        - createIndex:
+            tableName: dashboard_definitions
+            indexName: idx_dashboard_defs_tenant_category
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: category
+
+  # ── 2. saved_reports ──────────────────────────────────────────────────────────
+  - changeSet:
+      id: 024-create-saved-reports
+      author: primus
+      comment: Saved ad-hoc reports with parameterized SQL and sharing controls
+      changes:
+        - createTable:
+            tableName: saved_reports
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: category
+                  type: VARCHAR(50)
+              - column:
+                  name: query_sql
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parameters
+                  type: JSONB
+              - column:
+                  name: created_by_user
+                  type: VARCHAR(36)
+              - column:
+                  name: is_shared
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_run_at
+                  type: TIMESTAMP
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_saved_reports_tenant
+                    references: tenants(id)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 024-saved-reports-index
+      author: primus
+      comment: Index for saved report lookup by tenant and creator
+      changes:
+        - createIndex:
+            tableName: saved_reports
+            indexName: idx_saved_reports_tenant_user
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: created_by_user

@@ -1,0 +1,375 @@
+databaseChangeLog:
+  - changeSet:
+      id: 018-create-formulary
+      author: primus
+      comment: Drug formulary — approved drug list per tenant with cost and tier info
+      changes:
+        - createTable:
+            tableName: formulary
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_formulary_tenant
+                    references: tenants(id)
+              - column:
+                  name: drug_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: generic_name
+                  type: VARCHAR(255)
+              - column:
+                  name: ndc
+                  type: VARCHAR(20)
+              - column:
+                  name: rxnorm_code
+                  type: VARCHAR(20)
+              - column:
+                  name: strength
+                  type: VARCHAR(100)
+              - column:
+                  name: form
+                  type: VARCHAR(50)
+              - column:
+                  name: route
+                  type: VARCHAR(50)
+              - column:
+                  name: drug_class
+                  type: VARCHAR(100)
+              - column:
+                  name: schedule
+                  type: VARCHAR(10)
+              - column:
+                  name: requires_pa
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tier
+                  type: INTEGER
+              - column:
+                  name: cost
+                  type: DECIMAL(10,2)
+              - column:
+                  name: is_active
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 018-formulary-index
+      author: primus
+      comment: Index for fast formulary lookup by drug name
+      changes:
+        - createIndex:
+            tableName: formulary
+            indexName: idx_formulary_tenant_drug_name
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: drug_name
+
+  - changeSet:
+      id: 018-create-drug-intolerances
+      author: primus
+      comment: Patient drug intolerances distinct from allergies — adverse reactions without immune response
+      changes:
+        - createTable:
+            tableName: drug_intolerances
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_drug_intolerances_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_drug_intolerances_patient
+                    references: patients(id)
+              - column:
+                  name: drug_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: rxnorm_code
+                  type: VARCHAR(20)
+              - column:
+                  name: reaction
+                  type: VARCHAR(500)
+              - column:
+                  name: severity
+                  type: VARCHAR(20)
+              - column:
+                  name: onset_date
+                  type: DATE
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 018-drug-intolerances-index
+      author: primus
+      comment: Index for fast drug intolerance lookup by patient
+      changes:
+        - createIndex:
+            tableName: drug_intolerances
+            indexName: idx_drug_intolerances_patient_tenant
+            columns:
+              - column:
+                  name: patient_id
+              - column:
+                  name: tenant_id
+
+  - changeSet:
+      id: 018-create-inventory-items
+      author: primus
+      comment: Clinic inventory items — supplies, medications, devices
+      changes:
+        - createTable:
+            tableName: inventory_items
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_inventory_items_tenant
+                    references: tenants(id)
+              - column:
+                  name: formulary_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_inventory_items_formulary
+                    references: formulary(id)
+              - column:
+                  name: item_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sku
+                  type: VARCHAR(50)
+              - column:
+                  name: category
+                  type: VARCHAR(100)
+              - column:
+                  name: quantity_on_hand
+                  type: INTEGER
+                  defaultValueNumeric: 0
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reorder_level
+                  type: INTEGER
+                  defaultValueNumeric: 10
+                  constraints:
+                    nullable: false
+              - column:
+                  name: unit_cost
+                  type: DECIMAL(10,2)
+              - column:
+                  name: location_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_inventory_items_location
+                    references: locations(id)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 018-inventory-items-index
+      author: primus
+      comment: Index for low-stock queries
+      changes:
+        - createIndex:
+            tableName: inventory_items
+            indexName: idx_inventory_items_tenant
+            columns:
+              - column:
+                  name: tenant_id
+
+  - changeSet:
+      id: 018-create-inventory-transactions
+      author: primus
+      comment: Inventory transaction log — receipts, dispenses, adjustments, transfers
+      changes:
+        - createTable:
+            tableName: inventory_transactions
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_inventory_transactions_tenant
+                    references: tenants(id)
+              - column:
+                  name: item_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_inventory_transactions_item
+                    references: inventory_items(id)
+              - column:
+                  name: transaction_type
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reference_number
+                  type: VARCHAR(100)
+              - column:
+                  name: notes
+                  type: TEXT
+              - column:
+                  name: performed_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+
+  - changeSet:
+      id: 018-inventory-transactions-index
+      author: primus
+      comment: Index for transaction lookup by item
+      changes:
+        - createIndex:
+            tableName: inventory_transactions
+            indexName: idx_inventory_transactions_item_id
+            columns:
+              - column:
+                  name: item_id
