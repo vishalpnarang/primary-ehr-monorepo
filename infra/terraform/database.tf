@@ -39,6 +39,9 @@ resource "aws_rds_cluster" "main" {
   master_username = "primusadmin"
   master_password = var.db_password
 
+  # Restore from snapshot if available (preserves customer test data)
+  snapshot_identifier = var.db_snapshot_identifier != "" ? var.db_snapshot_identifier : null
+
   # Network
   db_subnet_group_name   = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.rds.id]

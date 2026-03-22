@@ -38,6 +38,12 @@ variable "db_password" {
   default     = "PrimusDemo2026!"
 }
 
+variable "db_snapshot_identifier" {
+  description = "RDS cluster snapshot ID to restore from. Leave empty for fresh DB with seed data."
+  type        = string
+  default     = ""
+}
+
 variable "domain_name" {
   description = "Optional custom domain (e.g. demo.yourcompany.com). Leave empty to use ALB/CloudFront URLs."
   type        = string

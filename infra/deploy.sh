@@ -132,10 +132,29 @@ if [[ ! -f terraform.tfvars ]]; then
 fi
 
 terraform init -upgrade
-terraform apply \
-  -var="instance_name=${INSTANCE_NAME}" \
-  -var="aws_region=${AWS_REGION}" \
-  -auto-approve
+
+# Check for existing RDS snapshot (preserves customer test data from last session)
+SNAPSHOT_ID=""
+log "Checking for existing database snapshot..."
+LATEST_SNAPSHOT=$(aws rds describe-db-cluster-snapshots \
+  --query "DBClusterSnapshots[?contains(DBClusterSnapshotIdentifier, 'primus-demo-${INSTANCE_NAME}')].DBClusterSnapshotIdentifier | sort(@) | [-1:]" \
+  --output text 2>/dev/null || echo "None")
+
+if [[ -n "${LATEST_SNAPSHOT}" && "${LATEST_SNAPSHOT}" != "None" ]]; then
+  success "Found snapshot: ${LATEST_SNAPSHOT}"
+  log "Database will be restored from snapshot (customer data preserved)"
+  SNAPSHOT_ID="${LATEST_SNAPSHOT}"
+else
+  log "No snapshot found — will use fresh seed data"
+fi
+
+# Apply with or without snapshot
+TF_VARS="-var=instance_name=${INSTANCE_NAME} -var=aws_region=${AWS_REGION}"
+if [[ -n "${SNAPSHOT_ID}" ]]; then
+  TF_VARS="${TF_VARS} -var=db_snapshot_identifier=${SNAPSHOT_ID}"
+fi
+
+terraform apply ${TF_VARS} -auto-approve
 
 # Capture Terraform outputs
 APP_URL=$(terraform output -raw cloudfront_url)

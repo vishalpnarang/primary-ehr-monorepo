@@ -120,6 +120,22 @@ log "AWS account: ${AWS_ACCOUNT_ID}, region: ${AWS_REGION}"
 # Step 1: Empty S3 bucket before destroy (Terraform force_destroy handles it,
 # but pre-emptying avoids version marker issues and speeds up destroy)
 # ---------------------------------------------------------------------------
+# Check if user wants to save data first
+SNAPSHOT_EXISTS=$(aws rds describe-db-cluster-snapshots \
+  --query "DBClusterSnapshots[?contains(DBClusterSnapshotIdentifier, '${NAME_PREFIX}')].DBClusterSnapshotIdentifier" \
+  --output text 2>/dev/null || echo "")
+if [[ -z "${SNAPSHOT_EXISTS}" ]]; then
+  warn "No database snapshot found for ${INSTANCE_NAME}."
+  warn "Customer test data will be LOST. Run ./snapshot.sh ${INSTANCE_NAME} first to save."
+  if [[ "${CI:-}" != "true" ]]; then
+    read -p "Continue without snapshot? (yes/no): " SKIP_SNAP
+    if [[ "${SKIP_SNAP}" != "yes" ]]; then
+      echo "Run ./snapshot.sh ${INSTANCE_NAME} first, then retry."
+      exit 0
+    fi
+  fi
+fi
+
 log ""
 log "=== Step 1/3: Emptying S3 frontend bucket ==="
 
