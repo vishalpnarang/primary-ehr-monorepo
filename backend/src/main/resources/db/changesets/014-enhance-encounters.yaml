@@ -1,0 +1,424 @@
+databaseChangeLog:
+
+  # ── 1. encounter_diagnoses ────────────────────────────────────────────────────
+  - changeSet:
+      id: 014-create-encounter-diagnoses
+      author: primus
+      comment: Structured ICD-10 diagnosis rows per encounter (replaces inline assessment_plan approach)
+      changes:
+        - createTable:
+            tableName: encounter_diagnoses
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_enc_diagnoses_tenant
+                    references: tenants(id)
+              - column:
+                  name: encounter_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_enc_diagnoses_encounter
+                    references: encounters(id)
+              - column:
+                  name: icd10_code
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+              - column:
+                  name: is_primary
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sequence
+                  type: INTEGER
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 014-enc-diagnoses-unique-constraint
+      author: primus
+      comment: Same ICD-10 code cannot appear twice on one encounter
+      changes:
+        - addUniqueConstraint:
+            tableName: encounter_diagnoses
+            columnNames: encounter_id, icd10_code
+            constraintName: uq_enc_diagnosis_encounter_code
+
+  - changeSet:
+      id: 014-enc-diagnoses-indexes
+      author: primus
+      comment: Indexes for diagnosis lookup by encounter and tenant
+      changes:
+        - createIndex:
+            tableName: encounter_diagnoses
+            indexName: idx_enc_diagnoses_encounter_id
+            columns:
+              - column:
+                  name: encounter_id
+        - createIndex:
+            tableName: encounter_diagnoses
+            indexName: idx_enc_diagnoses_tenant_id
+            columns:
+              - column:
+                  name: tenant_id
+
+  # ── 2. encounter_procedures ───────────────────────────────────────────────────
+  - changeSet:
+      id: 014-create-encounter-procedures
+      author: primus
+      comment: CPT procedure codes billed against an encounter
+      changes:
+        - createTable:
+            tableName: encounter_procedures
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_enc_procedures_tenant
+                    references: tenants(id)
+              - column:
+                  name: encounter_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_enc_procedures_encounter
+                    references: encounters(id)
+              - column:
+                  name: cpt_code
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+              - column:
+                  name: modifier
+                  type: VARCHAR(10)
+              - column:
+                  name: units
+                  type: INTEGER
+                  defaultValueNumeric: 1
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 014-enc-procedures-indexes
+      author: primus
+      comment: Index for procedure lookup by encounter
+      changes:
+        - createIndex:
+            tableName: encounter_procedures
+            indexName: idx_enc_procedures_encounter_id
+            columns:
+              - column:
+                  name: encounter_id
+
+  # ── 3. encounter_comments ─────────────────────────────────────────────────────
+  - changeSet:
+      id: 014-create-encounter-comments
+      author: primus
+      comment: Internal staff comments on an encounter (not part of clinical note)
+      changes:
+        - createTable:
+            tableName: encounter_comments
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_enc_comments_tenant
+                    references: tenants(id)
+              - column:
+                  name: encounter_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_enc_comments_encounter
+                    references: encounters(id)
+              - column:
+                  name: user_id
+                  type: VARCHAR(36)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: comment
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 014-enc-comments-indexes
+      author: primus
+      comment: Index for comment lookup by encounter
+      changes:
+        - createIndex:
+            tableName: encounter_comments
+            indexName: idx_enc_comments_encounter_id
+            columns:
+              - column:
+                  name: encounter_id
+
+  # ── 4. patient_visits ─────────────────────────────────────────────────────────
+  - changeSet:
+      id: 014-create-patient-visits
+      author: primus
+      comment: Visit tracking with timestamps for each stage of the office visit workflow
+      changes:
+        - createTable:
+            tableName: patient_visits
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_patient_visits_tenant
+                    references: tenants(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_patient_visits_patient
+                    references: patients(id)
+              - column:
+                  name: encounter_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_patient_visits_encounter
+                    references: encounters(id)
+              - column:
+                  name: appointment_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_patient_visits_appointment
+                    references: appointments(id)
+              - column:
+                  name: check_in_time
+                  type: TIMESTAMP
+              - column:
+                  name: rooming_time
+                  type: TIMESTAMP
+              - column:
+                  name: provider_start_time
+                  type: TIMESTAMP
+              - column:
+                  name: checkout_time
+                  type: TIMESTAMP
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  defaultValue: CHECKED_IN
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 014-patient-visits-indexes
+      author: primus
+      comment: Indexes for visit lookup by patient and encounter
+      changes:
+        - createIndex:
+            tableName: patient_visits
+            indexName: idx_patient_visits_patient_id
+            columns:
+              - column:
+                  name: patient_id
+        - createIndex:
+            tableName: patient_visits
+            indexName: idx_patient_visits_encounter_id
+            columns:
+              - column:
+                  name: encounter_id
+
+  # ── 5. Add columns to encounters ──────────────────────────────────────────────
+  - changeSet:
+      id: 014-encounters-add-ros-data
+      author: primus
+      comment: Add ROS data JSONB column to encounters (replaces plain text ros_data)
+      changes:
+        - addColumn:
+            tableName: encounters
+            columns:
+              - column:
+                  name: ros_data_json
+                  type: JSONB
+
+  - changeSet:
+      id: 014-encounters-add-physical-exam-data
+      author: primus
+      comment: Add physical exam data JSONB column to encounters
+      changes:
+        - addColumn:
+            tableName: encounters
+            columns:
+              - column:
+                  name: physical_exam_data
+                  type: JSONB
+
+  - changeSet:
+      id: 014-encounters-add-template-id
+      author: primus
+      comment: Link encounter to the SOAP note template that was applied
+      changes:
+        - addColumn:
+            tableName: encounters
+            columns:
+              - column:
+                  name: template_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_encounters_soap_template
+                    references: soap_note_templates(id)
+
+  - changeSet:
+      id: 014-encounters-add-visit-id
+      author: primus
+      comment: Link encounter back to the patient visit tracking row
+      changes:
+        - addColumn:
+            tableName: encounters
+            columns:
+              - column:
+                  name: visit_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_encounters_visit
+                    references: patient_visits(id)

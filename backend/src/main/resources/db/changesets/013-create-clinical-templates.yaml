@@ -1,0 +1,506 @@
+databaseChangeLog:
+
+  # ── 1. macros ─────────────────────────────────────────────────────────────────
+  - changeSet:
+      id: 013-create-macros
+      author: primus
+      comment: Smart-phrase macros — abbreviation expands to full text inside note fields
+      changes:
+        - createTable:
+            tableName: macros
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_macros_tenant
+                    references: tenants(id)
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: abbreviation
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expansion
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category
+                  type: VARCHAR(50)
+              - column:
+                  name: is_shared
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by_provider
+                  type: VARCHAR(36)
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 013-macros-unique-constraint
+      author: primus
+      comment: Abbreviation must be unique within a tenant
+      changes:
+        - addUniqueConstraint:
+            tableName: macros
+            columnNames: tenant_id, abbreviation
+            constraintName: uq_macros_tenant_abbreviation
+
+  - changeSet:
+      id: 013-macros-indexes
+      author: primus
+      comment: Indexes for macro lookup by tenant and category
+      changes:
+        - createIndex:
+            tableName: macros
+            indexName: idx_macros_tenant_id
+            columns:
+              - column:
+                  name: tenant_id
+        - createIndex:
+            tableName: macros
+            indexName: idx_macros_tenant_category
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: category
+
+  # ── 2. soap_note_templates ────────────────────────────────────────────────────
+  - changeSet:
+      id: 013-create-soap-note-templates
+      author: primus
+      comment: Reusable SOAP note templates per visit category
+      changes:
+        - createTable:
+            tableName: soap_note_templates
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_soap_templates_tenant
+                    references: tenants(id)
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category
+                  type: VARCHAR(50)
+              - column:
+                  name: subjective_template
+                  type: TEXT
+              - column:
+                  name: objective_template
+                  type: TEXT
+              - column:
+                  name: assessment_template
+                  type: TEXT
+              - column:
+                  name: plan_template
+                  type: TEXT
+              - column:
+                  name: is_default
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 013-soap-templates-indexes
+      author: primus
+      comment: Index for SOAP template lookup by tenant
+      changes:
+        - createIndex:
+            tableName: soap_note_templates
+            indexName: idx_soap_templates_tenant_id
+            columns:
+              - column:
+                  name: tenant_id
+
+  # ── 3. ros_templates ──────────────────────────────────────────────────────────
+  - changeSet:
+      id: 013-create-ros-templates
+      author: primus
+      comment: Review-of-systems templates with system+findings stored as JSONB
+      changes:
+        - createTable:
+            tableName: ros_templates
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_ros_templates_tenant
+                    references: tenants(id)
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: systems
+                  type: JSONB
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_default
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  # ── 4. physical_exam_templates ────────────────────────────────────────────────
+  - changeSet:
+      id: 013-create-physical-exam-templates
+      author: primus
+      comment: Physical exam templates with section+findings stored as JSONB
+      changes:
+        - createTable:
+            tableName: physical_exam_templates
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_pe_templates_tenant
+                    references: tenants(id)
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sections
+                  type: JSONB
+                  constraints:
+                    nullable: false
+              - column:
+                  name: is_default
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  # ── 5. annotable_images ───────────────────────────────────────────────────────
+  - changeSet:
+      id: 013-create-annotable-images
+      author: primus
+      comment: Base anatomical images that providers can pin annotations on
+      changes:
+        - createTable:
+            tableName: annotable_images
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_annotable_images_tenant
+                    references: tenants(id)
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category
+                  type: VARCHAR(50)
+              - column:
+                  name: image_url
+                  type: VARCHAR(1024)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+              - column:
+                  name: is_system
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  # ── 6. annotable_image_pins ───────────────────────────────────────────────────
+  - changeSet:
+      id: 013-create-annotable-image-pins
+      author: primus
+      comment: Per-encounter or per-patient annotation pins on an anatomical image
+      changes:
+        - createTable:
+            tableName: annotable_image_pins
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uuid
+                  type: VARCHAR(36)
+                  defaultValueComputed: gen_random_uuid()
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_image_pins_tenant
+                    references: tenants(id)
+              - column:
+                  name: image_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_image_pins_image
+                    references: annotable_images(id)
+              - column:
+                  name: encounter_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_image_pins_encounter
+                    references: encounters(id)
+              - column:
+                  name: patient_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_image_pins_patient
+                    references: patients(id)
+              - column:
+                  name: x_position
+                  type: DECIMAL(5,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: y_position
+                  type: DECIMAL(5,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: label
+                  type: VARCHAR(255)
+              - column:
+                  name: notes
+                  type: TEXT
+              - column:
+                  name: color
+                  type: VARCHAR(7)
+                  defaultValue: '#FF0000'
+              - column:
+                  name: created_by
+                  type: VARCHAR(255)
+              - column:
+                  name: modified_by
+                  type: VARCHAR(255)
+              - column:
+                  name: created
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: modified
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+              - column:
+                  name: archive
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 013-image-pins-indexes
+      author: primus
+      comment: Indexes for fast pin lookup by image and encounter
+      changes:
+        - createIndex:
+            tableName: annotable_image_pins
+            indexName: idx_image_pins_image_id
+            columns:
+              - column:
+                  name: image_id
+        - createIndex:
+            tableName: annotable_image_pins
+            indexName: idx_image_pins_encounter_id
+            columns:
+              - column:
+                  name: encounter_id
