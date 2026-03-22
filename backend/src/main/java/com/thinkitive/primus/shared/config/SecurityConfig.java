@@ -1,17 +1,19 @@
 package com.thinkitive.primus.shared.config;
 
 import com.thinkitive.primus.shared.security.AuditInterceptor;
+import com.thinkitive.primus.shared.security.KeycloakJwtConverter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -61,9 +63,12 @@ public class SecurityConfig implements WebMvcConfigurer {
     private String allowedOriginsConfig;
 
     private final AuditInterceptor auditInterceptor;
+    private final KeycloakJwtConverter keycloakJwtConverter;
 
-    public SecurityConfig(AuditInterceptor auditInterceptor) {
+    public SecurityConfig(AuditInterceptor auditInterceptor,
+                          KeycloakJwtConverter keycloakJwtConverter) {
         this.auditInterceptor = auditInterceptor;
+        this.keycloakJwtConverter = keycloakJwtConverter;
     }
 
     // -------------------------------------------------------------------------
@@ -72,8 +77,16 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // CSRF: Use cookie-based token (XSRF-TOKEN) readable by the SPA.
+        // The frontend must send it back as X-XSRF-TOKEN header on mutating requests.
+        CsrfTokenRequestAttributeHandler csrfHandler = new CsrfTokenRequestAttributeHandler();
+        csrfHandler.setCsrfRequestAttributeName(null); // Opt out of deferred CSRF for SPAs
+
         http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRequestHandler(csrfHandler)
+                        .ignoringRequestMatchers(PUBLIC_ENDPOINTS))
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -81,7 +94,9 @@ public class SecurityConfig implements WebMvcConfigurer {
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwt -> jwt.decoder(jwtDecoder())));
+                        .jwt(jwt -> jwt
+                                .decoder(jwtDecoder())
+                                .jwtAuthenticationConverter(keycloakJwtConverter)));
 
         return http.build();
     }

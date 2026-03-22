@@ -10,9 +10,18 @@ export const api = axios.create({
   baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
   timeout: 30000,
+  withCredentials: true, // Send cookies (CSRF token, httpOnly session)
 });
 
-// Request interceptor — attach JWT token and tenant ID from Zustand persisted store
+/**
+ * Read the XSRF-TOKEN cookie set by Spring Security's CookieCsrfTokenRepository.
+ */
+function getCsrfToken(): string | null {
+  const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+// Request interceptor — attach JWT, tenant ID, and CSRF token
 api.interceptors.request.use((config) => {
   const raw = sessionStorage.getItem('primus-auth');
   if (raw) {
@@ -21,23 +30,32 @@ api.interceptors.request.use((config) => {
       if (state?.token) {
         config.headers.Authorization = `Bearer ${state.token}`;
       }
-      config.headers['X-TENANT-ID'] = state?.tenantId || '5';
+      if (state?.tenantId) {
+        config.headers['X-TENANT-ID'] = state.tenantId;
+      }
     } catch {
-      config.headers['X-TENANT-ID'] = '5';
+      // Session corrupt — will redirect on 401
     }
-  } else {
-    config.headers['X-TENANT-ID'] = '5';
+  }
+
+  // Attach CSRF token for mutating requests
+  const method = config.method?.toUpperCase();
+  if (method && !['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+      config.headers['X-XSRF-TOKEN'] = csrfToken;
+    }
   }
 
   return config;
 });
 
-// Response interceptor — handle 401 (redirect to login)
+// Response interceptor — handle 401 and 403
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      sessionStorage.removeItem('primus-access-token');
+      sessionStorage.removeItem('primus-auth');
       window.location.href = '/login';
     }
     return Promise.reject(error);

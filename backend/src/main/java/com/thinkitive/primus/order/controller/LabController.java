@@ -7,11 +7,15 @@ import com.thinkitive.primus.shared.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import com.thinkitive.primus.shared.security.Roles;
 
 @RestController
 @RequestMapping("/api/v1/labs")
 @RequiredArgsConstructor
+@PreAuthorize(Roles.HAS_ORDERING_ROLE)
 public class LabController extends BaseController {
 
     private final LabService labService;

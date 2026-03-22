@@ -1,8 +1,9 @@
+# Liquibase changelog for per-tenant schema provisioning.
+# Contains ONLY tenant-scoped tables. Excludes:
+#   - 001-create-tenants (global, lives in public schema)
+#   - 002-create-users   (global, lives in public schema)
+#   - 028-seed-data       (handled by TenantProvisioningService)
 databaseChangeLog:
-  - include:
-      file: db/changesets/001-create-tenants.yaml
-  - include:
-      file: db/changesets/002-create-users.yaml
   - include:
       file: db/changesets/003-create-patients.yaml
   - include:
@@ -53,7 +54,3 @@ databaseChangeLog:
       file: db/changesets/026-create-employer.yaml
   - include:
       file: db/changesets/027-create-affiliate-broker.yaml
-  - include:
-      file: db/changesets/028-seed-data.yaml
-  - include:
-      file: db/changesets/029-production-indexes.yaml

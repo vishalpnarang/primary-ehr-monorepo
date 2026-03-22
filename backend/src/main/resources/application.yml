@@ -12,10 +12,12 @@ spring:
     driver-class-name: org.postgresql.Driver
     hikari:
       connection-timeout: 20000
-      maximum-pool-size: 10
-      minimum-idle: 2
+      maximum-pool-size: 100
+      minimum-idle: 10
       idle-timeout: 300000
+      max-lifetime: 1800000
       pool-name: PrimusHikariPool
+      leak-detection-threshold: 60000
 
   jpa:
     hibernate:
@@ -25,6 +27,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
         default_schema: public
+        multiTenancy: SCHEMA
     open-in-view: false
 
   liquibase:

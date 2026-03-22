@@ -181,4 +181,74 @@ class FormTemplateServiceTest {
                 .isInstanceOf(PrimusException.class)
                 .hasMessageContaining("PUBLISHED");
     }
+
+    @Test
+    @DisplayName("listTemplates returns templates filtered by category")
+    void listTemplates_filtersByCategory() {
+        when(templateRepository.findFiltered(1L,
+                com.thinkitive.primus.template.entity.FormTemplate.TemplateCategory.INTAKE, null))
+                .thenReturn(java.util.List.of(draftTemplate));
+
+        java.util.List<FormTemplateDto> result = formTemplateService.listTemplates("INTAKE", null);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getCategory()).isEqualTo("INTAKE");
+        verify(templateRepository).findFiltered(1L,
+                com.thinkitive.primus.template.entity.FormTemplate.TemplateCategory.INTAKE, null);
+    }
+
+    @Test
+    @DisplayName("getTemplate throws NOT_FOUND when UUID does not exist for tenant")
+    void getTemplate_notFound_throws() {
+        String unknownUuid = UUID.randomUUID().toString();
+        when(templateRepository.findByTenantIdAndUuid(1L, unknownUuid))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> formTemplateService.getTemplate(unknownUuid))
+                .isInstanceOf(PrimusException.class)
+                .hasMessageContaining("Form template not found");
+    }
+
+    @Test
+    @DisplayName("updateTemplate throws BAD_REQUEST when template is already PUBLISHED")
+    void updateTemplate_onPublished_throws() {
+        String pubUuid = publishedTemplate.getUuid();
+        when(templateRepository.findByTenantIdAndUuid(1L, pubUuid))
+                .thenReturn(Optional.of(publishedTemplate));
+
+        com.thinkitive.primus.template.dto.UpdateFormTemplateRequest update =
+                new com.thinkitive.primus.template.dto.UpdateFormTemplateRequest();
+        update.setName("Updated Name");
+
+        assertThatThrownBy(() -> formTemplateService.updateTemplate(pubUuid, update))
+                .isInstanceOf(PrimusException.class)
+                .hasMessageContaining("Only DRAFT templates can be updated");
+    }
+
+    @Test
+    @DisplayName("listSubmissionsForPatient returns submissions for a known patient")
+    void listSubmissionsForPatient_returnsSubmissions() {
+        FormSubmission submission = FormSubmission.builder()
+                .tenantId(1L)
+                .templateId(2L)
+                .patientId(100L)
+                .submittedBy(patientUuid)
+                .submissionData("{\"answer\":\"yes\"}")
+                .status(FormSubmission.SubmissionStatus.SUBMITTED)
+                .build();
+        submission.setId(50L);
+        submission.setUuid(UUID.randomUUID().toString());
+
+        when(patientRepository.findByTenantIdAndUuid(1L, patientUuid))
+                .thenReturn(Optional.of(testPatient));
+        when(submissionRepository.findByPatientIdAndTenantIdAndArchiveFalseOrderByCreatedAtDesc(100L, 1L))
+                .thenReturn(java.util.List.of(submission));
+
+        java.util.List<FormSubmissionDto> result =
+                formTemplateService.listSubmissionsForPatient(patientUuid);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getStatus()).isEqualTo("SUBMITTED");
+        assertThat(result.get(0).getPatientId()).isEqualTo(100L);
+    }
 }

@@ -7,11 +7,15 @@ import com.thinkitive.primus.shared.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import com.thinkitive.primus.shared.security.Roles;
 
 @RestController
 @RequestMapping("/api/v1/messaging/enhanced")
 @RequiredArgsConstructor
+@PreAuthorize(Roles.HAS_ANY_STAFF_ROLE)
 public class EnhancedMessagingController extends BaseController {
 
     private final EnhancedMessagingService enhancedMessagingService;

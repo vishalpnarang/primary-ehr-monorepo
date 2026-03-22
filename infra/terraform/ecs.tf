@@ -19,7 +19,7 @@ resource "aws_ecs_cluster" "main" {
 
   setting {
     name  = "containerInsights"
-    value = "disabled" # Disabled to reduce CloudWatch cost (~$0.35/GB) for demo
+    value = "enabled" # Enabled for production observability (CPU, memory, network metrics)
   }
 
   tags = { Name = "${local.name_prefix}-cluster" }
@@ -38,17 +38,17 @@ resource "aws_ecs_cluster_capacity_providers" "main" {
 
 # ---------------------------------------------------------------------------
 # CloudWatch Log Groups — one per service
-# Retention 7 days keeps demo logs accessible without accruing storage cost.
+# Retention 2192 days (6 years) — HIPAA requires audit logs retained for 6 years.
 # ---------------------------------------------------------------------------
 resource "aws_cloudwatch_log_group" "backend" {
   name              = "/ecs/${local.name_prefix}/backend"
-  retention_in_days = 7
+  retention_in_days = 2192
   tags              = { Name = "${local.name_prefix}-logs-backend" }
 }
 
 resource "aws_cloudwatch_log_group" "keycloak" {
   name              = "/ecs/${local.name_prefix}/keycloak"
-  retention_in_days = 7
+  retention_in_days = 2192
   tags              = { Name = "${local.name_prefix}-logs-keycloak" }
 }
 
@@ -391,7 +391,7 @@ resource "aws_ecs_service" "backend" {
   }
 
   depends_on = [
-    aws_lb_listener.http,
+    aws_lb_listener.https,
     aws_iam_role_policy_attachment.ecs_task_execution_managed,
   ]
 
@@ -424,7 +424,7 @@ resource "aws_ecs_service" "keycloak" {
   }
 
   depends_on = [
-    aws_lb_listener.http,
+    aws_lb_listener.https,
     aws_iam_role_policy_attachment.ecs_task_execution_managed,
   ]
 

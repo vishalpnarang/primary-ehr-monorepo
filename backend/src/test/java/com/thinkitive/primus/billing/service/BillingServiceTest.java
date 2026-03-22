@@ -211,7 +211,79 @@ class BillingServiceTest {
                 .hasMessageContaining("DENIED");
     }
 
+    // ── Edge case tests ───────────────────────────────────────────────────────
+
+    @Test
+    void getClaimsWithStatusFilterReturnsOnlyMatchingClaims() {
+        Claim submitted1 = buildClaim(ClaimStatus.SUBMITTED, new BigDecimal("150.00"), BigDecimal.ZERO);
+        Claim submitted2 = buildClaim(ClaimStatus.SUBMITTED, new BigDecimal("200.00"), BigDecimal.ZERO);
+
+        PageRequest pageable = PageRequest.of(0, 20);
+        when(claimRepo.findByTenantIdAndStatus(eq(1L), eq(ClaimStatus.SUBMITTED), eq(pageable)))
+                .thenReturn(new PageImpl<>(List.of(submitted1, submitted2), pageable, 2));
+        when(patientRepo.findById(1L)).thenReturn(Optional.of(testPatient));
+
+        Page<ClaimDto> page = billingService.listClaims("SUBMITTED", pageable);
+
+        assertThat(page).isNotNull();
+        assertThat(page.getContent()).hasSize(2);
+        page.getContent().forEach(c ->
+                assertThat(c.getStatus()).isEqualTo("SUBMITTED"));
+    }
+
+    @Test
+    void getArAgingCalculatesCorrectBuckets() {
+        LocalDate today = LocalDate.now();
+
+        // Current bucket: 0–30 days
+        Claim current = buildClaimWithDate(ClaimStatus.SUBMITTED,
+                new BigDecimal("100.00"), BigDecimal.ZERO, today.minusDays(15));
+
+        // 31–60 day bucket
+        Claim aging31 = buildClaimWithDate(ClaimStatus.SUBMITTED,
+                new BigDecimal("200.00"), BigDecimal.ZERO, today.minusDays(45));
+
+        // 61–90 day bucket
+        Claim aging61 = buildClaimWithDate(ClaimStatus.SUBMITTED,
+                new BigDecimal("300.00"), BigDecimal.ZERO, today.minusDays(75));
+
+        // Over-120 bucket
+        Claim over120 = buildClaimWithDate(ClaimStatus.SUBMITTED,
+                new BigDecimal("400.00"), BigDecimal.ZERO, today.minusDays(150));
+
+        when(claimRepo.findByTenantId(1L))
+                .thenReturn(List.of(current, aging31, aging61, over120));
+
+        com.thinkitive.primus.billing.dto.ArAgingDto aging = billingService.getArAging();
+
+        assertThat(aging).isNotNull();
+        assertThat(aging.getCurrent()).isEqualByComparingTo(new BigDecimal("100.00"));
+        assertThat(aging.getDays31to60()).isEqualByComparingTo(new BigDecimal("200.00"));
+        assertThat(aging.getDays61to90()).isEqualByComparingTo(new BigDecimal("300.00"));
+        assertThat(aging.getOver120()).isEqualByComparingTo(new BigDecimal("400.00"));
+        assertThat(aging.getTotal()).isEqualByComparingTo(new BigDecimal("1000.00"));
+    }
+
     // ── helpers ──────────────────────────────────────────────────────────────
+
+    private Claim buildClaimWithDate(ClaimStatus status, BigDecimal totalCharge,
+                                     BigDecimal paidAmount, LocalDate dateOfService) {
+        Claim claim = Claim.builder()
+                .tenantId(1L)
+                .patientId(1L)
+                .encounterId(1L)
+                .providerId(1L)
+                .dateOfService(dateOfService)
+                .payerName("Aetna")
+                .totalCharge(totalCharge)
+                .paidAmount(paidAmount)
+                .patientResponsibility(new BigDecimal("25.00"))
+                .status(status)
+                .build();
+        claim.setId(System.nanoTime());
+        claim.setUuid(java.util.UUID.randomUUID().toString());
+        return claim;
+    }
 
     private Claim buildClaim(ClaimStatus status, BigDecimal totalCharge, BigDecimal paidAmount) {
         Claim claim = Claim.builder()

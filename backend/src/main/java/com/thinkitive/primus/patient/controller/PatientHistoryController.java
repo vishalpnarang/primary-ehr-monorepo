@@ -9,7 +9,10 @@ import com.thinkitive.primus.shared.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import com.thinkitive.primus.shared.security.Roles;
 
 import java.util.List;
 
@@ -23,6 +26,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/patients/{patientId}/history")
 @RequiredArgsConstructor
+@PreAuthorize(Roles.HAS_CLINICAL_ROLE)
 public class PatientHistoryController extends BaseController {
 
     private final PatientHistoryService patientHistoryService;

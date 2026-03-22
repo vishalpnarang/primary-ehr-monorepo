@@ -1,0 +1,185 @@
+databaseChangeLog:
+  - changeSet:
+      id: 029-patient-indexes
+      author: primus
+      comment: "Production-scale indexes for patient search and filtering"
+      changes:
+        - createIndex:
+            tableName: patients
+            indexName: idx_patients_tenant_last_first
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: last_name }
+              - column: { name: first_name }
+        - createIndex:
+            tableName: patients
+            indexName: idx_patients_tenant_mrn
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: mrn }
+        - createIndex:
+            tableName: patients
+            indexName: idx_patients_tenant_dob
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: date_of_birth }
+        - createIndex:
+            tableName: patients
+            indexName: idx_patients_tenant_phone
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: phone }
+        - createIndex:
+            tableName: patients
+            indexName: idx_patients_tenant_email
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: email }
+
+  - changeSet:
+      id: 029-appointment-indexes
+      author: primus
+      comment: "Production-scale indexes for appointment queries"
+      changes:
+        - createIndex:
+            tableName: appointments
+            indexName: idx_appointments_tenant_date
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: appointment_date }
+        - createIndex:
+            tableName: appointments
+            indexName: idx_appointments_tenant_provider_date
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: provider_id }
+              - column: { name: appointment_date }
+        - createIndex:
+            tableName: appointments
+            indexName: idx_appointments_tenant_patient
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: patient_id }
+        - createIndex:
+            tableName: appointments
+            indexName: idx_appointments_tenant_status_date
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: status }
+              - column: { name: appointment_date }
+
+  - changeSet:
+      id: 029-encounter-indexes
+      author: primus
+      comment: "Production-scale indexes for encounter queries"
+      changes:
+        - createIndex:
+            tableName: encounters
+            indexName: idx_encounters_tenant_patient
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: patient_id }
+        - createIndex:
+            tableName: encounters
+            indexName: idx_encounters_tenant_provider_date
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: provider_id }
+              - column: { name: encounter_date }
+        - createIndex:
+            tableName: encounters
+            indexName: idx_encounters_tenant_status
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: status }
+
+  - changeSet:
+      id: 029-prescription-indexes
+      author: primus
+      comment: "Production-scale indexes for prescription queries"
+      changes:
+        - createIndex:
+            tableName: prescriptions
+            indexName: idx_prescriptions_tenant_patient
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: patient_id }
+        - createIndex:
+            tableName: prescriptions
+            indexName: idx_prescriptions_tenant_status
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: status }
+
+  - changeSet:
+      id: 029-audit-log-indexes
+      author: primus
+      comment: "Production-scale indexes for HIPAA audit log queries"
+      changes:
+        - createIndex:
+            tableName: audit_log
+            indexName: idx_audit_log_tenant_resource_created
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: resource_type }
+              - column: { name: created }
+        - createIndex:
+            tableName: audit_log
+            indexName: idx_audit_log_resource_id
+            columns:
+              - column: { name: resource_type }
+              - column: { name: resource_id }
+
+  - changeSet:
+      id: 029-lab-order-indexes
+      author: primus
+      comment: "Production-scale indexes for lab orders"
+      changes:
+        - createIndex:
+            tableName: lab_orders
+            indexName: idx_lab_orders_tenant_patient
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: patient_id }
+        - createIndex:
+            tableName: lab_orders
+            indexName: idx_lab_orders_tenant_status
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: status }
+
+  - changeSet:
+      id: 029-message-indexes
+      author: primus
+      comment: "Production-scale indexes for messaging queries"
+      changes:
+        - createIndex:
+            tableName: message_threads
+            indexName: idx_message_threads_tenant_updated
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: modified, descending: true }
+
+  - changeSet:
+      id: 029-invoice-payment-indexes
+      author: primus
+      comment: "Production-scale indexes for financial queries"
+      changes:
+        - createIndex:
+            tableName: invoices
+            indexName: idx_invoices_tenant_patient
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: patient_id }
+        - createIndex:
+            tableName: invoices
+            indexName: idx_invoices_tenant_status
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: status }
+        - createIndex:
+            tableName: payment_transactions
+            indexName: idx_payment_tx_tenant_created
+            columns:
+              - column: { name: tenant_id }
+              - column: { name: created }

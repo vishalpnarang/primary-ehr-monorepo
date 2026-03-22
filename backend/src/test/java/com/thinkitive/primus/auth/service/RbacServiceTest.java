@@ -142,4 +142,53 @@ class RbacServiceTest {
                 .isInstanceOf(PrimusException.class)
                 .hasMessageContaining("Feature not found");
     }
+
+    @Test
+    @DisplayName("getFeaturesByTenant returns only non-archived features for tenant")
+    void getFeaturesByTenant_returnsNonArchivedFeatures() {
+        Feature archivedFeature = Feature.builder()
+                .tenantId(1L)
+                .name("LEGACY_MODULE")
+                .enabled(false)
+                .module("BILLING")
+                .build();
+        archivedFeature.setId(6L);
+        archivedFeature.setUuid(UUID.randomUUID().toString());
+        archivedFeature.setArchive(true);
+
+        // Repository method findByTenantIdAndArchiveFalse should only return non-archived
+        when(featureRepository.findByTenantIdAndArchiveFalse(1L))
+                .thenReturn(List.of(testFeature));
+
+        List<FeatureDto> result = rbacService.getFeaturesByTenant(1L);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getName()).isEqualTo("TELEHEALTH");
+        verify(featureRepository).findByTenantIdAndArchiveFalse(1L);
+    }
+
+    @Test
+    @DisplayName("assignPermissionToRole throws NOT_FOUND when role does not exist")
+    void assignPermissionToRole_roleNotFound_throws() {
+        when(roleRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> rbacService.assignPermissionToRole(999L, 10L))
+                .isInstanceOf(PrimusException.class)
+                .hasMessageContaining("Role not found");
+
+        verify(rolePermissionRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("assignPermissionToRole throws NOT_FOUND when permission does not exist")
+    void assignPermissionToRole_permissionNotFound_throws() {
+        when(roleRepository.findById(1L)).thenReturn(Optional.of(testRole));
+        when(permissionRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> rbacService.assignPermissionToRole(1L, 999L))
+                .isInstanceOf(PrimusException.class)
+                .hasMessageContaining("Permission not found");
+
+        verify(rolePermissionRepository, never()).save(any());
+    }
 }

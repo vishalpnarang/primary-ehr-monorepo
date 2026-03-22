@@ -4,6 +4,14 @@ spring:
   liquibase:
     enabled: true
 
+# Dev-only AES-256 encryption key (32 bytes, Base64-encoded).
+# Generate for prod: openssl rand -base64 32
+# In production, inject via AWS Secrets Manager — NEVER use this value.
+primus:
+  security:
+    encryption:
+      key: "ZGV2LW9ubHktMzItYnl0ZS1rZXktZG8tbm90LXVzZQ=="
+
 logging:
   level:
     org.hibernate.SQL: DEBUG

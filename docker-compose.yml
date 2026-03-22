@@ -24,8 +24,10 @@ services:
       KC_DB_PASSWORD: primus
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-      KC_HEALTH_ENABLED: true
-    command: start-dev
+      KC_HEALTH_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_ENABLED: "true"
+    command: start --optimized
     ports:
       - "8180:8080"
     depends_on:

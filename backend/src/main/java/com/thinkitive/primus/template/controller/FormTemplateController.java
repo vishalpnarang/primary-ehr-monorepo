@@ -9,7 +9,10 @@ import com.thinkitive.primus.template.service.FormTemplateService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import com.thinkitive.primus.shared.security.Roles;
 
 /**
  * REST controller for form template and submission management.
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/form-templates")
 @RequiredArgsConstructor
+@PreAuthorize(Roles.HAS_CLINICAL_ROLE)
 public class FormTemplateController extends BaseController {
 
     private final FormTemplateService formTemplateService;

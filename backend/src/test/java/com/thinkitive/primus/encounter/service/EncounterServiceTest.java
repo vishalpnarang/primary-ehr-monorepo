@@ -188,6 +188,40 @@ class EncounterServiceTest {
         encounters.forEach(enc -> assertThat(enc.getStatus()).isEqualTo("SIGNED"));
     }
 
+    // ── Edge case tests ───────────────────────────────────────────────────────
+
+    @Test
+    void signEncounterAlreadySignedThrowsError() {
+        // Signing a SIGNED encounter must throw — idempotent re-sign is not allowed.
+        String uuid = UUID.randomUUID().toString();
+        Encounter encounter = buildEncounter(uuid, EncounterStatus.SIGNED);
+        encounter.setSignedAt(Instant.now());
+        encounter.setSignedBy("Dr. Sarah Mitchell");
+
+        when(encounterRepo.findByTenantIdAndUuid(1L, uuid)).thenReturn(Optional.of(encounter));
+
+        assertThatThrownBy(() -> encounterService.signEncounter(uuid))
+                .isInstanceOf(PrimusException.class)
+                .hasMessageContaining("already signed");
+    }
+
+    @Test
+    void addAddendumUnsignedEncounterThrowsError() {
+        // Addenda may only be appended to SIGNED encounters; IN_PROGRESS must be rejected.
+        String uuid = UUID.randomUUID().toString();
+        Encounter encounter = buildEncounter(uuid, EncounterStatus.IN_PROGRESS);
+
+        when(encounterRepo.findByTenantIdAndUuid(1L, uuid)).thenReturn(Optional.of(encounter));
+
+        com.thinkitive.primus.encounter.dto.AddendumRequest request =
+                new com.thinkitive.primus.encounter.dto.AddendumRequest();
+        request.setText("Additional clinical note for the record.");
+
+        assertThatThrownBy(() -> encounterService.addAddendum(uuid, request))
+                .isInstanceOf(PrimusException.class)
+                .hasMessageContaining("signed");
+    }
+
     // ── helpers ──────────────────────────────────────────────────────────────
 
     private Encounter buildEncounter( String uuid, EncounterStatus status) {

@@ -15,7 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
-import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -134,6 +134,127 @@ class LabServiceTest {
         assertThatThrownBy(() -> labService.recordPocResult(request))
                 .isInstanceOf(PrimusException.class)
                 .hasMessageContaining("POC test not found");
+    }
+
+    @Test
+    @DisplayName("getOrderSets returns active order sets for tenant")
+    void getOrderSets_returnsList() {
+        LabOrderSet orderSet = LabOrderSet.builder()
+                .tenantId(1L)
+                .name("Comprehensive Metabolic Panel")
+                .description("CMP workup")
+                .tests("[\"CMP\",\"CBC\"]")
+                .isActive(true)
+                .build();
+        orderSet.setId(1L);
+        orderSet.setUuid(UUID.randomUUID().toString());
+
+        when(labOrderSetRepository.findByTenantIdAndIsActiveTrueAndArchiveFalse(1L))
+                .thenReturn(List.of(orderSet));
+
+        List<LabOrderSetDto> result = labService.getOrderSets();
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getName()).isEqualTo("Comprehensive Metabolic Panel");
+        assertThat(result.get(0).isActive()).isTrue();
+        verify(labOrderSetRepository).findByTenantIdAndIsActiveTrueAndArchiveFalse(1L);
+    }
+
+    @Test
+    @DisplayName("searchCatalog returns catalog entries matching query string")
+    void searchCatalog_withQuery_returnsMatches() {
+        LabCatalog catalogEntry = LabCatalog.builder()
+                .tenantId(1L)
+                .testCode("CBC001")
+                .testName("Complete Blood Count")
+                .specimenType("Whole Blood")
+                .container("EDTA tube")
+                .cptCode("85025")
+                .loincCode("58410-2")
+                .isActive(true)
+                .build();
+        catalogEntry.setId(1L);
+        catalogEntry.setUuid(UUID.randomUUID().toString());
+
+        when(labCatalogRepository.findByTenantIdAndTestNameContainingIgnoreCaseAndArchiveFalse(
+                1L, "blood"))
+                .thenReturn(List.of(catalogEntry));
+
+        List<LabCatalogDto> result = labService.searchCatalog("blood");
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getTestName()).isEqualTo("Complete Blood Count");
+        assertThat(result.get(0).getCptCode()).isEqualTo("85025");
+        verify(labCatalogRepository)
+                .findByTenantIdAndTestNameContainingIgnoreCaseAndArchiveFalse(1L, "blood");
+    }
+
+    @Test
+    @DisplayName("getPatientPocResults returns POC results ordered by performed date desc")
+    void getPatientPocResults_returnsList() {
+        PocResult result1 = PocResult.builder()
+                .tenantId(1L)
+                .pocTestId(1L)
+                .patientId(100L)
+                .results("{\"glucose\":95}")
+                .performedBy("nurse-001")
+                .performedAt(Instant.now().minusSeconds(3600))
+                .build();
+        result1.setId(1L);
+        result1.setUuid(UUID.randomUUID().toString());
+
+        PocResult result2 = PocResult.builder()
+                .tenantId(1L)
+                .pocTestId(1L)
+                .patientId(100L)
+                .results("{\"glucose\":102}")
+                .performedBy("nurse-001")
+                .performedAt(Instant.now())
+                .build();
+        result2.setId(2L);
+        result2.setUuid(UUID.randomUUID().toString());
+
+        when(pocResultRepository.findByPatientIdAndTenantIdAndArchiveFalseOrderByPerformedAtDesc(
+                100L, 1L))
+                .thenReturn(List.of(result2, result1));
+        when(pocTestRepository.findById(1L)).thenReturn(Optional.of(testPocTest));
+
+        List<PocResultDto> results = labService.getPatientPocResults(100L);
+
+        assertThat(results).hasSize(2);
+        assertThat(results.get(0).getPocTestUuid()).isEqualTo(pocTestUuid);
+        verify(pocResultRepository)
+                .findByPatientIdAndTenantIdAndArchiveFalseOrderByPerformedAtDesc(100L, 1L);
+    }
+
+    @Test
+    @DisplayName("getImagingResults returns imaging results ordered by result date desc")
+    void getImagingResults_returnsList() {
+        ImagingResult imaging = ImagingResult.builder()
+                .tenantId(1L)
+                .patientId(100L)
+                .modality("MRI")
+                .studyDescription("MRI Brain without contrast")
+                .radiologist("Dr. Nguyen")
+                .report("No acute intracranial abnormality.")
+                .impression("Normal MRI brain.")
+                .status(ImagingResult.ImagingStatus.FINAL)
+                .resultDate(Instant.now())
+                .build();
+        imaging.setId(1L);
+        imaging.setUuid(UUID.randomUUID().toString());
+
+        when(imagingResultRepository.findByPatientIdAndTenantIdAndArchiveFalseOrderByResultDateDesc(
+                100L, 1L))
+                .thenReturn(List.of(imaging));
+
+        List<ImagingResultDto> results = labService.getImagingResults(100L);
+
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).getModality()).isEqualTo("MRI");
+        assertThat(results.get(0).getStatus()).isEqualTo("FINAL");
+        verify(imagingResultRepository)
+                .findByPatientIdAndTenantIdAndArchiveFalseOrderByResultDateDesc(100L, 1L);
     }
 
     @Test

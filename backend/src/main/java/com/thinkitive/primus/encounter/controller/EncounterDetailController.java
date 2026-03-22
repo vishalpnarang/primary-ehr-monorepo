@@ -7,7 +7,10 @@ import com.thinkitive.primus.shared.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import com.thinkitive.primus.shared.security.Roles;
 
 /**
  * Encounter detail sub-resources — mounted under /api/v1/encounters/{encounterUuid}.
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/encounters/{encounterUuid}")
 @RequiredArgsConstructor
+@PreAuthorize(Roles.HAS_CLINICAL_ROLE)
 public class EncounterDetailController extends BaseController {
 
     private final EncounterDetailService encounterDetailService;

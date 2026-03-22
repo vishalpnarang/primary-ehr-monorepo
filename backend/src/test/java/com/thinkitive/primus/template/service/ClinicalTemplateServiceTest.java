@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -143,5 +144,122 @@ class ClinicalTemplateServiceTest {
         assertThat(result.getName()).isEqualTo("Annual Physical");
         assertThat(result.getSubjectiveTemplate()).isNotBlank();
         verify(soapNoteTemplateRepository).save(any(SoapNoteTemplate.class));
+    }
+
+    @Test
+    @DisplayName("getSoapNoteTemplates returns list of SOAP templates for tenant")
+    void getSoapNoteTemplates_returnsList() {
+        SoapNoteTemplate template = SoapNoteTemplate.builder()
+                .tenantId(1L)
+                .name("Annual Physical")
+                .subjectiveTemplate("Patient presents for annual physical.")
+                .build();
+        template.setId(1L);
+        template.setUuid(UUID.randomUUID().toString());
+
+        when(soapNoteTemplateRepository.findByTenantIdAndArchiveFalse(1L))
+                .thenReturn(List.of(template));
+
+        List<SoapNoteTemplateDto> result = clinicalTemplateService.getSoapNoteTemplates(null);
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getName()).isEqualTo("Annual Physical");
+        verify(soapNoteTemplateRepository).findByTenantIdAndArchiveFalse(1L);
+    }
+
+    @Test
+    @DisplayName("getRosTemplates returns list of ROS templates for tenant")
+    void getRosTemplates_returnsList() {
+        com.thinkitive.primus.template.entity.RosTemplate rosTemplate =
+                com.thinkitive.primus.template.entity.RosTemplate.builder()
+                        .tenantId(1L)
+                        .name("Comprehensive ROS")
+                        .systems("{\"constitutional\":true,\"cardiovascular\":true}")
+                        .isDefault(true)
+                        .build();
+        rosTemplate.setId(1L);
+        rosTemplate.setUuid(UUID.randomUUID().toString());
+
+        when(rosTemplateRepository.findByTenantIdAndArchiveFalse(1L))
+                .thenReturn(List.of(rosTemplate));
+
+        List<RosTemplateDto> result = clinicalTemplateService.getRosTemplates();
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getName()).isEqualTo("Comprehensive ROS");
+        assertThat(result.get(0).isDefault()).isTrue();
+        verify(rosTemplateRepository).findByTenantIdAndArchiveFalse(1L);
+    }
+
+    @Test
+    @DisplayName("getPhysicalExamTemplates returns list of PE templates for tenant")
+    void getPhysicalExamTemplates_returnsList() {
+        com.thinkitive.primus.template.entity.PhysicalExamTemplate peTemplate =
+                com.thinkitive.primus.template.entity.PhysicalExamTemplate.builder()
+                        .tenantId(1L)
+                        .name("Standard PE")
+                        .sections("{\"general\":\"Well-appearing\",\"heent\":\"PERRLA\"}")
+                        .isDefault(true)
+                        .build();
+        peTemplate.setId(1L);
+        peTemplate.setUuid(UUID.randomUUID().toString());
+
+        when(physicalExamTemplateRepository.findByTenantIdAndArchiveFalse(1L))
+                .thenReturn(List.of(peTemplate));
+
+        List<PhysicalExamTemplateDto> result = clinicalTemplateService.getPhysicalExamTemplates();
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getName()).isEqualTo("Standard PE");
+        verify(physicalExamTemplateRepository).findByTenantIdAndArchiveFalse(1L);
+    }
+
+    @Test
+    @DisplayName("addPin saves image pin and returns DTO with correct position")
+    void addPin_savesAndReturnsDto() {
+        String imageUuid = UUID.randomUUID().toString();
+
+        com.thinkitive.primus.template.entity.AnnotableImage image =
+                com.thinkitive.primus.template.entity.AnnotableImage.builder()
+                        .tenantId(1L)
+                        .name("Body Diagram")
+                        .imageUrl("https://cdn.primus.health/body-diagram.png")
+                        .isSystem(true)
+                        .build();
+        image.setId(10L);
+        image.setUuid(imageUuid);
+
+        AddPinRequest pinRequest = new AddPinRequest();
+        pinRequest.setXPosition(new java.math.BigDecimal("45.5"));
+        pinRequest.setYPosition(new java.math.BigDecimal("72.3"));
+        pinRequest.setLabel("Right knee pain");
+        pinRequest.setNotes("Patient reports 6/10 pain on flexion");
+        pinRequest.setColor("#FF5733");
+
+        com.thinkitive.primus.template.entity.AnnotableImagePin savedPin =
+                com.thinkitive.primus.template.entity.AnnotableImagePin.builder()
+                        .tenantId(1L)
+                        .imageId(10L)
+                        .xPosition(new java.math.BigDecimal("45.5"))
+                        .yPosition(new java.math.BigDecimal("72.3"))
+                        .label("Right knee pain")
+                        .notes("Patient reports 6/10 pain on flexion")
+                        .color("#FF5733")
+                        .build();
+        savedPin.setId(1L);
+        savedPin.setUuid(UUID.randomUUID().toString());
+
+        when(annotableImageRepository.findByUuidAndArchiveFalse(imageUuid))
+                .thenReturn(Optional.of(image));
+        when(annotableImagePinRepository.save(any(com.thinkitive.primus.template.entity.AnnotableImagePin.class)))
+                .thenReturn(savedPin);
+
+        AnnotableImagePinDto result = clinicalTemplateService.addPin(imageUuid, pinRequest);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getLabel()).isEqualTo("Right knee pain");
+        assertThat(result.getColor()).isEqualTo("#FF5733");
+        assertThat(result.getImageUuid()).isEqualTo(imageUuid);
+        verify(annotableImagePinRepository).save(any(com.thinkitive.primus.template.entity.AnnotableImagePin.class));
     }
 }

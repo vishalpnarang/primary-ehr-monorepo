@@ -10,7 +10,13 @@ export const api = axios.create({
   baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
   timeout: 30000,
+  withCredentials: true,
 });
+
+function getCsrfToken(): string | null {
+  const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
 
 // Request interceptor — attach JWT token and tenant ID
 api.interceptors.request.use((config) => {
@@ -19,7 +25,16 @@ api.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`;
   }
   const tenantId = sessionStorage.getItem('primus-employer-tenant-id');
-  config.headers['X-TENANT-ID'] = tenantId || '5';
+  if (tenantId) {
+    config.headers['X-TENANT-ID'] = tenantId;
+  }
+  const method = config.method?.toUpperCase();
+  if (method && !['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+      config.headers['X-XSRF-TOKEN'] = csrfToken;
+    }
+  }
   return config;
 });
 

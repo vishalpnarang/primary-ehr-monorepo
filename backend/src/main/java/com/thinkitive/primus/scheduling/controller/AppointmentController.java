@@ -11,13 +11,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import com.thinkitive.primus.shared.security.Roles;
 
 import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/v1/appointments")
 @RequiredArgsConstructor
+@PreAuthorize(Roles.HAS_SCHEDULING_ROLE)
 public class AppointmentController extends BaseController {
 
     private final AppointmentService appointmentService;

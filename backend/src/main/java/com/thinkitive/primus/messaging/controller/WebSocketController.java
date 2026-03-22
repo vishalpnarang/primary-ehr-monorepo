@@ -10,8 +10,10 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
+import com.thinkitive.primus.shared.security.Roles;
 
 /**
  * Handles inbound STOMP WebSocket messages from connected clients.
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Controller;
 @Slf4j
 @Controller
 @RequiredArgsConstructor
+@PreAuthorize(Roles.HAS_ANY_STAFF_ROLE)
 public class WebSocketController {
 
     private final MessagingService messagingService;

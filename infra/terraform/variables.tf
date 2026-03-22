@@ -45,9 +45,9 @@ variable "db_snapshot_identifier" {
 }
 
 variable "domain_name" {
-  description = "Optional custom domain (e.g. demo.yourcompany.com). Leave empty to use ALB/CloudFront URLs."
+  description = "Domain name for ACM certificate and HTTPS on the ALB (e.g. primus-ehr.com). Required for TLS."
   type        = string
-  default     = ""
+  default     = "primus-ehr.com"
 }
 
 # ---------------------------------------------------------------------------
@@ -123,4 +123,14 @@ variable "uploads_bucket_name" {
   description = "Base name for the S3 uploads bucket (message attachments, patient documents). A unique suffix is appended automatically."
   type        = string
   default     = "primus-uploads"
+}
+
+# ---------------------------------------------------------------------------
+# CloudWatch Alarms — SNS topic for alarm notifications
+# ---------------------------------------------------------------------------
+
+variable "alarm_sns_topic_arn" {
+  description = "SNS topic ARN for CloudWatch alarm notifications. If empty, alarms still fire but do not send notifications."
+  type        = string
+  default     = ""
 }

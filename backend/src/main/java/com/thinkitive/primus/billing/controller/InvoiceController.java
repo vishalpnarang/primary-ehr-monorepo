@@ -7,11 +7,15 @@ import com.thinkitive.primus.shared.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import com.thinkitive.primus.shared.security.Roles;
 
 @RestController
 @RequestMapping("/api/v1/invoices")
 @RequiredArgsConstructor
+@PreAuthorize(Roles.HAS_BILLING_ROLE)
 public class InvoiceController extends BaseController {
 
     private final InvoiceService invoiceService;

@@ -83,14 +83,62 @@ resource "aws_lb_target_group" "keycloak" {
 }
 
 # ---------------------------------------------------------------------------
-# Listener — HTTP port 80
-# Production should use HTTPS (port 443) with an ACM certificate.
-# For demo without a custom domain, HTTP is fine.
+# ACM Certificate — TLS for the ALB (*.primus-ehr.com or custom domain)
+# ---------------------------------------------------------------------------
+resource "aws_acm_certificate" "alb" {
+  domain_name       = var.domain_name
+  subject_alternative_names = ["*.${var.domain_name}"]
+  validation_method = "DNS"
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tags = { Name = "${local.name_prefix}-acm-cert" }
+}
+
+# DNS validation record — requires a Route 53 hosted zone for the domain.
+# If using an external DNS provider, create the CNAME manually and
+# import this resource or skip the aws_acm_certificate_validation.
+resource "aws_acm_certificate_validation" "alb" {
+  certificate_arn = aws_acm_certificate.alb.arn
+
+  # Validation completes once DNS propagates (typically 2-5 minutes).
+  # Terraform will wait up to the default timeout (45 min).
+  timeouts {
+    create = "30m"
+  }
+}
+
+# ---------------------------------------------------------------------------
+# Listener — HTTP port 80 (redirects all traffic to HTTPS)
 # ---------------------------------------------------------------------------
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.main.arn
   port              = 80
   protocol          = "HTTP"
+
+  # 301 permanent redirect — all HTTP traffic must go through HTTPS
+  default_action {
+    type = "redirect"
+
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
+    }
+  }
+}
+
+# ---------------------------------------------------------------------------
+# Listener — HTTPS port 443 with ACM certificate
+# ---------------------------------------------------------------------------
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06" # TLS 1.3 preferred, 1.2 minimum
+  certificate_arn   = aws_acm_certificate_validation.alb.certificate_arn
 
   # Default action: redirect browser to CloudFront (provider portal)
   default_action {
@@ -107,12 +155,12 @@ resource "aws_lb_listener" "http" {
 }
 
 # ---------------------------------------------------------------------------
-# Listener Rules — evaluated top-down by priority
+# Listener Rules — evaluated top-down by priority (attached to HTTPS listener)
 # ---------------------------------------------------------------------------
 
 # Priority 10: /api/* → backend target group
 resource "aws_lb_listener_rule" "api" {
-  listener_arn = aws_lb_listener.http.arn
+  listener_arn = aws_lb_listener.https.arn
   priority     = 10
 
   condition {
@@ -129,7 +177,7 @@ resource "aws_lb_listener_rule" "api" {
 
 # Priority 20: /auth/* → Keycloak target group
 resource "aws_lb_listener_rule" "auth" {
-  listener_arn = aws_lb_listener.http.arn
+  listener_arn = aws_lb_listener.https.arn
   priority     = 20
 
   condition {
@@ -154,10 +202,10 @@ output "alb_dns_name" {
 
 output "api_url" {
   description = "REST API base URL"
-  value       = "http://${aws_lb.main.dns_name}/api"
+  value       = "https://${aws_lb.main.dns_name}/api"
 }
 
 output "keycloak_url" {
   description = "Keycloak admin console URL"
-  value       = "http://${aws_lb.main.dns_name}/auth"
+  value       = "https://${aws_lb.main.dns_name}/auth"
 }

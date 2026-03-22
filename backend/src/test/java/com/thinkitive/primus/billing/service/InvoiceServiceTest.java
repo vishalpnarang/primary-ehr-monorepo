@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -164,5 +165,77 @@ class InvoiceServiceTest {
         InvoiceDto result = invoiceService.voidInvoice(invoiceUuid);
 
         assertThat(result.getStatus()).isEqualTo("VOID");
+    }
+
+    @Test
+    @DisplayName("getByPatient returns all invoices for a patient ordered by created date")
+    void getByPatient_returnsInvoiceList() {
+        Invoice secondInvoice = Invoice.builder()
+                .tenantId(1L)
+                .patientId(100L)
+                .invoiceNumber("INV-202603-XYZABC")
+                .subtotal(new BigDecimal("75.00"))
+                .tax(BigDecimal.ZERO)
+                .discount(BigDecimal.ZERO)
+                .total(new BigDecimal("75.00"))
+                .amountPaid(BigDecimal.ZERO)
+                .balanceDue(new BigDecimal("75.00"))
+                .status(Invoice.InvoiceStatus.SENT)
+                .dueDate(LocalDate.now().plusDays(15))
+                .build();
+        secondInvoice.setId(2L);
+        secondInvoice.setUuid(UUID.randomUUID().toString());
+
+        when(invoiceRepository.findByPatientIdAndTenantIdAndArchiveFalseOrderByCreatedAtDesc(
+                100L, 1L))
+                .thenReturn(List.of(testInvoice, secondInvoice));
+        when(lineItemRepository.findByInvoiceIdAndTenantIdAndArchiveFalse(eq(1L), eq(1L)))
+                .thenReturn(List.of());
+        when(lineItemRepository.findByInvoiceIdAndTenantIdAndArchiveFalse(eq(2L), eq(1L)))
+                .thenReturn(List.of());
+
+        List<InvoiceDto> result = invoiceService.getByPatient(100L);
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).getStatus()).isEqualTo("DRAFT");
+        assertThat(result.get(1).getStatus()).isEqualTo("SENT");
+        verify(invoiceRepository)
+                .findByPatientIdAndTenantIdAndArchiveFalseOrderByCreatedAtDesc(100L, 1L);
+    }
+
+    @Test
+    @DisplayName("getByUuid throws NOT_FOUND when invoice UUID does not exist")
+    void getByUuid_notFound_throws() {
+        String unknownUuid = UUID.randomUUID().toString();
+        when(invoiceRepository.findByTenantIdAndUuid(1L, unknownUuid))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> invoiceService.getByUuid(unknownUuid))
+                .isInstanceOf(com.thinkitive.primus.shared.exception.PrimusException.class)
+                .hasMessageContaining("Invoice not found");
+    }
+
+    @Test
+    @DisplayName("markPaid sets status to PAID and zeroes out balance due")
+    void markPaid_updatesStatusAndBalance() {
+        testInvoice.setTotal(new BigDecimal("200.00"));
+        testInvoice.setAmountPaid(BigDecimal.ZERO);
+        testInvoice.setBalanceDue(new BigDecimal("200.00"));
+        testInvoice.setStatus(Invoice.InvoiceStatus.SENT);
+
+        when(invoiceRepository.findByTenantIdAndUuid(1L, invoiceUuid))
+                .thenReturn(Optional.of(testInvoice));
+        when(invoiceRepository.save(any(Invoice.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(lineItemRepository.findByInvoiceIdAndTenantIdAndArchiveFalse(1L, 1L))
+                .thenReturn(List.of());
+
+        InvoiceDto result = invoiceService.markPaid(invoiceUuid);
+
+        assertThat(result.getStatus()).isEqualTo("PAID");
+        assertThat(result.getBalanceDue()).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(result.getAmountPaid()).isEqualByComparingTo(new BigDecimal("200.00"));
+        verify(invoiceRepository).save(argThat(i ->
+                i.getStatus() == Invoice.InvoiceStatus.PAID
+                && i.getBalanceDue().compareTo(BigDecimal.ZERO) == 0));
     }
 }

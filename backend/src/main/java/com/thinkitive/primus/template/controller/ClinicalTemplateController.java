@@ -7,11 +7,15 @@ import com.thinkitive.primus.template.service.ClinicalTemplateService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import com.thinkitive.primus.shared.security.Roles;
 
 @RestController
 @RequestMapping("/api/v1/clinical-templates")
 @RequiredArgsConstructor
+@PreAuthorize(Roles.HAS_CLINICAL_ROLE)
 public class ClinicalTemplateController extends BaseController {
 
     private final ClinicalTemplateService clinicalTemplateService;

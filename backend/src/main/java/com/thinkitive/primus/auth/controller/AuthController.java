@@ -6,6 +6,8 @@ import com.thinkitive.primus.auth.dto.LoginResponse;
 import com.thinkitive.primus.auth.dto.SwitchRoleRequest;
 import com.thinkitive.primus.shared.controller.BaseController;
 import com.thinkitive.primus.shared.dto.ApiResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,8 +31,22 @@ public class AuthController extends BaseController {
      * and returns a signed mock JWT with role + tenant embedded.
      */
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<ApiResponse> login(
+            @Valid @RequestBody LoginRequest request,
+            HttpServletResponse httpResponse) {
         LoginResponse response = buildMockLoginResponse(request.getUsername());
+
+        // Set JWT in httpOnly cookie for XSS protection.
+        // Frontend can still read user info from the response body,
+        // but the token itself is inaccessible to JavaScript.
+        Cookie tokenCookie = new Cookie("PRIMUS_TOKEN", response.getAccessToken());
+        tokenCookie.setHttpOnly(true);
+        tokenCookie.setSecure(true); // HTTPS only in production
+        tokenCookie.setPath("/api");
+        tokenCookie.setMaxAge((int) MOCK_EXPIRES_IN);
+        tokenCookie.setAttribute("SameSite", "Strict");
+        httpResponse.addCookie(tokenCookie);
+
         return ok(response, "Login successful");
     }
 
@@ -54,6 +70,22 @@ public class AuthController extends BaseController {
         // In Phase 1 this will decode the Keycloak JWT from the Authorization header.
         CurrentUserDto user = buildMockCurrentUser("PROVIDER");
         return ok(user);
+    }
+
+    /**
+     * POST /api/v1/auth/logout
+     * Clears the httpOnly session cookie.
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse> logout(HttpServletResponse httpResponse) {
+        Cookie tokenCookie = new Cookie("PRIMUS_TOKEN", "");
+        tokenCookie.setHttpOnly(true);
+        tokenCookie.setSecure(true);
+        tokenCookie.setPath("/api");
+        tokenCookie.setMaxAge(0); // Delete cookie
+        tokenCookie.setAttribute("SameSite", "Strict");
+        httpResponse.addCookie(tokenCookie);
+        return ok(null, "Logged out");
     }
 
     // -------------------------------------------------------------------------

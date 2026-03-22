@@ -10,7 +10,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import com.thinkitive.primus.shared.security.Roles;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -24,6 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/scheduling/admin")
 @RequiredArgsConstructor
+@PreAuthorize(Roles.HAS_ADMIN_ROLE)
 public class SchedulingAdminController extends BaseController {
 
     private final SchedulingAdminService schedulingAdminService;
