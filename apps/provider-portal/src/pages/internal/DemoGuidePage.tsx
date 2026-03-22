@@ -146,14 +146,14 @@ cd apps/mock-api && npm run dev`}
 
 // ─── 2. Login Credentials ─────────────────────────────────────────────────────
 const credentials = [
-  { email: 'superadmin@thinkitive.com', password: 'Admin@1234', role: 'Super Admin', test: 'Tenant management, global settings' },
-  { email: 'admin@primusdemo.com', password: 'Admin@1234', role: 'Tenant Admin', test: 'Org settings, user management, billing' },
-  { email: 'manager@primusdemo.com', password: 'Admin@1234', role: 'Practice Admin', test: 'Staff schedules, daily ops, reports' },
-  { email: 'dr.smith@primusdemo.com', password: 'Doctor@1234', role: 'Provider (MD)', test: 'Patient chart, SOAP notes, orders, Rx' },
-  { email: 'nurse.jones@primusdemo.com', password: 'Nurse@1234', role: 'Nurse / MA', test: 'Rooming, vitals, medication reconciliation' },
-  { email: 'frontdesk@primusdemo.com', password: 'Desk@1234', role: 'Front Desk', test: 'Scheduling, check-in, patient registration' },
-  { email: 'billing@primusdemo.com', password: 'Billing@1234', role: 'Billing Staff', test: 'Claims, ERA, denials, RCM dashboard' },
-  { email: 'patient@example.com', password: 'Patient@1234', role: 'Patient', test: 'Patient portal — labs, messages, booking' },
+  { email: 'alex.morgan@thinkitive.com', password: 'password123', role: 'Super Admin', test: 'Tenants, platform health, feature flags, audit log' },
+  { email: 'james.wilson@primusdemo.com', password: 'password123', role: 'Tenant Admin', test: 'Org settings, users, locations, providers, payers' },
+  { email: 'maria.garcia@primusdemo.com', password: 'password123', role: 'Practice Admin', test: 'Ops dashboard, staff tasks, reports' },
+  { email: 'emily.chen@primusdemo.com', password: 'password123', role: 'Provider (MD)', test: 'Dashboard, patient chart, SOAP notes, inbox, orders' },
+  { email: 'sarah.thompson@primusdemo.com', password: 'password123', role: 'Nurse / MA', test: 'Room status, rooming checklist, vitals, tasks' },
+  { email: 'david.kim@primusdemo.com', password: 'password123', role: 'Front Desk', test: 'Schedule, check-in flow, patient registration' },
+  { email: 'lisa.patel@primusdemo.com', password: 'password123', role: 'Billing Staff', test: 'KPI dashboard, claims, denials, A/R, ERA' },
+  { email: 'robert.johnson@email.com', password: 'password123', role: 'Patient', test: 'Patient portal — home, appointments, messages, records, billing' },
 ];
 
 const CredentialsSection = () => (

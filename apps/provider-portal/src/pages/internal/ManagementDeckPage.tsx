@@ -100,7 +100,7 @@ const HeroSection = () => (
       <div className="flex flex-wrap gap-4">
         {[
           { label: '268 Files', sub: 'codebase' },
-          { label: '32,700 Lines', sub: 'of TypeScript/React' },
+          { label: '40,000 Lines', sub: 'of TypeScript/React' },
           { label: '31 Pages', sub: 'built' },
           { label: 'Phase 0', sub: 'UI complete' },
         ].map((s) => (
@@ -349,7 +349,7 @@ const ProgressSection = () => (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
         {[
           { value: '268', label: 'Total Files', sub: 'in codebase' },
-          { value: '32,700', label: 'Lines of Code', sub: 'TypeScript + TSX' },
+          { value: '40,000', label: 'Lines of Code', sub: 'TypeScript + TSX' },
           { value: '31', label: 'Pages Built', sub: 'all roles covered' },
           { value: '14', label: 'API Contracts', sub: 'spec complete' },
         ].map((s) => (
