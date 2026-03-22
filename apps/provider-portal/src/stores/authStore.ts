@@ -46,9 +46,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       };
 
       // Persist to session
-      // Extract numeric tenant ID from JWT claim; fall back to '1' if not present
-      // decoded.tenant_id comes from the Keycloak realm mapper "tenant_id" claim
-      const tenantId = decoded.tenant_id == null ? '1' : String(decoded.tenant_id);
+      // Extract tenant ID from JWT claim; fall back to '5' (seeded Primus Think tenant)
+      const tenantId = decoded.tenant_id != null ? String(decoded.tenant_id) : '5';
       sessionStorage.setItem('primus-access-token', tokenResponse.access_token);
       sessionStorage.setItem('primus-refresh-token', tokenResponse.refresh_token);
       sessionStorage.setItem('primus-user', JSON.stringify(user));
