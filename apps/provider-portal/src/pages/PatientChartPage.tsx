@@ -156,17 +156,18 @@ const Card: React.FC<CardProps> = ({ title, count, onViewAll, onAdd, headerExtra
   </div>
 );
 
-// ─── View All Overlay ────────────────────────────────────────────────────────
+// ─── Inline Detail Drawer ────────────────────────────────────────────────────
+// Renders as a right-side panel within the page content area — no modal overlay.
 
-const ViewAllOverlay: React.FC<{ title: string; onClose: () => void; children: React.ReactNode }> = ({ title, onClose, children }) => (
-  <div className="fixed inset-0 z-modal bg-black/30 flex items-start justify-center pt-20" onClick={onClose}>
-    <div className="bg-white rounded-xl shadow-2xl border w-[800px] max-h-[75vh] flex flex-col animate-scale-in" onClick={(e) => e.stopPropagation()}>
-      <div className="flex items-center justify-between px-5 py-3 border-b">
-        <h2 className="text-sm font-semibold">{title}</h2>
-        <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded"><X className="w-4 h-4 text-gray-400" /></button>
-      </div>
-      <div className="overflow-y-auto flex-1 p-4">{children}</div>
+const InlineDetailDrawer: React.FC<{ title: string; onClose: () => void; children: React.ReactNode }> = ({ title, onClose, children }) => (
+  <div className="absolute inset-y-0 right-0 w-[480px] bg-white border-l border-slate-200 shadow-xl z-30 flex flex-col animate-slide-in-right">
+    <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 flex-shrink-0">
+      <h2 className="text-sm font-semibold text-gray-900">{title}</h2>
+      <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded" aria-label="Close">
+        <X className="w-4 h-4 text-gray-400" />
+      </button>
     </div>
+    <div className="overflow-y-auto flex-1 p-4">{children}</div>
   </div>
 );
 
@@ -343,7 +344,7 @@ const PatientChartPage: React.FC = () => {
       </div>
 
       {/* ── Content + Action Panel ── */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
         {/* Card Grid */}
         <div className="flex-1 overflow-y-auto p-3 bg-slate-50">
           {headerTab === 'home' && subTab === 'facesheet' && (
@@ -944,26 +945,26 @@ const PatientChartPage: React.FC = () => {
         <div className="hidden lg:block">
           <ActionPanel collapsed={apCollapsed} toggle={() => setApCollapsed(!apCollapsed)} />
         </div>
-      </div>
 
-      {/* View All Overlays */}
-      {viewAll === 'medications' && (
-        <ViewAllOverlay title="All Medications" onClose={() => setViewAll(null)}>
-          <table className="w-full text-sm"><thead className="bg-slate-50"><tr><th className="text-left px-3 py-2 text-xs font-medium text-gray-500">Medication</th><th className="text-left px-3 py-2 text-xs font-medium text-gray-500">Strength</th><th className="text-left px-3 py-2 text-xs font-medium text-gray-500">Directions</th><th className="text-left px-3 py-2 text-xs font-medium text-gray-500">Date</th></tr></thead>
-            <tbody className="divide-y">{medications.map((m) => (<tr key={m.id} className="hover:bg-slate-50"><td className="px-3 py-2 font-medium">{m.name}</td><td className="px-3 py-2 font-mono text-gray-600">{m.strength}</td><td className="px-3 py-2 text-gray-600">{m.directions}</td><td className="px-3 py-2 text-gray-400">{m.date}</td></tr>))}</tbody></table>
-        </ViewAllOverlay>
-      )}
-      {viewAll === 'problems' && (
-        <ViewAllOverlay title="Problem List" onClose={() => setViewAll(null)}>
-          <table className="w-full text-sm"><thead className="bg-slate-50"><tr><th className="text-left px-3 py-2 text-xs font-medium text-gray-500">Problem</th><th className="text-left px-3 py-2 text-xs font-medium text-gray-500">ICD-10</th><th className="text-left px-3 py-2 text-xs font-medium text-gray-500">Onset</th></tr></thead>
-            <tbody className="divide-y">{problems.map((p) => (<tr key={p.id} className="hover:bg-slate-50"><td className="px-3 py-2 font-medium">{p.description}</td><td className="px-3 py-2 font-mono text-gray-600">{p.icdCode}</td><td className="px-3 py-2 text-gray-400">{p.onset}</td></tr>))}</tbody></table>
-        </ViewAllOverlay>
-      )}
-      {viewAll && !['medications', 'problems'].includes(viewAll) && (
-        <ViewAllOverlay title={viewAll.charAt(0).toUpperCase() + viewAll.slice(1)} onClose={() => setViewAll(null)}>
-          <p className="text-sm text-gray-500 text-center py-8">Full detailed view for {viewAll}</p>
-        </ViewAllOverlay>
-      )}
+        {/* Inline Detail Drawer — slides in over the content area, no modal overlay */}
+        {viewAll === 'medications' && (
+          <InlineDetailDrawer title="All Medications" onClose={() => setViewAll(null)}>
+            <table className="w-full text-sm"><thead className="bg-slate-50"><tr><th className="text-left px-3 py-2 text-xs font-medium text-gray-500">Medication</th><th className="text-left px-3 py-2 text-xs font-medium text-gray-500">Strength</th><th className="text-left px-3 py-2 text-xs font-medium text-gray-500">Directions</th><th className="text-left px-3 py-2 text-xs font-medium text-gray-500">Date</th></tr></thead>
+              <tbody className="divide-y">{medications.map((m) => (<tr key={m.id} className="hover:bg-slate-50"><td className="px-3 py-2 font-medium">{m.name}</td><td className="px-3 py-2 font-mono text-gray-600">{m.strength}</td><td className="px-3 py-2 text-gray-600">{m.directions}</td><td className="px-3 py-2 text-gray-400">{m.date}</td></tr>))}</tbody></table>
+          </InlineDetailDrawer>
+        )}
+        {viewAll === 'problems' && (
+          <InlineDetailDrawer title="Problem List" onClose={() => setViewAll(null)}>
+            <table className="w-full text-sm"><thead className="bg-slate-50"><tr><th className="text-left px-3 py-2 text-xs font-medium text-gray-500">Problem</th><th className="text-left px-3 py-2 text-xs font-medium text-gray-500">ICD-10</th><th className="text-left px-3 py-2 text-xs font-medium text-gray-500">Onset</th></tr></thead>
+              <tbody className="divide-y">{problems.map((p) => (<tr key={p.id} className="hover:bg-slate-50"><td className="px-3 py-2 font-medium">{p.description}</td><td className="px-3 py-2 font-mono text-gray-600">{p.icdCode}</td><td className="px-3 py-2 text-gray-400">{p.onset}</td></tr>))}</tbody></table>
+          </InlineDetailDrawer>
+        )}
+        {viewAll && !['medications', 'problems'].includes(viewAll) && (
+          <InlineDetailDrawer title={viewAll.charAt(0).toUpperCase() + viewAll.slice(1)} onClose={() => setViewAll(null)}>
+            <p className="text-sm text-gray-500 text-center py-8">Full detailed view for {viewAll}</p>
+          </InlineDetailDrawer>
+        )}
+      </div>
     </div>
   );
 };

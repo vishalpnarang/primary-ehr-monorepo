@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Calendar,
   Clock,
@@ -57,9 +58,10 @@ interface CardHeaderProps {
   title: string;
   count?: number;
   action?: string;
+  onAction?: () => void;
   children?: React.ReactNode;
 }
-const CardHeader: React.FC<CardHeaderProps> = ({ title, count, action, children }) => (
+const CardHeader: React.FC<CardHeaderProps> = ({ title, count, action, onAction, children }) => (
   <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100">
     <div className="flex items-center gap-1.5">
       <span className="text-[11px] font-semibold text-gray-700 uppercase tracking-wide">{title}</span>
@@ -72,7 +74,10 @@ const CardHeader: React.FC<CardHeaderProps> = ({ title, count, action, children 
     <div className="flex items-center gap-2">
       {children}
       {action && (
-        <button className="text-[10px] text-blue-600 hover:text-blue-700 font-medium flex items-center gap-0.5">
+        <button
+          onClick={onAction}
+          className="text-[10px] text-blue-600 hover:text-blue-700 font-medium flex items-center gap-0.5"
+        >
           {action} <ChevronRight className="w-3 h-3" />
         </button>
       )}
@@ -272,6 +277,7 @@ const CARE_GAPS: CareGapRow[] = [
 
 const ProviderDashboard: React.FC = () => {
   const { data: apiData } = useProviderDashboard();
+  const navigate = useNavigate();
 
   // KPI counts — use API data when available, fall back to inline mock derivations
   const completed = apiData?.completedAppointments ?? PROVIDER_APPTS.filter((a) => a.status === 'completed').length;
@@ -279,13 +285,14 @@ const ProviderDashboard: React.FC = () => {
   const noShows   = apiData?.noShowCount         ?? PROVIDER_APPTS.filter((a) => a.status === 'no_show').length;
   const totalAppts = apiData?.todayAppointmentsTotal ?? PROVIDER_APPTS.length;
   const totalGaps = CARE_GAPS.reduce((n, g) => n + g.gaps.length, 0);
+  const remaining = Math.max(0, totalAppts - completed);
 
   return (
     <div className="flex flex-col gap-2 h-full">
       {/* KPI Strip */}
       <div className="grid grid-cols-4 gap-2">
         <KpiCard label="Patients Today"  value={totalAppts}            sub="on schedule"                            icon={<Calendar    className="w-3.5 h-3.5 text-blue-600"  />} iconBg="bg-blue-50"  />
-        <KpiCard label="Completed"       value={completed}             sub={`${totalAppts - completed} remaining`}  icon={<CheckCircle2 className="w-3.5 h-3.5 text-success-600" />} iconBg="bg-success-50" />
+        <KpiCard label="Completed"       value={completed}             sub={`${remaining} remaining`}               icon={<CheckCircle2 className="w-3.5 h-3.5 text-success-600" />} iconBg="bg-success-50" />
         <KpiCard label="In Room / Active" value={inRoom}              sub="currently occupied"                      icon={<DoorOpen    className="w-3.5 h-3.5 text-purple-600"  />} iconBg="bg-purple-50"  />
         <KpiCard label="No Shows"        value={noShows}              sub="today"                                   icon={<XCircle     className="w-3.5 h-3.5 text-critical-600" />} iconBg="bg-critical-50" alert={noShows > 0} />
       </div>
@@ -295,7 +302,7 @@ const ProviderDashboard: React.FC = () => {
 
         {/* Col 1: Schedule */}
         <Card className="flex flex-col overflow-hidden">
-          <CardHeader title="Today's Schedule" count={PROVIDER_APPTS.length} action="Full schedule" />
+          <CardHeader title="Today's Schedule" count={PROVIDER_APPTS.length} action="Full schedule" onAction={() => navigate('/schedule')} />
           <div className="overflow-y-auto flex-1">
             {PROVIDER_APPTS.map((a) => (
               <ApptRow key={a.id} time={a.time} name={a.name} type={a.type} status={a.status} reason={a.reason} room={a.room} />
@@ -305,7 +312,7 @@ const ProviderDashboard: React.FC = () => {
 
         {/* Col 2: Priority Inbox */}
         <Card className="flex flex-col overflow-hidden">
-          <CardHeader title="Priority Inbox" count={INBOX_GROUPS.reduce((n, g) => n + g.count, 0)} action="Open inbox" />
+          <CardHeader title="Priority Inbox" count={INBOX_GROUPS.reduce((n, g) => n + g.count, 0)} action="Open inbox" onAction={() => navigate('/inbox')} />
           <div className="overflow-y-auto flex-1 divide-y divide-gray-50">
             {INBOX_GROUPS.map((group) => (
               <div key={group.label} className="px-3 py-2">
@@ -342,7 +349,7 @@ const ProviderDashboard: React.FC = () => {
 
         {/* Col 3: Care Gaps */}
         <Card className="flex flex-col overflow-hidden">
-          <CardHeader title="Care Gaps — Today" count={totalGaps} action="All gaps" />
+          <CardHeader title="Care Gaps — Today" count={totalGaps} action="All gaps" onAction={() => navigate('/patients')} />
           <div className="overflow-y-auto flex-1 divide-y divide-gray-50">
             {CARE_GAPS.map((row) => (
               <div key={row.id} className="px-3 py-2 hover:bg-slate-50 cursor-pointer">

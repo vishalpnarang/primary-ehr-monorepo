@@ -12,7 +12,7 @@ import {
   X,
 } from 'lucide-react';
 import { cn } from '@primus/ui/lib';
-import { appointmentApi } from '@/lib/api';
+import { useCreateAppointment } from '@/hooks/useApi';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -323,8 +323,8 @@ interface SectionCardProps {
 }
 
 const SectionCard: React.FC<SectionCardProps> = ({ title, children }) => (
-  <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-    <div className="px-4 py-3 bg-slate-50 border-b border-slate-100">
+  <div className="bg-white border border-slate-200 rounded-xl overflow-visible">
+    <div className="px-4 py-3 bg-slate-50 border-b border-slate-100 rounded-t-xl">
       <h2 className="text-sm font-semibold text-gray-800">{title}</h2>
     </div>
     <div className="p-4">{children}</div>
@@ -432,6 +432,7 @@ const ConfirmationCard: React.FC<ConfirmationCardProps> = ({
 
 const NewAppointmentPage: React.FC = () => {
   const navigate = useNavigate();
+  const createAppointment = useCreateAppointment();
 
   const [selectedPatient, setSelectedPatient] = useState<PatientResult | null>(null);
   const [apptType, setApptType]               = useState<ApptType | ''>('');
@@ -480,25 +481,26 @@ const NewAppointmentPage: React.FC = () => {
     };
     const duration = durationMap[apptType] ?? 30;
 
+    const payload: Record<string, unknown> = {
+      patientId: selectedPatient.id,
+      providerId: provider,
+      date: selectedDate,
+      startTime,
+      type: apptType.replace('-', '_').toUpperCase(),
+      reason,
+      locationId: location,
+      duration,
+      telehealth: apptType === 'telehealth',
+    };
+
     try {
-      const payload: Record<string, unknown> = {
-        patientId: selectedPatient.id,
-        providerId: provider,
-        date: selectedDate,
-        startTime,
-        type: apptType.replace('-', '_').toUpperCase(),
-        reason,
-        locationId: location,
-        duration,
-        telehealth: apptType === 'telehealth',
-      };
-      await appointmentApi.create(payload);
-      setBooked(true);
+      await createAppointment.mutateAsync(payload);
     } catch (err: unknown) {
       // Backend unavailable — fall through to mock success so the UI flow still works
       console.warn('Backend booking failed, using mock:', err);
-      setBooked(true);
     }
+    // Show confirmation regardless — invalidation already fired in onSuccess (or was skipped on error)
+    setBooked(true);
   };
 
   return (
@@ -530,16 +532,16 @@ const NewAppointmentPage: React.FC = () => {
           />
           <div className="flex gap-3">
             <button
-              onClick={() => navigate('/schedule')}
+              onClick={() => { setBooked(false); setSelectedPatient(null); setApptType(''); setProvider(''); setLocation(''); setSelectedDate(''); setSelectedSlot(null); setReason(''); }}
               className="flex-1 py-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-sm font-medium text-gray-700 transition-colors"
             >
-              Back to Schedule
+              Book Another
             </button>
             <button
-              onClick={() => { setBooked(false); setSelectedPatient(null); setApptType(''); setProvider(''); setLocation(''); setSelectedDate(''); setSelectedSlot(null); setReason(''); }}
+              onClick={() => navigate('/schedule')}
               className="flex-1 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors"
             >
-              Book Another
+              Back to Schedule
             </button>
           </div>
         </div>

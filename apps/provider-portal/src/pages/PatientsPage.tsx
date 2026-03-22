@@ -29,16 +29,16 @@ interface MockPatient {
   lastName: string;
   preferredName?: string;
   dob: string;
-  age: number;
+  age?: number;
   sex: 'Male' | 'Female' | 'Other';
   phone: string;
   email?: string;
-  insurance: {
+  insurance?: {
     payerName: string;
     planType: string;
     verified: boolean;
   };
-  status: PatientStatus;
+  status?: PatientStatus;
   lastVisitDate?: string;
   primaryProvider: string;
   hasHighRisk: boolean;
@@ -156,6 +156,15 @@ function formatLastVisit(date: string | undefined): string {
   return new Date(date + 'T12:00:00').toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', year: 'numeric',
   });
+}
+
+function computeAge(dob: string): number {
+  const today = new Date();
+  const birth = new Date(dob + 'T12:00:00');
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+  return age;
 }
 
 function getInitials(firstName: string, lastName: string): string {
@@ -541,7 +550,7 @@ const PatientRow: React.FC<PatientRowProps> = ({ patient, onClick }) => {
       <div className="flex items-center">
         <div>
           <p className="text-sm text-gray-700">{formatDob(patient.dob)}</p>
-          <p className="text-xs text-gray-400">{patient.age} yr old</p>
+          <p className="text-xs text-gray-400">{patient.age ?? computeAge(patient.dob)} yr old</p>
         </div>
       </div>
 
@@ -552,14 +561,14 @@ const PatientRow: React.FC<PatientRowProps> = ({ patient, onClick }) => {
 
       {/* Insurance */}
       <div className="hidden xl:flex items-center gap-1.5 min-w-0">
-        {patient.insurance.verified ? (
+        {patient.insurance?.verified ? (
           <Shield className="w-3.5 h-3.5 text-green-500 flex-shrink-0" />
         ) : (
           <Shield className="w-3.5 h-3.5 text-gray-300 flex-shrink-0" />
         )}
         <div className="min-w-0">
-          <p className="text-sm text-gray-700 truncate">{patient.insurance.payerName}</p>
-          <p className="text-xs text-gray-400">{patient.insurance.planType}</p>
+          <p className="text-sm text-gray-700 truncate">{patient.insurance?.payerName ?? '—'}</p>
+          <p className="text-xs text-gray-400">{patient.insurance?.planType ?? ''}</p>
         </div>
       </div>
 
@@ -575,7 +584,7 @@ const PatientRow: React.FC<PatientRowProps> = ({ patient, onClick }) => {
 
       {/* Status */}
       <div className="flex items-center">
-        <StatusBadge status={patient.status} />
+        <StatusBadge status={patient.status ?? 'active'} />
       </div>
     </button>
   );

@@ -54,7 +54,9 @@ interface ScheduleAppointment {
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
-const TODAY = '2026-03-19';
+// Derive today's ISO date at runtime so mock appointments always show for the current day
+const _now = new Date();
+const TODAY = `${_now.getFullYear()}-${String(_now.getMonth() + 1).padStart(2, '0')}-${String(_now.getDate()).padStart(2, '0')}`;
 
 const MOCK_APPOINTMENTS: ScheduleAppointment[] = [
   {
@@ -354,7 +356,7 @@ const DayView: React.FC<DayViewProps> = ({ appointments, onApptClick }) => {
   }, [appointments]);
 
   return (
-    <div className="flex overflow-auto" style={{ maxHeight: 'calc(100vh - 180px)' }}>
+    <div className="flex overflow-y-auto flex-1" style={{ maxHeight: 'calc(100vh - 260px)', minHeight: '400px' }}>
       {/* Time gutter */}
       <div className="w-16 flex-shrink-0 select-none">
         {DAY_HOURS.map((h) => (
@@ -421,7 +423,7 @@ const WeekView: React.FC<WeekViewProps> = ({ currentDate, allAppointments, onApp
   const SLOT_HEIGHT = 48;
 
   return (
-    <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 180px)' }}>
+    <div className="overflow-y-auto flex-1" style={{ maxHeight: 'calc(100vh - 260px)', minHeight: '400px' }}>
       {/* Day headers */}
       <div className="flex border-b border-slate-200 sticky top-0 bg-white z-10">
         <div className="w-14 flex-shrink-0" />
@@ -765,7 +767,7 @@ const SchedulePage: React.FC = () => {
       <div className="flex items-center justify-between mb-3">
         <div>
           <h1 className="text-xl font-semibold text-gray-900">Schedule</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Thursday, March 19, 2026</p>
+          <p className="text-sm text-gray-500 mt-0.5">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</p>
         </div>
         <button
           onClick={() => navigate('/schedule/new')}
@@ -875,7 +877,7 @@ const SchedulePage: React.FC = () => {
       </div>
 
       {/* Calendar body */}
-      <div className="bg-white rounded-lg border border-slate-200 mt-2 overflow-hidden">
+      <div className="bg-white rounded-lg border border-slate-200 mt-2 overflow-hidden flex-1 flex flex-col">
         {view === 'day' && (
           <DayView appointments={dayAppointments} onApptClick={setSelectedAppt} />
         )}

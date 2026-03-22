@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppShell } from '@/layouts/AppShell';
@@ -44,49 +44,60 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 };
 
+// Wrap each lazy page individually so AppShell (sidebar) stays mounted during navigation
+const S = (C: React.ComponentType) => (
+  <Suspense fallback={<PageLoader />}>
+    <C />
+  </Suspense>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <BrowserRouter>
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route
-            element={
-              <ProtectedRoute>
-                <AppShell />
-              </ProtectedRoute>
-            }
-          >
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/schedule" element={<SchedulePage />} />
-            <Route path="/schedule/new" element={<NewAppointmentPage />} />
-            <Route path="/patients" element={<PatientsPage />} />
-            <Route path="/patients/new" element={<NewPatientPage />} />
-            <Route path="/patients/:patientId" element={<PatientChartPage />} />
-            <Route path="/patients/:patientId/:section" element={<PatientChartPage />} />
-            <Route path="/patients/:patientId/encounters/new" element={<NewEncounterPage />} />
-            <Route path="/patients/:patientId/encounters/:encounterId" element={<NewEncounterPage />} />
-            <Route path="/patients/:patientId/checkin" element={<CheckInPage />} />
-            <Route path="/patients/:patientId/rooming" element={<RoomingPage />} />
-            <Route path="/inbox" element={<InboxPage />} />
-            <Route path="/billing" element={<BillingPage />} />
-            <Route path="/billing/:section" element={<BillingPage />} />
-            <Route path="/reports" element={<ReportsPage />} />
-            <Route path="/reports/:section" element={<ReportsPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/settings/:section" element={<SettingsPage />} />
-            <Route path="/settings/tenants/new" element={<TenantProvisioningPage />} />
-          </Route>
-          {/* Internal routes — password-gated, no EHR auth required */}
-          <Route element={<InternalGate />}>
-            <Route path="/internal/management" element={<ManagementDeckPage />} />
-            <Route path="/internal/client" element={<ClientDeckPage />} />
-            <Route path="/internal/demo-guide" element={<DemoGuidePage />} />
-          </Route>
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      </Suspense>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route
+          element={
+            <ProtectedRoute>
+              <AppShell />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/dashboard" element={S(DashboardPage)} />
+          <Route path="/schedule" element={S(SchedulePage)} />
+          <Route path="/schedule/new" element={S(NewAppointmentPage)} />
+          <Route path="/patients" element={S(PatientsPage)} />
+          <Route path="/patients/new" element={S(NewPatientPage)} />
+          <Route path="/patients/:patientId" element={S(PatientChartPage)} />
+          <Route path="/patients/:patientId/:section" element={S(PatientChartPage)} />
+          <Route path="/patients/:patientId/encounters/new" element={S(NewEncounterPage)} />
+          <Route path="/patients/:patientId/encounters/:encounterId" element={S(NewEncounterPage)} />
+          <Route path="/patients/:patientId/checkin" element={S(CheckInPage)} />
+          <Route path="/patients/:patientId/rooming" element={S(RoomingPage)} />
+          <Route path="/inbox" element={S(InboxPage)} />
+          <Route path="/billing" element={S(BillingPage)} />
+          <Route path="/billing/:section" element={S(BillingPage)} />
+          <Route path="/reports" element={S(ReportsPage)} />
+          <Route path="/reports/:section" element={S(ReportsPage)} />
+          <Route path="/settings" element={S(SettingsPage)} />
+          <Route path="/settings/:section" element={S(SettingsPage)} />
+          <Route path="/settings/tenants/new" element={S(TenantProvisioningPage)} />
+        </Route>
+        {/* Internal routes — password-gated, no EHR auth required */}
+        <Route
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <InternalGate />
+            </Suspense>
+          }
+        >
+          <Route path="/internal/management" element={S(ManagementDeckPage)} />
+          <Route path="/internal/client" element={S(ClientDeckPage)} />
+          <Route path="/internal/demo-guide" element={S(DemoGuidePage)} />
+        </Route>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
     </BrowserRouter>
   </QueryClientProvider>
 );
