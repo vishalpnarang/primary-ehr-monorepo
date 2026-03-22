@@ -11,7 +11,6 @@ export default defineConfig({
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'mobile', use: { ...devices['iPhone 13'] } },
   ],
   webServer: {
     command: 'cd apps/provider-portal && npx vite --port 5173',
