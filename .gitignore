@@ -36,3 +36,5 @@ coverage/
 
 # Claude
 .claude/
+test-results/
+playwright-report/
