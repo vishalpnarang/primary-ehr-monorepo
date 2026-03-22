@@ -35,6 +35,43 @@ output "instance_name" {
   value       = var.instance_name
 }
 
+# ---------------------------------------------------------------------------
+# Phase 8 — Notifications
+# ---------------------------------------------------------------------------
+
+output "ses_domain_identity_arn" {
+  description = "SES domain identity ARN — add DKIM CNAMEs to DNS to complete domain verification"
+  value       = aws_ses_domain_identity.main.arn
+}
+
+output "sns_appointment_reminders_arn" {
+  description = "SNS topic ARN for appointment reminder SMS — injected into backend as SNS_TOPIC_APPOINTMENT_REMINDERS"
+  value       = aws_sns_topic.appointment_reminders.arn
+}
+
+output "sns_notification_dispatch_arn" {
+  description = "SNS topic ARN for general notification dispatch — injected into backend as SNS_TOPIC_NOTIFICATION_DISPATCH"
+  value       = aws_sns_topic.notification_dispatch.arn
+}
+
+# ---------------------------------------------------------------------------
+# Phase 8 — File uploads
+# ---------------------------------------------------------------------------
+
+output "s3_uploads_bucket_name" {
+  description = "S3 uploads bucket name — injected into backend as AWS_S3_UPLOADS_BUCKET"
+  value       = aws_s3_bucket.uploads.id
+}
+
+output "s3_uploads_bucket_arn" {
+  description = "S3 uploads bucket ARN"
+  value       = aws_s3_bucket.uploads.arn
+}
+
+# ---------------------------------------------------------------------------
+# Deployment summary
+# ---------------------------------------------------------------------------
+
 output "deployment_summary" {
   description = "Human-readable deployment summary — printed after apply completes"
   value = <<-EOT
@@ -66,6 +103,15 @@ output "deployment_summary" {
 
     ECS CLUSTER
       Name: ${aws_ecs_cluster.main.name}
+
+    NOTIFICATIONS (Phase 8)
+      SES sender     : ${var.ses_sender_email}
+      SES domain ARN : ${aws_ses_domain_identity.main.arn}
+      SNS appt topic : ${aws_sns_topic.appointment_reminders.arn}
+      SNS dispatch   : ${aws_sns_topic.notification_dispatch.arn}
+
+    FILE UPLOADS (Phase 8)
+      S3 bucket: ${aws_s3_bucket.uploads.id}
 
     TEAR DOWN
       cd infra && ./destroy.sh ${var.instance_name}

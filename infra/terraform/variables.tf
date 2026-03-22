@@ -98,3 +98,29 @@ variable "backend_jwt_secret" {
   sensitive   = true
   default     = "primus-jwt-secret-change-in-prod-2026!"
 }
+
+# ---------------------------------------------------------------------------
+# Phase 8 — Notifications (SES + SNS)
+# ---------------------------------------------------------------------------
+
+variable "ses_sender_email" {
+  description = "Verified SES sender address used by the backend for all outbound email (appointment reminders, password resets, etc.)."
+  type        = string
+  default     = "noreply@primus-ehr.com"
+}
+
+variable "sns_sms_spend_limit" {
+  description = "Monthly SMS spend limit in USD for the AWS SNS account-level SMS preferences. Prevents runaway costs on demo deployments."
+  type        = number
+  default     = 100
+}
+
+# ---------------------------------------------------------------------------
+# Phase 8 — File uploads (S3)
+# ---------------------------------------------------------------------------
+
+variable "uploads_bucket_name" {
+  description = "Base name for the S3 uploads bucket (message attachments, patient documents). A unique suffix is appended automatically."
+  type        = string
+  default     = "primus-uploads"
+}

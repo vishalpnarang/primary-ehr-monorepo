@@ -131,18 +131,61 @@ resource "aws_iam_role_policy" "ecs_task_s3" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
+      # Frontend bucket — read-only (backend may serve asset URLs)
       {
+        Sid      = "FrontendS3ReadOnly"
         Effect   = "Allow"
-        Action   = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
+        Action   = ["s3:GetObject"]
         Resource = "${aws_s3_bucket.frontend.arn}/*"
       },
+      # Uploads bucket — full read/write for patient documents and attachments
+      # (ses.tf/s3_uploads.tf also attach separate policies; this policy covers
+      #  the core S3 access the task role needs at the IAM level)
       {
-        Effect   = "Allow"
-        Action   = ["secretsmanager:GetSecretValue"]
+        Sid    = "UploadsS3ReadWrite"
+        Effect = "Allow"
+        Action = [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:GetObjectVersion",
+          "s3:ListBucket",
+        ]
+        Resource = [
+          aws_s3_bucket.uploads.arn,
+          "${aws_s3_bucket.uploads.arn}/*",
+        ]
+      },
+      # Secrets Manager — backend reads credentials at startup
+      {
+        Sid    = "SecretsManagerRead"
+        Effect = "Allow"
+        Action = ["secretsmanager:GetSecretValue"]
         Resource = [
           aws_secretsmanager_secret.db_credentials.arn,
           aws_secretsmanager_secret.backend_secrets.arn,
         ]
+      },
+      # SES — send email notifications (appointment reminders, lab results, messages)
+      {
+        Sid    = "SESSendEmail"
+        Effect = "Allow"
+        Action = [
+          "ses:SendEmail",
+          "ses:SendRawEmail",
+          "ses:SendTemplatedEmail",
+        ]
+        Resource = "*" # Scoped further by ses.tf policy; "*" needed for identity ARN wildcard
+      },
+      # SNS — publish SMS notifications and internal dispatch events
+      {
+        Sid    = "SNSPublish"
+        Effect = "Allow"
+        Action = [
+          "sns:Publish",
+          "sns:GetTopicAttributes",
+        ]
+        Resource = "*" # Topic ARNs not yet known at ecs.tf parse time; sns.tf adds scoped policy
       }
     ]
   })
@@ -182,6 +225,13 @@ resource "aws_ecs_task_definition" "backend" {
         { name = "DB_PORT",                value = "5432" },
         { name = "DB_NAME",                value = aws_rds_cluster.main.database_name },
         { name = "AWS_REGION",             value = var.aws_region },
+        # Phase 8 — Notifications
+        { name = "SES_SENDER_EMAIL",                  value = var.ses_sender_email },
+        { name = "SES_CONFIGURATION_SET",             value = "${local.name_prefix}-ses-config" },
+        { name = "SNS_TOPIC_APPOINTMENT_REMINDERS",   value = aws_sns_topic.appointment_reminders.arn },
+        { name = "SNS_TOPIC_NOTIFICATION_DISPATCH",   value = aws_sns_topic.notification_dispatch.arn },
+        # Phase 8 — File uploads
+        { name = "AWS_S3_UPLOADS_BUCKET",             value = aws_s3_bucket.uploads.id },
       ]
 
       # Secrets — injected as environment variables at runtime from Secrets Manager.

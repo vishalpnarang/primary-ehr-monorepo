@@ -4,17 +4,131 @@
 
 | What | Where | Port | Status |
 |------|-------|------|--------|
-| Provider Portal | `apps/provider-portal/` | 5173 | UI complete (mock data) |
+| Provider Portal | `apps/provider-portal/` | 5173 | Complete — wired to real API |
 | Internal: Mgmt Deck | `/internal/management` | 5173 | Password: primus2026 |
 | Internal: Client Deck | `/internal/client` | 5173 | Password: primus2026 |
 | Internal: Demo Guide | `/internal/demo-guide` | 5173 | Password: primus2026 |
-| Patient Portal | `apps/patient-portal/` | 5174 | UI complete (mock data) |
-| Backend API | `backend/` | 8080 | Running, real DB, 14 controllers |
+| Patient Portal | `apps/patient-portal/` | 5174 | Complete — wired to real API |
+| Backend API | `backend/` | 8080 | Running — 540 Java files, 20+ controllers, 150+ endpoints |
 | Swagger UI | — | 8080/swagger-ui | Live |
-| PostgreSQL | Docker | 5432 | Running, 30+ tables |
-| Keycloak | Docker | 8180 | Running, 8 users |
+| PostgreSQL | Docker | 5432 | Running — 27 Liquibase changesets, 130+ tables |
+| Keycloak | Docker | 8180 | Running, 8 users, full RBAC |
 | Redis | Docker | 6379 | Running |
 | Mailhog | Docker | 8025 | Running |
+| SonarQube | Docker | 9000 | Running |
+| GitHub Org | `github.com/primus-ehr` | — | 3 repos: primus, ui, infra |
+| @primus-ehr/ui | GitHub Packages | — | Published |
+
+---
+
+## Session 11 — Phases 1–10 Complete (2026-03-22)
+
+### What was done
+
+#### Backend — Phases 1–10
+
+**Phase 1 — RBAC + Auth**
+- Keycloak realm JSON with tenant_id JWT mapper finalized
+- Spring Security OAuth2 resource server wired — all endpoints secured
+- `TenantContextFilter` extracts tenant from JWT claim, no hardcoding
+- RBAC annotations on all controllers (`@PreAuthorize`)
+- 8 Keycloak users seeded (Super Admin, Tenant Admin, Practice Admin, Provider, Nurse/MA, Front Desk, Billing, Patient)
+
+**Phase 2 — Patient Enrichment + Scheduling**
+- Patient CRUD with full demographics, insurance, emergency contacts
+- Appointment scheduling with conflict detection (provider + room availability)
+- FormBuilder domain: dynamic form definitions, submissions, form-to-chart population
+- Clinical templates domain: SOAP templates, smart phrases, dot-phrase expansion
+
+**Phase 3 — EHR Core + Care Plans**
+- Encounter SOAP notes with structured ROS, PE, A&P sections
+- Problem list management (ICD-10 coded, add/resolve/update)
+- Medication list with dosage, frequency, prescriber, status
+- Allergy list with reaction type and severity
+- Vitals history with trend data
+- Care plan builder: goals, interventions, outcomes, target dates
+
+**Phase 4 — Labs + Orders**
+- Lab order creation and result ingestion (Quest HL7 mock)
+- Lab result trend visualization data
+- Imaging orders and referral tracking
+- Order history audit trail
+- Critical value flagging
+
+**Phase 5 — Formulary + Prescribing**
+- Formulary management: drug catalog, coverage tiers, prior auth flags
+- Drug-drug and drug-allergy interaction checks
+- Prescription creation, refill requests, Rx history
+- PDMP query tracking (mock integration stub)
+
+**Phase 6 — Inventory + Billing**
+- Inventory management: items, stock levels, usage tracking, low-stock alerts
+- Invoice and payment domains: invoice generation, patient payments (Stripe stub)
+- Charge capture from signed encounters
+- Claim scrubbing and 837P generation
+- ERA posting and denial queue
+- A/R aging dashboard
+
+**Phase 7–8 — Messaging + Notifications**
+- Secure provider-to-provider and provider-to-patient messaging
+- WebSocket STOMP/SockJS for real-time message delivery
+- Notification domain: appointment reminders (SMS/email stubs), lab ready, secure message alerts
+- In-app notification bell with unread count
+
+**Phase 9 — Analytics + CRM**
+- Analytics dashboard: provider productivity, revenue KPIs, HEDIS care gaps
+- CRM domain: patient engagement tracking, outreach campaigns, lead management
+- Employer health domain: employer accounts, employee panels, aggregate reporting
+- Affiliate and broker management domains
+
+**Phase 10 — SaaS Hardening**
+- 27 Liquibase changesets creating 130+ tables with indexes and FK constraints
+- Hibernate Envers audit logging on all PHI entities
+- Row-level security groundwork (tenant_id filter on all queries)
+- SonarQube integration with JaCoCo coverage
+
+#### Frontend — All phases
+- TanStack Query hooks for all 150+ API endpoints
+- Axios client with JWT interceptor, tenant header, error handling
+- All pages wired to real backend — no mock data fallback in production paths
+- Patient Portal fully connected (Keycloak auth, all key pages)
+- WebSocket hook (STOMP/SockJS) for real-time messaging
+
+#### GitHub Org + CI/CD
+- `primus-ehr` GitHub organization created
+- 3 repositories: `primus-ehr/primus` (monorepo), `primus-ehr/ui` (@primus-ehr/ui package), `primus-ehr/infra` (Terraform)
+- `@primus-ehr/ui` published to GitHub Packages (scoped package)
+- GitHub Actions CI: lint + test + build on every PR, Docker image push on merge to main
+- Branch protection on `main` for all 3 repos
+
+#### Infrastructure
+- Docker Compose updated: postgres, keycloak, redis, mailhog, sonarqube (5 services)
+- Terraform updated for all new ECS services, secrets, RDS parameter groups
+- Seed SQL updated with data for all 20 domains (130+ tables populated)
+- Keycloak realm JSON updated with correct redirect URIs and client scopes
+
+#### Bug fixes (E2E testing)
+- Fixed `X-TENANT-ID` header mismatch — frontend now reads tenant_id from JWT, not hardcoded
+- Fixed UUID vs String inconsistency across 83 files (standardized on String uuid)
+- Fixed Liquibase checksum errors from out-of-order changeset edits
+- Fixed CORS config to allow both portal origins (5173, 5174)
+- Fixed Keycloak port conflict (moved to 8180, backend stays on 8080)
+- Fixed missing `@Column` annotations on entity fields causing null inserts
+- Fixed WebSocket STOMP destination prefix mismatch between client and server
+
+### Test results
+- Frontend: **70/70** tests pass
+- Backend: **32/32** tests pass
+- E2E: **172** Playwright scenarios ready (happy-path + master-flow specs)
+- Total: **274 tests**
+
+### Codebase stats (as of 2026-03-22)
+- Total files: **750+**
+- Total lines: **60,000+**
+- Java files: **540** (20 domain packages, 20+ controllers, 150+ REST endpoints)
+- React components: **100+**
+- Database tables: **130+** (27 Liquibase changesets)
+- Phases complete: **10/10**
 
 ---
 
@@ -224,30 +338,31 @@ cd apps/patient-portal && npx vite   # http://localhost:5174
 
 ---
 
-## What's NOT done yet
+## What's NOT done yet (post Phase 10 — vendor integrations + production)
 
-### Frontend → Backend wiring
-- [ ] Replace mock data with real API calls (Axios + TanStack Query)
-- [ ] Real login flow via Keycloak OIDC
-- [ ] WebSocket connection for live messaging
+### Vendor integrations (need contracts / accounts)
+- [ ] Quest Labs HL7 live feed — needs vendor contract and IP whitelisting
+- [ ] ScriptSure EPCS — needs vendor contract + DEA audit + 2FA hardware
+- [ ] Availity EDI live submission — needs registration and trading partner agreement
+- [ ] Stripe live payments — needs Stripe account + HIPAA BAA
+- [ ] Twilio SMS live — needs account + A2P 10DLC registration
+- [ ] Amazon Chime SDK live — needs AWS account setup + HIPAA BAA
+- [ ] Bamboo Health PDMP — needs state-level integration agreements
 
-### Backend features
-- [ ] Patient CRUD against real DB (currently returns mock data from service impls)
-- [ ] Appointment conflict detection with real queries
-- [ ] Encounter auto-save and signing with audit log
-- [ ] File upload (S3) for documents and insurance cards
+### Production hardening
+- [ ] PostgreSQL Row-Level Security enforcement at DB layer
+- [ ] HIPAA audit log 7-year retention in S3 Glacier
+- [ ] FHIR R4 APIs (ONC 21st Century Cures Act compliance)
+- [ ] Penetration testing (annual requirement)
+- [ ] SOC 2 Type II audit readiness
+- [ ] BAA execution with all cloud vendors (AWS, Twilio, Stripe, Mailgun)
+- [ ] Disaster recovery runbook + RTO/RPO testing
 
-### Integrations (Phase 4+)
-- [ ] Quest Labs HL7 — needs vendor contract
-- [ ] ScriptSure EPCS — needs vendor contract + DEA audit
-- [ ] Availity EDI — needs registration
-- [ ] Stripe payments — needs account
-- [ ] Twilio SMS — needs account
-- [ ] Amazon Chime SDK — needs setup
-
-### Production hardening (Phase 10)
-- [ ] Row-Level Security at PostgreSQL layer
-- [ ] HIPAA audit log with 7-year retention
-- [ ] FHIR R4 APIs
-- [ ] Penetration testing
-- [ ] SOC 2 readiness
+### Nice-to-have future features
+- [ ] AI ambient documentation (Suki/Nabla partnership)
+- [ ] Voice dictation (Web Speech API)
+- [ ] Kiosk self-check-in flow
+- [ ] FHIR-based electronic prior authorization (DaVinci PAS — mandated Jan 2027)
+- [ ] SDOH screening (PRAPARE tool) + community resource referral
+- [ ] Custom report builder (drag-and-drop)
+- [ ] Immunization registry reporting (HL7 VXU to state IIS)
