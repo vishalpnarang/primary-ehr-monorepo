@@ -1,0 +1,537 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - link "hero" [ref=e5] [cursor=pointer]:
+      - /url: "#hero"
+    - link "market" [ref=e6] [cursor=pointer]:
+      - /url: "#market"
+    - link "product" [ref=e7] [cursor=pointer]:
+      - /url: "#product"
+    - link "features" [ref=e8] [cursor=pointer]:
+      - /url: "#features"
+    - link "architecture" [ref=e9] [cursor=pointer]:
+      - /url: "#architecture"
+    - link "progress" [ref=e10] [cursor=pointer]:
+      - /url: "#progress"
+    - link "roadmap" [ref=e11] [cursor=pointer]:
+      - /url: "#roadmap"
+    - link "economics" [ref=e12] [cursor=pointer]:
+      - /url: "#economics"
+    - link "gtm" [ref=e13] [cursor=pointer]:
+      - /url: "#gtm"
+    - link "team" [ref=e14] [cursor=pointer]:
+      - /url: "#team"
+  - generic [ref=e16]:
+    - generic [ref=e17]:
+      - img [ref=e19]
+      - generic [ref=e21]: Thinkitive Technologies — Internal
+    - heading "Primus EHR" [level=1] [ref=e22]
+    - paragraph [ref=e23]: Modern EHR Platform for Primary Care
+    - paragraph [ref=e24]: A multi-tenant SaaS Electronic Health Record platform purpose-built for US primary care clinics. Replacing legacy EMRs — starting with legacy EHR at Primus Think — then scaling to a full SaaS offering.
+    - generic [ref=e25]:
+      - generic [ref=e26]:
+        - generic [ref=e27]: 268 Files
+        - generic [ref=e28]: codebase
+      - generic [ref=e29]:
+        - generic [ref=e30]: 40,000 Lines
+        - generic [ref=e31]: of TypeScript/React
+      - generic [ref=e32]:
+        - generic [ref=e33]: 31 Pages
+        - generic [ref=e34]: built
+      - generic [ref=e35]:
+        - generic [ref=e36]: Phase 0
+        - generic [ref=e37]: UI complete
+    - generic [ref=e38]: Scroll to explore ↓
+  - generic [ref=e40]:
+    - generic [ref=e41]: Market Opportunity
+    - heading "A $40B Market in Pain" [level=2] [ref=e42]
+    - generic [ref=e44]:
+      - generic [ref=e45]:
+        - generic [ref=e46]: $40B
+        - generic [ref=e47]: US EHR Market Size
+        - generic [ref=e48]: Growing at 5.8% CAGR through 2030
+      - generic [ref=e49]:
+        - generic [ref=e50]: 70%
+        - generic [ref=e51]: Provider Burnout Rate
+        - generic [ref=e52]: Directly linked to poor EHR UX
+      - generic [ref=e53]:
+        - generic [ref=e54]: 2hrs
+        - generic [ref=e55]: EHR Time Per Patient
+        - generic [ref=e56]: Providers spend 2hrs on docs for 1hr of care
+    - generic [ref=e57]:
+      - heading "Legacy EHR Pain Points" [level=3] [ref=e58]
+      - generic [ref=e59]:
+        - generic [ref=e60]:
+          - generic [ref=e61]: ✕
+          - generic [ref=e62]: legacy EHR — good but aging UI, limited customization
+        - generic [ref=e63]:
+          - generic [ref=e64]: ✕
+          - generic [ref=e65]: athenahealth — complex, expensive, hard to implement
+        - generic [ref=e66]:
+          - generic [ref=e67]: ✕
+          - generic [ref=e68]: Epic — built for hospitals, overkill for primary care
+        - generic [ref=e69]:
+          - generic [ref=e70]: ✕
+          - generic [ref=e71]: No modern, primary-care-first, multi-tenant SaaS player
+        - generic [ref=e72]:
+          - generic [ref=e73]: ✕
+          - generic [ref=e74]: 15+ clicks to complete a basic SOAP note
+        - generic [ref=e75]:
+          - generic [ref=e76]: ✕
+          - generic [ref=e77]: Zero keyboard-first design in any incumbent product
+  - generic [ref=e79]:
+    - generic [ref=e80]: Product
+    - heading "What Primus Does" [level=2] [ref=e81]
+    - paragraph [ref=e83]: "A complete EHR platform: patient management, scheduling, clinical charting, e-prescribing, lab ordering, billing, telehealth, and patient portal — all in one keyboard-first interface."
+    - generic [ref=e84]:
+      - generic [ref=e85]:
+        - img [ref=e86]
+        - heading "Single-Screen Workflow" [level=3] [ref=e90]
+        - paragraph [ref=e91]: Providers complete 90% of tasks without leaving the patient chart.
+      - generic [ref=e92]:
+        - img [ref=e93]
+        - heading "Keyboard-First Design" [level=3] [ref=e97]
+        - paragraph [ref=e98]: Every common action has a keyboard shortcut. Ctrl+K command palette.
+      - generic [ref=e99]:
+        - img [ref=e100]
+        - heading "Multi-Tenant SaaS" [level=3] [ref=e104]
+        - paragraph [ref=e105]: Full tenant isolation. Row-level security. One codebase, many clinics.
+      - generic [ref=e106]:
+        - img [ref=e107]
+        - heading "3-Click Rule" [level=3] [ref=e109]
+        - paragraph [ref=e110]: No common action requires more than 3 clicks. Ruthlessly enforced.
+      - generic [ref=e111]:
+        - img [ref=e112]
+        - heading "HIPAA-Native" [level=3] [ref=e114]
+        - paragraph [ref=e115]: Audit logging, encryption at rest/transit, BAA-ready from day one.
+      - generic [ref=e116]:
+        - img [ref=e117]
+        - heading "Modern Stack" [level=3] [ref=e119]
+        - paragraph [ref=e120]: React 18 + Spring Boot 3 + PostgreSQL + Keycloak + AWS.
+  - generic [ref=e122]:
+    - generic [ref=e123]: Features
+    - heading "12 Core Modules" [level=2] [ref=e124]
+    - generic [ref=e126]:
+      - generic [ref=e127]:
+        - img [ref=e129]
+        - generic [ref=e134]: Patient Chart
+        - generic [ref=e135]: "Full chart: problems, meds, allergies, history"
+      - generic [ref=e136]:
+        - img [ref=e138]
+        - generic [ref=e140]: Scheduling
+        - generic [ref=e141]: Day/week/month, multi-provider, color-coded
+      - generic [ref=e142]:
+        - img [ref=e144]
+        - generic [ref=e147]: SOAP Editor
+        - generic [ref=e148]: Smart phrases, templates, voice-ready structure
+      - generic [ref=e149]:
+        - img [ref=e151]
+        - generic [ref=e153]: e-Prescribing
+        - generic [ref=e154]: ScriptSure EPCS integration, formulary check
+      - generic [ref=e155]:
+        - img [ref=e157]
+        - generic [ref=e159]: Labs
+        - generic [ref=e160]: Quest + HL7, results inbox, trend views
+      - generic [ref=e161]:
+        - img [ref=e163]
+        - generic [ref=e165]: Billing & RCM
+        - generic [ref=e166]: Availity clearinghouse, ERA, denials mgmt
+      - generic [ref=e167]:
+        - img [ref=e169]
+        - generic [ref=e172]: Telehealth
+        - generic [ref=e173]: Amazon Chime SDK, HIPAA BAA, $0 idle cost
+      - generic [ref=e174]:
+        - img [ref=e176]
+        - generic [ref=e178]: Patient Portal
+        - generic [ref=e179]: Mobile-first, messaging, lab results, booking
+      - generic [ref=e180]:
+        - img [ref=e182]
+        - generic [ref=e185]: Inbox
+        - generic [ref=e186]: Priority triage, tasks, referrals, results
+      - generic [ref=e187]:
+        - img [ref=e189]
+        - generic [ref=e191]: Dashboards
+        - generic [ref=e192]: HEDIS metrics, panel health, revenue reports
+      - generic [ref=e193]:
+        - img [ref=e195]
+        - generic [ref=e197]: HIPAA
+        - generic [ref=e198]: Audit logs, encryption, consent management
+      - generic [ref=e199]:
+        - img [ref=e201]
+        - generic [ref=e205]: Multi-Tenant
+        - generic [ref=e206]: Full isolation, RLS, per-tenant config
+  - generic [ref=e208]:
+    - generic [ref=e209]: Architecture
+    - heading "Tech Stack" [level=2] [ref=e210]
+    - generic [ref=e212]:
+      - generic [ref=e213]:
+        - generic [ref=e214]:
+          - img [ref=e216]
+          - generic [ref=e220]:
+            - text: Frontend
+            - generic [ref=e221]: React 18 + Vite + TypeScript
+        - generic [ref=e222]:
+          - img [ref=e224]
+          - generic [ref=e228]:
+            - text: Styling
+            - generic [ref=e229]: Tailwind CSS + shadcn/ui
+        - generic [ref=e230]:
+          - img [ref=e232]
+          - generic [ref=e234]:
+            - text: State
+            - generic [ref=e235]: Zustand + TanStack Query
+        - generic [ref=e236]:
+          - img [ref=e238]
+          - generic [ref=e241]:
+            - text: Backend
+            - generic [ref=e242]: Spring Boot 3 (Java 21)
+        - generic [ref=e243]:
+          - img [ref=e245]
+          - generic [ref=e249]:
+            - text: Database
+            - generic [ref=e250]: PostgreSQL (Aurora Serverless)
+        - generic [ref=e251]:
+          - img [ref=e253]
+          - generic [ref=e256]:
+            - text: Auth
+            - generic [ref=e257]: Keycloak 24 on ECS Fargate
+        - generic [ref=e258]:
+          - img [ref=e260]
+          - generic [ref=e262]:
+            - text: Cloud
+            - generic [ref=e263]: AWS (ECS, RDS, S3, Chime)
+        - generic [ref=e264]:
+          - img [ref=e266]
+          - generic [ref=e269]:
+            - text: IaC / CI/CD
+            - generic [ref=e270]: Terraform + GitHub Actions
+      - generic [ref=e271]:
+        - heading "Third-Party Integrations" [level=3] [ref=e272]
+        - generic [ref=e273]:
+          - generic [ref=e274]:
+            - generic [ref=e275]: ScriptSure
+            - generic [ref=e276]: EPCS e-Prescribing
+          - generic [ref=e277]:
+            - generic [ref=e278]: Availity
+            - generic [ref=e279]: Claims clearinghouse
+          - generic [ref=e280]:
+            - generic [ref=e281]: Quest Diagnostics
+            - generic [ref=e282]: Lab ordering + HL7
+          - generic [ref=e283]:
+            - generic [ref=e284]: Twilio
+            - generic [ref=e285]: SMS notifications
+          - generic [ref=e286]:
+            - generic [ref=e287]: Stripe
+            - generic [ref=e288]: Patient payments
+          - generic [ref=e289]:
+            - generic [ref=e290]: Amazon Chime SDK
+            - generic [ref=e291]: HIPAA telehealth
+          - generic [ref=e292]:
+            - generic [ref=e293]: Jitsi
+            - generic [ref=e294]: Local dev video
+  - generic [ref=e296]:
+    - generic [ref=e297]: Build Progress
+    - heading "Where We Are Today" [level=2] [ref=e298]
+    - generic [ref=e300]:
+      - generic [ref=e301]:
+        - generic [ref=e302]: "268"
+        - generic [ref=e303]: Total Files
+        - generic [ref=e304]: in codebase
+      - generic [ref=e305]:
+        - generic [ref=e306]: 40,000
+        - generic [ref=e307]: Lines of Code
+        - generic [ref=e308]: TypeScript + TSX
+      - generic [ref=e309]:
+        - generic [ref=e310]: "31"
+        - generic [ref=e311]: Pages Built
+        - generic [ref=e312]: all roles covered
+      - generic [ref=e313]:
+        - generic [ref=e314]: "14"
+        - generic [ref=e315]: API Contracts
+        - generic [ref=e316]: spec complete
+    - generic [ref=e317]:
+      - generic [ref=e318]:
+        - heading "Phase 0 Deliverables (Complete)" [level=3] [ref=e319]
+        - generic [ref=e320]:
+          - generic [ref=e321]:
+            - img [ref=e322]
+            - text: Full React simulation — all 8 roles
+          - generic [ref=e325]:
+            - img [ref=e326]
+            - text: Mock login with role switcher
+          - generic [ref=e329]:
+            - img [ref=e330]
+            - text: Patient chart with all tabs
+          - generic [ref=e333]:
+            - img [ref=e334]
+            - text: SOAP editor with smart phrases
+          - generic [ref=e337]:
+            - img [ref=e338]
+            - text: Scheduling — day/week/month
+          - generic [ref=e341]:
+            - img [ref=e342]
+            - text: Billing & RCM full flow
+          - generic [ref=e345]:
+            - img [ref=e346]
+            - text: Patient portal (mobile-first)
+          - generic [ref=e349]:
+            - img [ref=e350]
+            - text: Inbox, Reports, Settings
+          - generic [ref=e353]:
+            - img [ref=e354]
+            - text: Multi-tenant admin (Super Admin)
+          - generic [ref=e357]:
+            - img [ref=e358]
+            - text: Command palette (Ctrl+K)
+      - generic [ref=e361]:
+        - heading "Documentation Complete" [level=3] [ref=e362]
+        - generic [ref=e363]:
+          - generic [ref=e364]:
+            - img [ref=e365]
+            - text: Product Requirements Document (PRD)
+          - generic [ref=e368]:
+            - img [ref=e369]
+            - text: User Personas (all 8 roles)
+          - generic [ref=e372]:
+            - img [ref=e373]
+            - text: Feature Map (P0/P1/P2)
+          - generic [ref=e376]:
+            - img [ref=e377]
+            - text: User Flows (every workflow)
+          - generic [ref=e380]:
+            - img [ref=e381]
+            - text: Information Architecture
+          - generic [ref=e384]:
+            - img [ref=e385]
+            - text: Tech Stack decisions
+          - generic [ref=e388]:
+            - img [ref=e389]
+            - text: System Design
+          - generic [ref=e392]:
+            - img [ref=e393]
+            - text: Multi-Tenancy model
+          - generic [ref=e396]:
+            - img [ref=e397]
+            - text: Data Model (30+ tables)
+          - generic [ref=e400]:
+            - img [ref=e401]
+            - text: API Contracts (14 modules)
+          - generic [ref=e404]:
+            - img [ref=e405]
+            - text: Auth Strategy (Keycloak + RBAC)
+          - generic [ref=e408]:
+            - img [ref=e409]
+            - text: Design System + Component Library
+  - generic [ref=e413]:
+    - generic [ref=e414]: Roadmap
+    - heading "10-Phase Build Plan" [level=2] [ref=e415]
+    - generic [ref=e417]:
+      - generic [ref=e418]:
+        - generic [ref=e419]: ✓
+        - generic [ref=e420]:
+          - generic [ref=e421]: Phase 0 — UI Simulation
+          - generic [ref=e422]: Complete React UI — all roles, all flows
+      - generic [ref=e423]:
+        - generic [ref=e424]: "1"
+        - generic [ref=e425]:
+          - generic [ref=e426]: Phase 1 — Auth + TenantsCurrent
+          - generic [ref=e427]: Keycloak, RBAC, tenant provisioning
+      - generic [ref=e428]:
+        - generic [ref=e429]: "2"
+        - generic [ref=e430]:
+          - generic [ref=e431]: Phase 2 — Patient + Scheduling
+          - generic [ref=e432]: Real patient records, appointments
+      - generic [ref=e433]:
+        - generic [ref=e434]: "3"
+        - generic [ref=e435]:
+          - generic [ref=e436]: Phase 3 — EHR Core
+          - generic [ref=e437]: Encounters, SOAP notes, medications, problem list
+      - generic [ref=e438]:
+        - generic [ref=e439]: "4"
+        - generic [ref=e440]:
+          - generic [ref=e441]: Phase 4 — Orders + Labs
+          - generic [ref=e442]: Lab ordering, HL7, results inbox
+      - generic [ref=e443]:
+        - generic [ref=e444]: "5"
+        - generic [ref=e445]:
+          - generic [ref=e446]: Phase 5 — e-Prescribing
+          - generic [ref=e447]: ScriptSure EPCS integration
+      - generic [ref=e448]:
+        - generic [ref=e449]: "6"
+        - generic [ref=e450]:
+          - generic [ref=e451]: Phase 6 — Billing + RCM
+          - generic [ref=e452]: Claims, Availity ERA, Stripe
+      - generic [ref=e453]:
+        - generic [ref=e454]: "7"
+        - generic [ref=e455]:
+          - generic [ref=e456]: Phase 7 — Telehealth
+          - generic [ref=e457]: Amazon Chime SDK integration
+      - generic [ref=e458]:
+        - generic [ref=e459]: "8"
+        - generic [ref=e460]:
+          - generic [ref=e461]: Phase 8 — Notifications
+          - generic [ref=e462]: Twilio SMS, email, in-app
+      - generic [ref=e463]:
+        - generic [ref=e464]: "9"
+        - generic [ref=e465]:
+          - generic [ref=e466]: Phase 9 — Analytics
+          - generic [ref=e467]: Reports, HEDIS dashboards
+      - generic [ref=e468]:
+        - generic [ref=e469]: "10"
+        - generic [ref=e470]:
+          - generic [ref=e471]: Phase 10 — SaaS Hardening
+          - generic [ref=e472]: RLS, HIPAA audit, pen test, production deploy
+  - generic [ref=e474]:
+    - generic [ref=e475]: Unit Economics
+    - heading "Infrastructure Cost Model" [level=2] [ref=e476]
+    - paragraph [ref=e478]: INTERNAL — DO NOT SHARE WITH PROSPECTS
+    - generic [ref=e479]:
+      - generic [ref=e480]:
+        - generic [ref=e481]: Development
+        - generic [ref=e482]: $0 / month
+        - list [ref=e483]:
+          - listitem [ref=e484]:
+            - img [ref=e485]
+            - text: Local Docker (all services)
+          - listitem [ref=e487]:
+            - img [ref=e488]
+            - text: Jitsi for video
+          - listitem [ref=e490]:
+            - img [ref=e491]
+            - text: Mock data only
+          - listitem [ref=e493]:
+            - img [ref=e494]
+            - text: No cloud costs
+          - listitem [ref=e496]:
+            - img [ref=e497]
+            - text: GitHub free tier
+      - generic [ref=e499]:
+        - generic [ref=e500]: Demo / Staging
+        - generic [ref=e501]: $75–90 / month
+        - list [ref=e502]:
+          - listitem [ref=e503]:
+            - img [ref=e504]
+            - text: ECS Fargate (t3.small)
+          - listitem [ref=e506]:
+            - img [ref=e507]
+            - text: RDS db.t3.micro (~$30)
+          - listitem [ref=e509]:
+            - img [ref=e510]
+            - text: Keycloak on ECS (~$15)
+          - listitem [ref=e512]:
+            - img [ref=e513]
+            - text: S3 + CloudFront (~$5)
+          - listitem [ref=e515]:
+            - img [ref=e516]
+            - text: "Chime: $0 (demo only)"
+      - generic [ref=e518]:
+        - generic [ref=e519]: Production (per tenant)
+        - generic [ref=e520]: $400–600 / month
+        - list [ref=e521]:
+          - listitem [ref=e522]:
+            - img [ref=e523]
+            - text: ECS Fargate (2 tasks)
+          - listitem [ref=e525]:
+            - img [ref=e526]
+            - text: RDS Aurora Serverless
+          - listitem [ref=e528]:
+            - img [ref=e529]
+            - text: ElastiCache Redis
+          - listitem [ref=e531]:
+            - img [ref=e532]
+            - text: "Chime: ~$0.0017/min"
+          - listitem [ref=e534]:
+            - img [ref=e535]
+            - text: Twilio, Stripe pass-through
+    - generic [ref=e537]:
+      - img [ref=e538]
+      - generic [ref=e540]: Pricing model target:Flat $1,500–2,500/month per clinic location. No per-user fees. 5–10x margin at scale. Break-even at 1 paying tenant.
+  - generic [ref=e542]:
+    - generic [ref=e543]: Go-to-Market
+    - heading "From One Clinic to Many" [level=2] [ref=e544]
+    - generic [ref=e546]:
+      - generic [ref=e547]:
+        - heading "Phase 1 — First Client" [level=3] [ref=e548]
+        - generic [ref=e549]:
+          - generic [ref=e550]: Primus Think
+          - generic [ref=e551]: 3–4 clinic locations · USA · Primary Care
+          - generic [ref=e552]:
+            - generic [ref=e553]:
+              - img [ref=e554]
+              - text: Replacing legacy EHR systems
+            - generic [ref=e557]:
+              - img [ref=e558]
+              - text: Full deployment across all locations
+            - generic [ref=e561]:
+              - img [ref=e562]
+              - text: Thinkitive support team embedded
+            - generic [ref=e565]:
+              - img [ref=e566]
+              - text: Live feedback loop into product
+            - generic [ref=e569]:
+              - img [ref=e570]
+              - text: Case study + reference customer
+      - generic [ref=e573]:
+        - heading "Phase 2 — SaaS Expansion" [level=3] [ref=e574]
+        - generic [ref=e575]:
+          - generic [ref=e576]:
+            - generic [ref=e577]: "1"
+            - generic [ref=e578]:
+              - generic [ref=e579]: SaaS Hardening
+              - generic [ref=e580]: RLS, audit logs, pen test, HIPAA BAA
+          - generic [ref=e581]:
+            - generic [ref=e582]: "2"
+            - generic [ref=e583]:
+              - generic [ref=e584]: Self-serve onboarding
+              - generic [ref=e585]: Tenant provisioning in < 5 minutes
+          - generic [ref=e586]:
+            - generic [ref=e587]: "3"
+            - generic [ref=e588]:
+              - generic [ref=e589]: Inbound via referrals
+              - generic [ref=e590]: Primus Think → peer clinics
+          - generic [ref=e591]:
+            - generic [ref=e592]: "4"
+            - generic [ref=e593]:
+              - generic [ref=e594]: Channel partnerships
+              - generic [ref=e595]: Billing companies, MSOs, GPOs
+          - generic [ref=e596]:
+            - generic [ref=e597]: "5"
+            - generic [ref=e598]:
+              - generic [ref=e599]: "Target: 10 tenants"
+              - generic [ref=e600]: $15K–25K MRR at Year 1 SaaS
+  - generic [ref=e602]:
+    - generic [ref=e603]: Team
+    - heading "Thinkitive Technologies" [level=2] [ref=e604]
+    - paragraph [ref=e606]: A proven healthcare technology team with deep domain expertise in EHR systems, HIPAA compliance, HL7/FHIR integrations, and scalable SaaS architecture.
+    - generic [ref=e607]:
+      - generic [ref=e608]:
+        - heading "Core Strengths" [level=3] [ref=e609]
+        - generic [ref=e610]:
+          - generic [ref=e611]:
+            - img [ref=e612]
+            - text: Healthcare software — 8+ years domain experience
+          - generic [ref=e615]:
+            - img [ref=e616]
+            - text: EHR integrations — HL7, FHIR, CCD, CCDA
+          - generic [ref=e619]:
+            - img [ref=e620]
+            - text: HIPAA compliance — BAA, audit logging, encryption
+          - generic [ref=e623]:
+            - img [ref=e624]
+            - text: Multi-tenant SaaS — PostgreSQL RLS, Keycloak
+          - generic [ref=e627]:
+            - img [ref=e628]
+            - text: React + Spring Boot — our primary stack
+          - generic [ref=e631]:
+            - img [ref=e632]
+            - text: AWS — ECS, RDS Aurora, Chime, S3
+      - generic [ref=e635]:
+        - heading "Why We're Building This" [level=3] [ref=e636]
+        - paragraph [ref=e637]: "We've integrated with every major EHR — Epic, legacy EHR, athenahealth, Kareo. We know exactly what's broken. Primus is the EHR we always wished existed: modern, fast, keyboard-driven, and built for how primary care actually works."
+        - paragraph [ref=e638]: Starting with a real client (Primus Think) gives us battle-tested software from day one — not vaporware.
+    - generic [ref=e639]:
+      - generic [ref=e640]: Ready to Build the Future of Primary Care EHR
+      - generic [ref=e641]: "Phase 0 complete · Phase 1 starting · Primus Think deployment target: Q3 2026"
+```

@@ -1,0 +1,51 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e4]:
+  - generic [ref=e5]:
+    - generic [ref=e6]: P
+    - heading "Primus EHR" [level=1] [ref=e7]
+    - paragraph [ref=e8]: Provider Portal
+  - generic [ref=e9]:
+    - heading "Sign in" [level=2] [ref=e10]
+    - paragraph [ref=e11]: Select a role to simulate login
+    - generic [ref=e12]:
+      - button "Super Alex Morgan Super Admin" [ref=e13] [cursor=pointer]:
+        - generic [ref=e14]: Super
+        - generic [ref=e15]:
+          - paragraph [ref=e16]: Alex Morgan
+          - paragraph [ref=e17]: Super Admin
+      - button "Tenant James Wilson Tenant Admin" [ref=e18] [cursor=pointer]:
+        - generic [ref=e19]: Tenant
+        - generic [ref=e20]:
+          - paragraph [ref=e21]: James Wilson
+          - paragraph [ref=e22]: Tenant Admin
+      - button "Practice Maria Garcia Practice Admin" [ref=e23] [cursor=pointer]:
+        - generic [ref=e24]: Practice
+        - generic [ref=e25]:
+          - paragraph [ref=e26]: Maria Garcia
+          - paragraph [ref=e27]: Practice Admin
+      - button "Provider Emily Chen Provider (MD)" [active] [ref=e28] [cursor=pointer]:
+        - generic [ref=e29]: Provider
+        - generic [ref=e30]:
+          - paragraph [ref=e31]: Emily Chen
+          - paragraph [ref=e32]: Provider (MD)
+        - img [ref=e34]
+      - button "Nurse Sarah Thompson Nurse / MA" [ref=e36] [cursor=pointer]:
+        - generic [ref=e37]: Nurse
+        - generic [ref=e38]:
+          - paragraph [ref=e39]: Sarah Thompson
+          - paragraph [ref=e40]: Nurse / MA
+      - button "Front David Kim Front Desk" [ref=e41] [cursor=pointer]:
+        - generic [ref=e42]: Front
+        - generic [ref=e43]:
+          - paragraph [ref=e44]: David Kim
+          - paragraph [ref=e45]: Front Desk
+      - button "Billing Lisa Patel Billing Staff" [ref=e46] [cursor=pointer]:
+        - generic [ref=e47]: Billing
+        - generic [ref=e48]:
+          - paragraph [ref=e49]: Lisa Patel
+          - paragraph [ref=e50]: Billing Staff
+    - button "Sign in as Provider (MD)" [ref=e51] [cursor=pointer]
+    - paragraph [ref=e52]: Authenticates via Keycloak — falls back to mock if unavailable
+```

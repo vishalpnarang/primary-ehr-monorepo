@@ -1,0 +1,100 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: P
+      - generic [ref=e7]: Primus EHR
+    - button "Search... ⌘K" [ref=e9] [cursor=pointer]:
+      - img [ref=e10]
+      - generic [ref=e13]: Search...
+      - generic [ref=e14]: ⌘K
+    - navigation [ref=e15]:
+      - link "Dashboard" [ref=e16] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e17]
+        - generic [ref=e20]: Dashboard
+      - link "Scheduling" [ref=e21] [cursor=pointer]:
+        - /url: /schedule
+        - img [ref=e23]
+        - generic [ref=e25]: Scheduling
+      - link "Patients" [ref=e26] [cursor=pointer]:
+        - /url: /patients
+        - img [ref=e27]
+        - generic [ref=e32]: Patients
+      - link "Inbox 8" [ref=e33] [cursor=pointer]:
+        - /url: /inbox
+        - img [ref=e34]
+        - generic [ref=e37]: Inbox
+        - generic [ref=e38]: "8"
+    - generic [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e41]: EC
+        - generic [ref=e42]:
+          - paragraph [ref=e43]: Emily Chen
+          - paragraph [ref=e44]: provider
+        - button "Sign out" [ref=e45] [cursor=pointer]:
+          - img [ref=e46]
+      - button "Collapse" [ref=e49] [cursor=pointer]:
+        - img [ref=e50]
+        - generic [ref=e52]: Collapse
+  - main [ref=e53]:
+    - generic [ref=e55]:
+      - generic [ref=e56]:
+        - generic [ref=e57]:
+          - heading "Schedule" [level=1] [ref=e58]
+          - paragraph [ref=e59]: Thursday, March 19, 2026
+        - button "New Appointment" [ref=e60] [cursor=pointer]:
+          - img [ref=e61]
+          - text: New Appointment
+      - generic [ref=e62]:
+        - generic [ref=e63]:
+          - paragraph [ref=e64]: Total
+          - paragraph [ref=e65]: "0"
+        - generic [ref=e66]:
+          - paragraph [ref=e67]: Completed
+          - paragraph [ref=e68]: "0"
+        - generic [ref=e69]:
+          - paragraph [ref=e70]: Active
+          - paragraph [ref=e71]: "0"
+        - generic [ref=e72]:
+          - paragraph [ref=e73]: Remaining
+          - paragraph [ref=e74]: "0"
+      - generic [ref=e75]:
+        - generic [ref=e76]:
+          - button "day" [ref=e77] [cursor=pointer]
+          - button "week" [ref=e78] [cursor=pointer]
+          - button "month" [ref=e79] [cursor=pointer]
+        - generic [ref=e80]:
+          - button "Previous" [ref=e81] [cursor=pointer]:
+            - img [ref=e82]
+          - button "Today" [ref=e84] [cursor=pointer]
+          - button "Next" [ref=e85] [cursor=pointer]:
+            - img [ref=e86]
+        - generic [ref=e88]: Thursday, March 19, 2026
+        - button "All Providers" [ref=e90] [cursor=pointer]:
+          - img [ref=e91]
+          - generic [ref=e94]: All Providers
+          - img [ref=e95]
+        - generic [ref=e98]:
+          - generic [ref=e101]: New Patient
+          - generic [ref=e104]: Follow-up
+          - generic [ref=e107]: Annual Wellness
+          - generic [ref=e110]: Telehealth
+          - generic [ref=e113]: Urgent
+          - generic [ref=e116]: Blocked
+      - generic [ref=e119]:
+        - generic [ref=e121]: 7 AM
+        - generic [ref=e123]: 8 AM
+        - generic [ref=e125]: 9 AM
+        - generic [ref=e127]: 10 AM
+        - generic [ref=e129]: 11 AM
+        - generic [ref=e131]: 12 PM
+        - generic [ref=e133]: 1 PM
+        - generic [ref=e135]: 2 PM
+        - generic [ref=e137]: 3 PM
+        - generic [ref=e139]: 4 PM
+        - generic [ref=e141]: 5 PM
+        - generic [ref=e143]: 6 PM
+```

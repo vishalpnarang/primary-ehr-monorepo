@@ -1,0 +1,306 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: P
+      - generic [ref=e7]: Primus EHR
+    - button "Search... ⌘K" [ref=e9] [cursor=pointer]:
+      - img [ref=e10]
+      - generic [ref=e13]: Search...
+      - generic [ref=e14]: ⌘K
+    - navigation [ref=e15]:
+      - link "Dashboard" [ref=e16] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e18]
+        - generic [ref=e21]: Dashboard
+      - link "Scheduling" [ref=e22] [cursor=pointer]:
+        - /url: /schedule
+        - img [ref=e23]
+        - generic [ref=e25]: Scheduling
+      - link "Patients" [ref=e26] [cursor=pointer]:
+        - /url: /patients
+        - img [ref=e27]
+        - generic [ref=e32]: Patients
+      - link "Inbox 8" [ref=e33] [cursor=pointer]:
+        - /url: /inbox
+        - img [ref=e34]
+        - generic [ref=e37]: Inbox
+        - generic [ref=e38]: "8"
+    - generic [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e41]: EC
+        - generic [ref=e42]:
+          - paragraph [ref=e43]: Emily Chen
+          - paragraph [ref=e44]: provider
+        - button "Sign out" [ref=e45] [cursor=pointer]:
+          - img [ref=e46]
+      - button "Collapse" [ref=e49] [cursor=pointer]:
+        - img [ref=e50]
+        - generic [ref=e52]: Collapse
+  - main [ref=e53]:
+    - generic [ref=e55]:
+      - generic [ref=e56]:
+        - generic [ref=e57]:
+          - heading "Dr. Emily" [level=1] [ref=e58]
+          - generic [ref=e59]: ·
+          - generic [ref=e60]: Clinical overview
+        - generic [ref=e61]:
+          - generic [ref=e62]: Thursday, March 19, 2026
+          - generic [ref=e63]: Primus Think Health · Location A
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - generic [ref=e66]:
+            - img [ref=e68]
+            - generic [ref=e70]:
+              - paragraph [ref=e71]: Patients Today
+              - paragraph [ref=e72]: "12"
+              - paragraph [ref=e73]: on schedule
+          - generic [ref=e74]:
+            - img [ref=e76]
+            - generic [ref=e79]:
+              - paragraph [ref=e80]: Completed
+              - paragraph [ref=e81]: "1"
+              - paragraph [ref=e82]: 11 remaining
+          - generic [ref=e83]:
+            - img [ref=e85]
+            - generic [ref=e88]:
+              - paragraph [ref=e89]: In Room / Active
+              - paragraph [ref=e90]: "1"
+              - paragraph [ref=e91]: currently occupied
+          - generic [ref=e92]:
+            - img [ref=e94]
+            - generic [ref=e98]:
+              - paragraph [ref=e99]: No Shows
+              - paragraph [ref=e100]: "0"
+              - paragraph [ref=e101]: today
+        - generic [ref=e102]:
+          - generic [ref=e103]:
+            - generic [ref=e104]:
+              - generic [ref=e105]:
+                - generic [ref=e106]: Today's Schedule
+                - generic [ref=e107]: "12"
+              - button "Full schedule" [ref=e109] [cursor=pointer]:
+                - text: Full schedule
+                - img [ref=e110]
+            - generic [ref=e112]:
+              - generic [ref=e113] [cursor=pointer]:
+                - generic [ref=e114]: 08:00
+                - generic [ref=e115]: AWV
+                - generic [ref=e116]: Johnson, Robert
+                - generic [ref=e117]: Rm 2
+                - generic [ref=e120]: Done
+                - img [ref=e121]
+              - generic [ref=e123] [cursor=pointer]:
+                - generic [ref=e124]: 08:30
+                - generic [ref=e125]: F/U
+                - generic [ref=e126]: Rivera, Linda
+                - generic [ref=e127]: Rm 1
+                - generic [ref=e130]: Active
+                - img [ref=e131]
+              - generic [ref=e133] [cursor=pointer]:
+                - generic [ref=e134]: 09:00
+                - generic [ref=e135]: NP
+                - generic [ref=e136]: Chen, Marcus
+                - generic [ref=e137]: Rm 3
+                - generic [ref=e140]: Arrived
+                - img [ref=e141]
+              - generic [ref=e143] [cursor=pointer]:
+                - generic [ref=e144]: 09:30
+                - generic [ref=e145]: URG
+                - generic [ref=e146]: Thompson, Patricia
+                - generic [ref=e149]: Conf
+                - img [ref=e150]
+              - generic [ref=e152] [cursor=pointer]:
+                - generic [ref=e153]: 10:00
+                - generic [ref=e154]: F/U
+                - generic [ref=e155]: Williams, James
+                - generic [ref=e158]: Conf
+                - img [ref=e159]
+              - generic [ref=e161] [cursor=pointer]:
+                - generic [ref=e162]: 10:30
+                - generic [ref=e163]: TH
+                - generic [ref=e164]: Martinez, Angela
+                - generic [ref=e167]: Sched
+                - img [ref=e168]
+              - generic [ref=e170] [cursor=pointer]:
+                - generic [ref=e171]: 11:00
+                - generic [ref=e172]: PROC
+                - generic [ref=e173]: Baker, George
+                - generic [ref=e176]: Sched
+                - img [ref=e177]
+              - generic [ref=e179] [cursor=pointer]:
+                - generic [ref=e180]: 11:30
+                - generic [ref=e181]: F/U
+                - generic [ref=e182]: Nguyen, Kevin
+                - generic [ref=e185]: Sched
+                - img [ref=e186]
+              - generic [ref=e188] [cursor=pointer]:
+                - generic [ref=e189]: 13:00
+                - generic [ref=e190]: F/U
+                - generic [ref=e191]: Patel, Susan
+                - generic [ref=e194]: Sched
+                - img [ref=e195]
+              - generic [ref=e197] [cursor=pointer]:
+                - generic [ref=e198]: 13:30
+                - generic [ref=e199]: NP
+                - generic [ref=e200]: Torres, Maria
+                - generic [ref=e203]: Sched
+                - img [ref=e204]
+              - generic [ref=e206] [cursor=pointer]:
+                - generic [ref=e207]: 14:00
+                - generic [ref=e208]: AWV
+                - generic [ref=e209]: Davis, William
+                - generic [ref=e212]: Sched
+                - img [ref=e213]
+              - generic [ref=e215] [cursor=pointer]:
+                - generic [ref=e216]: 14:30
+                - generic [ref=e217]: URG
+                - generic [ref=e218]: Clark, Jennifer
+                - generic [ref=e221]: Sched
+                - img [ref=e222]
+          - generic [ref=e224]:
+            - generic [ref=e225]:
+              - generic [ref=e226]:
+                - generic [ref=e227]: Priority Inbox
+                - generic [ref=e228]: "15"
+              - button "Open inbox" [ref=e230] [cursor=pointer]:
+                - text: Open inbox
+                - img [ref=e231]
+            - generic [ref=e233]:
+              - generic [ref=e234]:
+                - generic [ref=e235]:
+                  - generic [ref=e236]:
+                    - img [ref=e237]
+                    - generic [ref=e239]: Critical Labs
+                  - generic [ref=e240]: "2"
+                - generic [ref=e241]:
+                  - generic [ref=e242] [cursor=pointer]:
+                    - generic [ref=e243]: Johnson, R.
+                    - generic [ref=e244]: K+ 6.2 mEq/L — CRIT HIGH
+                    - generic [ref=e245]: 8:14a
+                  - generic [ref=e246] [cursor=pointer]:
+                    - generic [ref=e247]: Chen, M.
+                    - generic [ref=e248]: INR 4.8 — CRIT HIGH (warfarin)
+                    - generic [ref=e249]: 7:52a
+              - generic [ref=e250]:
+                - generic [ref=e251]:
+                  - generic [ref=e252]:
+                    - img [ref=e253]
+                    - generic [ref=e256]: PA Requests
+                  - generic [ref=e257]: "3"
+                - generic [ref=e258]:
+                  - generic [ref=e259] [cursor=pointer]:
+                    - generic [ref=e260]: Rivera, L.
+                    - generic [ref=e261]: Adalimumab (Humira) — Aetna
+                    - generic [ref=e262]: yest
+                  - generic [ref=e263] [cursor=pointer]:
+                    - generic [ref=e264]: Baker, G.
+                    - generic [ref=e265]: Jardiance 10mg — BCBS
+                    - generic [ref=e266]: yest
+                  - generic [ref=e267] [cursor=pointer]:
+                    - generic [ref=e268]: Williams, J.
+                    - generic [ref=e269]: MRI Lumbar Spine — UHC
+                    - generic [ref=e270]: 3/17
+              - generic [ref=e271]:
+                - generic [ref=e272]:
+                  - generic [ref=e273]:
+                    - img [ref=e274]
+                    - generic [ref=e276]: Messages
+                  - generic [ref=e277]: "4"
+                - generic [ref=e278]:
+                  - generic [ref=e279] [cursor=pointer]:
+                    - generic [ref=e280]: Thompson, P.
+                    - generic [ref=e281]: "Q re: Metformin side effects"
+                    - generic [ref=e282]: 9:01a
+                  - generic [ref=e283] [cursor=pointer]:
+                    - generic [ref=e284]: Williams, J.
+                    - generic [ref=e285]: Requesting work note 3/18
+                    - generic [ref=e286]: 8:45a
+                  - generic [ref=e287] [cursor=pointer]:
+                    - generic [ref=e288]: Martinez, A.
+                    - generic [ref=e289]: Sertraline — feeling worse
+                    - generic [ref=e290]: 8:20a
+                  - paragraph [ref=e291] [cursor=pointer]: +1 more
+              - generic [ref=e292]:
+                - generic [ref=e293]:
+                  - generic [ref=e294]:
+                    - img [ref=e295]
+                    - generic [ref=e298]: Refills
+                  - generic [ref=e299]: "6"
+                - generic [ref=e300]:
+                  - generic [ref=e301] [cursor=pointer]:
+                    - generic [ref=e302]: Martinez, A.
+                    - generic [ref=e303]: Sertraline 50mg ×30 — CVS
+                    - generic [ref=e304]: 8:05a
+                  - generic [ref=e305] [cursor=pointer]:
+                    - generic [ref=e306]: Baker, G.
+                    - generic [ref=e307]: Lisinopril 10mg ×90 — Walg.
+                    - generic [ref=e308]: 7:44a
+                  - generic [ref=e309] [cursor=pointer]:
+                    - generic [ref=e310]: Patel, S.
+                    - generic [ref=e311]: Levothyroxine 75mcg ×90
+                    - generic [ref=e312]: 7:30a
+                  - paragraph [ref=e313] [cursor=pointer]: +3 more
+          - generic [ref=e314]:
+            - generic [ref=e315]:
+              - generic [ref=e316]:
+                - generic [ref=e317]: Care Gaps — Today
+                - generic [ref=e318]: "9"
+              - button "All gaps" [ref=e320] [cursor=pointer]:
+                - text: All gaps
+                - img [ref=e321]
+            - generic [ref=e323]:
+              - generic [ref=e324] [cursor=pointer]:
+                - generic [ref=e325]:
+                  - generic [ref=e326]: Johnson, R.
+                  - generic [ref=e327]: PAT-00101
+                - generic [ref=e328]:
+                  - generic [ref=e329]:
+                    - img [ref=e330]
+                    - text: A1c overdue 14mo
+                  - generic [ref=e332]:
+                    - img [ref=e333]
+                    - text: CRC screen due
+              - generic [ref=e335] [cursor=pointer]:
+                - generic [ref=e336]:
+                  - generic [ref=e337]: Rivera, L.
+                  - generic [ref=e338]: PAT-00102
+                - generic [ref=e339]:
+                  - generic [ref=e340]:
+                    - img [ref=e341]
+                    - text: Mammogram due
+                  - generic [ref=e343]:
+                    - img [ref=e344]
+                    - text: Flu vax
+              - generic [ref=e346] [cursor=pointer]:
+                - generic [ref=e347]:
+                  - generic [ref=e348]: Thompson, P.
+                  - generic [ref=e349]: PAT-00104
+                - generic [ref=e350]:
+                  - generic [ref=e351]:
+                    - img [ref=e352]
+                    - text: BP target unmet
+                  - generic [ref=e354]:
+                    - img [ref=e355]
+                    - text: Statin not on file
+              - generic [ref=e357] [cursor=pointer]:
+                - generic [ref=e358]:
+                  - generic [ref=e359]: Williams, J.
+                  - generic [ref=e360]: PAT-00105
+                - generic [ref=e361]:
+                  - generic [ref=e362]:
+                    - img [ref=e363]
+                    - text: Eye exam 18mo overdue
+                  - generic [ref=e365]:
+                    - img [ref=e366]
+                    - text: Foot exam due
+              - generic [ref=e368] [cursor=pointer]:
+                - generic [ref=e369]:
+                  - generic [ref=e370]: Martinez, A.
+                  - generic [ref=e371]: PAT-00106
+                - generic [ref=e373]:
+                  - img [ref=e374]
+                  - text: PHQ-9 due (depression)
+```

@@ -1,0 +1,170 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: P
+      - generic [ref=e7]: Primus EHR
+    - button "Search... ⌘K" [ref=e9] [cursor=pointer]:
+      - img [ref=e10]
+      - generic [ref=e13]: Search...
+      - generic [ref=e14]: ⌘K
+    - navigation [ref=e15]:
+      - link "Dashboard" [ref=e16] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e17]
+        - generic [ref=e20]: Dashboard
+      - link "Scheduling" [ref=e21] [cursor=pointer]:
+        - /url: /schedule
+        - img [ref=e23]
+        - generic [ref=e25]: Scheduling
+      - link "Patients" [ref=e26] [cursor=pointer]:
+        - /url: /patients
+        - img [ref=e27]
+        - generic [ref=e32]: Patients
+      - link "Inbox 8" [ref=e33] [cursor=pointer]:
+        - /url: /inbox
+        - img [ref=e34]
+        - generic [ref=e37]: Inbox
+        - generic [ref=e38]: "8"
+    - generic [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e41]: EC
+        - generic [ref=e42]:
+          - paragraph [ref=e43]: Emily Chen
+          - paragraph [ref=e44]: provider
+        - button "Sign out" [ref=e45] [cursor=pointer]:
+          - img [ref=e46]
+      - button "Collapse" [ref=e49] [cursor=pointer]:
+        - img [ref=e50]
+        - generic [ref=e52]: Collapse
+  - main [ref=e53]:
+    - generic [ref=e55]:
+      - navigation [ref=e56]:
+        - button "Schedule" [ref=e57] [cursor=pointer]
+        - img [ref=e58]
+        - generic [ref=e60]: New Appointment
+      - generic [ref=e61]:
+        - heading "Book Appointment" [level=1] [ref=e62]
+        - paragraph [ref=e63]: Search for a patient and select a time slot
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - heading "Patient" [level=2] [ref=e67]
+          - generic [ref=e70]:
+            - img
+            - textbox "Search patient by name or MRN…" [ref=e71]
+        - generic [ref=e72]:
+          - heading "Appointment Type" [level=2] [ref=e74]
+          - generic [ref=e76]:
+            - button "New Patient 60 min" [ref=e77] [cursor=pointer]:
+              - generic [ref=e78]: New Patient
+              - generic [ref=e79]: 60 min
+            - button "Follow-Up 20 min" [ref=e80] [cursor=pointer]:
+              - generic [ref=e81]: Follow-Up
+              - generic [ref=e82]: 20 min
+            - button "Annual Wellness 45 min" [ref=e83] [cursor=pointer]:
+              - generic [ref=e84]: Annual Wellness
+              - generic [ref=e85]: 45 min
+            - button "Telehealth 20 min" [ref=e86] [cursor=pointer]:
+              - generic [ref=e87]: Telehealth
+              - generic [ref=e88]: 20 min
+            - button "Urgent 30 min" [ref=e89] [cursor=pointer]:
+              - generic [ref=e90]: Urgent
+              - generic [ref=e91]: 30 min
+            - button "Procedure 45 min" [ref=e92] [cursor=pointer]:
+              - generic [ref=e93]: Procedure
+              - generic [ref=e94]: 45 min
+        - generic [ref=e95]:
+          - heading "Provider" [level=2] [ref=e97]
+          - generic [ref=e99]:
+            - button "EC Dr. Emily Chen MD — Internal Medicine" [ref=e100] [cursor=pointer]:
+              - generic [ref=e101]: EC
+              - generic [ref=e102]:
+                - paragraph [ref=e103]: Dr. Emily Chen
+                - paragraph [ref=e104]: MD — Internal Medicine
+            - button "MR Dr. Michael Rivera MD — Family Medicine" [ref=e105] [cursor=pointer]:
+              - generic [ref=e106]: MR
+              - generic [ref=e107]:
+                - paragraph [ref=e108]: Dr. Michael Rivera
+                - paragraph [ref=e109]: MD — Family Medicine
+            - button "KT Dr. Kevin Torres DO — Family Medicine" [ref=e110] [cursor=pointer]:
+              - generic [ref=e111]: KT
+              - generic [ref=e112]:
+                - paragraph [ref=e113]: Dr. Kevin Torres
+                - paragraph [ref=e114]: DO — Family Medicine
+        - generic [ref=e115]:
+          - generic [ref=e116]:
+            - heading "Date" [level=2] [ref=e118]
+            - generic [ref=e120]:
+              - generic [ref=e121]:
+                - button "Previous month" [ref=e122] [cursor=pointer]:
+                  - img [ref=e123]
+                - generic [ref=e125]: May 2026
+                - button "Next month" [active] [ref=e126] [cursor=pointer]:
+                  - img [ref=e127]
+              - generic [ref=e129]:
+                - generic [ref=e130]: Su
+                - generic [ref=e131]: Mo
+                - generic [ref=e132]: Tu
+                - generic [ref=e133]: We
+                - generic [ref=e134]: Th
+                - generic [ref=e135]: Fr
+                - generic [ref=e136]: Sa
+              - generic [ref=e137]:
+                - button "Select 2026-05-01" [ref=e143] [cursor=pointer]: "1"
+                - button "Select 2026-05-02" [disabled] [ref=e144]: "2"
+                - button "Select 2026-05-03" [disabled] [ref=e145]: "3"
+                - button "Select 2026-05-04" [ref=e146] [cursor=pointer]: "4"
+                - button "Select 2026-05-05" [ref=e147] [cursor=pointer]: "5"
+                - button "Select 2026-05-06" [ref=e148] [cursor=pointer]: "6"
+                - button "Select 2026-05-07" [ref=e149] [cursor=pointer]: "7"
+                - button "Select 2026-05-08" [ref=e150] [cursor=pointer]: "8"
+                - button "Select 2026-05-09" [disabled] [ref=e151]: "9"
+                - button "Select 2026-05-10" [disabled] [ref=e152]: "10"
+                - button "Select 2026-05-11" [ref=e153] [cursor=pointer]: "11"
+                - button "Select 2026-05-12" [ref=e154] [cursor=pointer]: "12"
+                - button "Select 2026-05-13" [ref=e155] [cursor=pointer]: "13"
+                - button "Select 2026-05-14" [ref=e156] [cursor=pointer]: "14"
+                - button "Select 2026-05-15" [ref=e157] [cursor=pointer]: "15"
+                - button "Select 2026-05-16" [disabled] [ref=e158]: "16"
+                - button "Select 2026-05-17" [disabled] [ref=e159]: "17"
+                - button "Select 2026-05-18" [ref=e160] [cursor=pointer]: "18"
+                - button "Select 2026-05-19" [ref=e161] [cursor=pointer]: "19"
+                - button "Select 2026-05-20" [ref=e162] [cursor=pointer]: "20"
+                - button "Select 2026-05-21" [ref=e163] [cursor=pointer]: "21"
+                - button "Select 2026-05-22" [ref=e164] [cursor=pointer]: "22"
+                - button "Select 2026-05-23" [disabled] [ref=e165]: "23"
+                - button "Select 2026-05-24" [disabled] [ref=e166]: "24"
+                - button "Select 2026-05-25" [ref=e167] [cursor=pointer]: "25"
+                - button "Select 2026-05-26" [ref=e168] [cursor=pointer]: "26"
+                - button "Select 2026-05-27" [ref=e169] [cursor=pointer]: "27"
+                - button "Select 2026-05-28" [ref=e170] [cursor=pointer]: "28"
+                - button "Select 2026-05-29" [ref=e171] [cursor=pointer]: "29"
+                - button "Select 2026-05-30" [disabled] [ref=e172]: "30"
+                - button "Select 2026-05-31" [disabled] [ref=e173]: "31"
+          - generic [ref=e174]:
+            - heading "Available Time Slots" [level=2] [ref=e176]
+            - generic [ref=e178]:
+              - img [ref=e179]
+              - paragraph [ref=e182]: Select a date to see available slots
+        - generic [ref=e183]:
+          - heading "Location" [level=2] [ref=e185]
+          - generic [ref=e187]:
+            - button "Downtown 120 N LaSalle St, Chicago, IL 60602" [ref=e188] [cursor=pointer]:
+              - img [ref=e189]
+              - generic [ref=e192]:
+                - paragraph [ref=e193]: Downtown
+                - paragraph [ref=e194]: 120 N LaSalle St, Chicago, IL 60602
+            - button "Midtown East 233 E Erie St, Chicago, IL 60611" [ref=e195] [cursor=pointer]:
+              - img [ref=e196]
+              - generic [ref=e199]:
+                - paragraph [ref=e200]: Midtown East
+                - paragraph [ref=e201]: 233 E Erie St, Chicago, IL 60611
+        - generic [ref=e202]:
+          - heading "Reason for Visit" [level=2] [ref=e204]
+          - textbox "Describe the reason for this appointment (optional)…" [ref=e206]
+        - generic [ref=e207]:
+          - button "Cancel" [ref=e208] [cursor=pointer]
+          - button "Book Appointment" [disabled] [ref=e209]
+```

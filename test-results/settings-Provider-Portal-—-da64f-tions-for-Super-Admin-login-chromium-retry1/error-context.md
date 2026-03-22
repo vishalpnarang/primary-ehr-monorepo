@@ -1,0 +1,150 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: P
+      - generic [ref=e7]: Primus EHR
+    - button "Search... ⌘K" [ref=e9] [cursor=pointer]:
+      - img [ref=e10]
+      - generic [ref=e13]: Search...
+      - generic [ref=e14]: ⌘K
+    - navigation [ref=e15]:
+      - link "Dashboard" [ref=e16] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e17]
+        - generic [ref=e20]: Dashboard
+      - link "Scheduling" [ref=e21] [cursor=pointer]:
+        - /url: /schedule
+        - img [ref=e22]
+        - generic [ref=e24]: Scheduling
+      - link "Patients" [ref=e25] [cursor=pointer]:
+        - /url: /patients
+        - img [ref=e26]
+        - generic [ref=e31]: Patients
+      - link "Settings" [ref=e32] [cursor=pointer]:
+        - /url: /settings
+        - img [ref=e34]
+        - generic [ref=e37]: Settings
+    - generic [ref=e38]:
+      - generic [ref=e39]:
+        - generic [ref=e40]: AM
+        - generic [ref=e41]:
+          - paragraph [ref=e42]: Alex Morgan
+          - paragraph [ref=e43]: super admin
+        - button "Sign out" [ref=e44] [cursor=pointer]:
+          - img [ref=e45]
+      - button "Collapse" [ref=e48] [cursor=pointer]:
+        - img [ref=e49]
+        - generic [ref=e51]: Collapse
+  - main [ref=e52]:
+    - generic [ref=e54]:
+      - complementary [ref=e55]:
+        - generic [ref=e56]:
+          - paragraph [ref=e58]: Platform Admin
+          - navigation [ref=e59]:
+            - button "Tenants" [ref=e60] [cursor=pointer]:
+              - img [ref=e62]
+              - text: Tenants
+            - button "Platform" [ref=e65] [cursor=pointer]:
+              - img [ref=e67]
+              - text: Platform
+            - button "Audit Log" [ref=e71] [cursor=pointer]:
+              - img [ref=e73]
+              - text: Audit Log
+            - button "Feature Flags" [ref=e76] [cursor=pointer]:
+              - img [ref=e78]
+              - text: Feature Flags
+          - generic [ref=e81]:
+            - generic [ref=e82]: AM
+            - generic [ref=e83]:
+              - paragraph [ref=e84]: Alex Morgan
+              - paragraph [ref=e85]: super admin
+      - generic [ref=e86]:
+        - generic [ref=e88]:
+          - img [ref=e90]
+          - heading "Tenants" [level=1] [ref=e93]
+        - generic [ref=e94]:
+          - generic [ref=e95]:
+            - paragraph [ref=e96]: 5 tenants registered
+            - button "Provision Tenant" [ref=e97] [cursor=pointer]:
+              - img [ref=e98]
+              - text: Provision Tenant
+          - table [ref=e100]:
+            - rowgroup [ref=e101]:
+              - row "Tenant Subdomain Locations Users Status Created" [ref=e102]:
+                - columnheader "Tenant" [ref=e103]
+                - columnheader "Subdomain" [ref=e104]
+                - columnheader "Locations" [ref=e105]
+                - columnheader "Users" [ref=e106]
+                - columnheader "Status" [ref=e107]
+                - columnheader "Created" [ref=e108]
+                - columnheader [ref=e109]
+            - rowgroup [ref=e110]:
+              - row "Primus Think TEN-00001 primusdemo.primus.app 3 11 Active 2025-10-01" [ref=e111]:
+                - cell "Primus Think TEN-00001" [ref=e112]:
+                  - paragraph [ref=e113]: Primus Think
+                  - paragraph [ref=e114]: TEN-00001
+                - cell "primusdemo.primus.app" [ref=e115]
+                - cell "3" [ref=e116]
+                - cell "11" [ref=e117]
+                - cell "Active" [ref=e118]:
+                  - generic [ref=e119]: Active
+                - cell "2025-10-01" [ref=e120]
+                - cell [ref=e121]:
+                  - button [ref=e122] [cursor=pointer]:
+                    - img [ref=e123]
+              - row "Riverside Family Medicine TEN-00002 riverside.primus.app 2 8 Active 2026-01-15" [ref=e127]:
+                - cell "Riverside Family Medicine TEN-00002" [ref=e128]:
+                  - paragraph [ref=e129]: Riverside Family Medicine
+                  - paragraph [ref=e130]: TEN-00002
+                - cell "riverside.primus.app" [ref=e131]
+                - cell "2" [ref=e132]
+                - cell "8" [ref=e133]
+                - cell "Active" [ref=e134]:
+                  - generic [ref=e135]: Active
+                - cell "2026-01-15" [ref=e136]
+                - cell [ref=e137]:
+                  - button [ref=e138] [cursor=pointer]:
+                    - img [ref=e139]
+              - row "Lakewood Internal Medicine TEN-00003 lakewood.primus.app 1 5 Provisioning 2026-03-10" [ref=e143]:
+                - cell "Lakewood Internal Medicine TEN-00003" [ref=e144]:
+                  - paragraph [ref=e145]: Lakewood Internal Medicine
+                  - paragraph [ref=e146]: TEN-00003
+                - cell "lakewood.primus.app" [ref=e147]
+                - cell "1" [ref=e148]
+                - cell "5" [ref=e149]
+                - cell "Provisioning" [ref=e150]:
+                  - generic [ref=e151]: Provisioning
+                - cell "2026-03-10" [ref=e152]
+                - cell [ref=e153]:
+                  - button [ref=e154] [cursor=pointer]:
+                    - img [ref=e155]
+              - row "Sunrise Health Partners TEN-00004 sunrise.primus.app 4 22 Active 2025-12-01" [ref=e159]:
+                - cell "Sunrise Health Partners TEN-00004" [ref=e160]:
+                  - paragraph [ref=e161]: Sunrise Health Partners
+                  - paragraph [ref=e162]: TEN-00004
+                - cell "sunrise.primus.app" [ref=e163]
+                - cell "4" [ref=e164]
+                - cell "22" [ref=e165]
+                - cell "Active" [ref=e166]:
+                  - generic [ref=e167]: Active
+                - cell "2025-12-01" [ref=e168]
+                - cell [ref=e169]:
+                  - button [ref=e170] [cursor=pointer]:
+                    - img [ref=e171]
+              - row "Valley Primary Care TEN-00005 valley.primus.app 1 3 Inactive 2026-02-20" [ref=e175]:
+                - cell "Valley Primary Care TEN-00005" [ref=e176]:
+                  - paragraph [ref=e177]: Valley Primary Care
+                  - paragraph [ref=e178]: TEN-00005
+                - cell "valley.primus.app" [ref=e179]
+                - cell "1" [ref=e180]
+                - cell "3" [ref=e181]
+                - cell "Inactive" [ref=e182]:
+                  - generic [ref=e183]: Inactive
+                - cell "2026-02-20" [ref=e184]
+                - cell [ref=e185]:
+                  - button [ref=e186] [cursor=pointer]:
+                    - img [ref=e187]
+```

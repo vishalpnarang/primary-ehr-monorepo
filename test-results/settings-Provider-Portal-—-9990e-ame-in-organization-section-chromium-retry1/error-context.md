@@ -1,0 +1,137 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: P
+      - generic [ref=e7]: Primus EHR
+    - button "Search... ⌘K" [ref=e9] [cursor=pointer]:
+      - img [ref=e10]
+      - generic [ref=e13]: Search...
+      - generic [ref=e14]: ⌘K
+    - navigation [ref=e15]:
+      - link "Dashboard" [ref=e16] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e17]
+        - generic [ref=e20]: Dashboard
+      - link "Scheduling" [ref=e21] [cursor=pointer]:
+        - /url: /schedule
+        - img [ref=e22]
+        - generic [ref=e24]: Scheduling
+      - link "Patients" [ref=e25] [cursor=pointer]:
+        - /url: /patients
+        - img [ref=e26]
+        - generic [ref=e31]: Patients
+      - link "Billing" [ref=e32] [cursor=pointer]:
+        - /url: /billing
+        - img [ref=e33]
+        - generic [ref=e35]: Billing
+      - link "Reports" [ref=e36] [cursor=pointer]:
+        - /url: /reports
+        - img [ref=e37]
+        - generic [ref=e39]: Reports
+      - link "Settings" [ref=e40] [cursor=pointer]:
+        - /url: /settings
+        - img [ref=e42]
+        - generic [ref=e45]: Settings
+    - generic [ref=e46]:
+      - generic [ref=e47]:
+        - generic [ref=e48]: JW
+        - generic [ref=e49]:
+          - paragraph [ref=e50]: James Wilson
+          - paragraph [ref=e51]: tenant admin
+        - button "Sign out" [ref=e52] [cursor=pointer]:
+          - img [ref=e53]
+      - button "Collapse" [ref=e56] [cursor=pointer]:
+        - img [ref=e57]
+        - generic [ref=e59]: Collapse
+  - main [ref=e60]:
+    - generic [ref=e62]:
+      - complementary [ref=e63]:
+        - generic [ref=e64]:
+          - paragraph [ref=e66]: Clinic Settings
+          - navigation [ref=e67]:
+            - button "Organization" [ref=e68] [cursor=pointer]:
+              - img [ref=e70]
+              - text: Organization
+            - button "Locations" [ref=e74] [cursor=pointer]:
+              - img [ref=e76]
+              - text: Locations
+            - button "Users" [ref=e79] [cursor=pointer]:
+              - img [ref=e81]
+              - text: Users
+            - button "Roles & Permissions" [ref=e86] [cursor=pointer]:
+              - img [ref=e88]
+              - text: Roles & Permissions
+            - button "Providers" [ref=e91] [cursor=pointer]:
+              - img [ref=e93]
+              - text: Providers
+            - button "Payers" [ref=e97] [cursor=pointer]:
+              - img [ref=e99]
+              - text: Payers
+            - button "Fee Schedule" [ref=e101] [cursor=pointer]:
+              - img [ref=e103]
+              - text: Fee Schedule
+            - button "Integrations" [ref=e105] [cursor=pointer]:
+              - img [ref=e107]
+              - text: Integrations
+            - button "Templates" [ref=e109] [cursor=pointer]:
+              - img [ref=e111]
+              - text: Templates
+            - button "Appointment Types" [ref=e114] [cursor=pointer]:
+              - img [ref=e116]
+              - text: Appointment Types
+          - generic [ref=e119]:
+            - generic [ref=e120]: JW
+            - generic [ref=e121]:
+              - paragraph [ref=e122]: James Wilson
+              - paragraph [ref=e123]: tenant admin
+      - generic [ref=e124]:
+        - generic [ref=e126]:
+          - img [ref=e128]
+          - heading "Organization" [level=1] [ref=e132]
+        - generic [ref=e133]:
+          - generic [ref=e134]:
+            - heading "Practice Information" [level=3] [ref=e135]
+            - generic [ref=e136]:
+              - generic [ref=e137]:
+                - generic [ref=e138]: Practice Name
+                - textbox [ref=e139]: Primus Think
+              - generic [ref=e140]:
+                - generic [ref=e141]: Group NPI
+                - textbox [ref=e142]: "1234567890"
+              - generic [ref=e143]:
+                - generic [ref=e144]: Tax ID (EIN)
+                - textbox [ref=e145]: 12-3456789
+              - generic [ref=e146]:
+                - generic [ref=e147]: Main Phone
+                - textbox [ref=e148]: (212) 555-0100
+              - generic [ref=e149]:
+                - generic [ref=e150]: Address Line 1
+                - textbox [ref=e151]: 250 W 57th St, Suite 801
+              - generic [ref=e152]:
+                - generic [ref=e153]: City
+                - textbox [ref=e154]: New York
+              - generic [ref=e155]:
+                - generic [ref=e156]:
+                  - generic [ref=e157]: State
+                  - combobox [ref=e158]:
+                    - option "NY" [selected]
+                    - option "NJ"
+                    - option "CT"
+                - generic [ref=e159]:
+                  - generic [ref=e160]: ZIP Code
+                  - textbox [ref=e161]: "10107"
+          - generic [ref=e162]:
+            - heading "Practice Logo" [level=3] [ref=e163]
+            - paragraph [ref=e164]: Shown on patient-facing documents and reports. PNG or SVG, max 2 MB.
+            - generic [ref=e165]:
+              - generic [ref=e166]: PP
+              - button "Upload Logo" [ref=e167] [cursor=pointer]:
+                - img [ref=e168]
+                - text: Upload Logo
+          - generic [ref=e171]:
+            - button "Save Changes" [ref=e172] [cursor=pointer]
+            - button "Discard" [ref=e173] [cursor=pointer]
+```

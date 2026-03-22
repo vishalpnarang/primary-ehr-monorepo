@@ -1,0 +1,188 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: P
+      - generic [ref=e7]: Primus EHR
+    - button "Search... ⌘K" [ref=e9] [cursor=pointer]:
+      - img [ref=e10]
+      - generic [ref=e13]: Search...
+      - generic [ref=e14]: ⌘K
+    - navigation [ref=e15]:
+      - link "Dashboard" [ref=e16] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e17]
+        - generic [ref=e20]: Dashboard
+      - link "Patients" [ref=e21] [cursor=pointer]:
+        - /url: /patients
+        - img [ref=e22]
+        - generic [ref=e27]: Patients
+      - link "Billing" [ref=e28] [cursor=pointer]:
+        - /url: /billing
+        - img [ref=e30]
+        - generic [ref=e32]: Billing
+      - link "Reports" [ref=e33] [cursor=pointer]:
+        - /url: /reports
+        - img [ref=e34]
+        - generic [ref=e36]: Reports
+    - generic [ref=e37]:
+      - generic [ref=e38]:
+        - generic [ref=e39]: LP
+        - generic [ref=e40]:
+          - paragraph [ref=e41]: Lisa Patel
+          - paragraph [ref=e42]: billing
+        - button "Sign out" [ref=e43] [cursor=pointer]:
+          - img [ref=e44]
+      - button "Collapse" [ref=e47] [cursor=pointer]:
+        - img [ref=e48]
+        - generic [ref=e50]: Collapse
+  - main [ref=e51]:
+    - generic [ref=e53]:
+      - generic [ref=e54]:
+        - generic [ref=e55]:
+          - heading "Billing & RCM" [level=1] [ref=e56]
+          - paragraph [ref=e57]: Claims management, denials, and revenue cycle
+        - generic [ref=e58]:
+          - button "Filters" [ref=e59] [cursor=pointer]:
+            - img [ref=e60]
+            - text: Filters
+          - button "Export" [ref=e62] [cursor=pointer]:
+            - img [ref=e63]
+            - text: Export
+      - generic [ref=e66]:
+        - button "Dashboard" [ref=e67] [cursor=pointer]
+        - button "Charges" [ref=e68] [cursor=pointer]
+        - button "Claims" [ref=e69] [cursor=pointer]
+        - button "ERA" [ref=e70] [cursor=pointer]
+        - button "Denials5" [ref=e71] [cursor=pointer]
+        - button "A/R" [ref=e72] [cursor=pointer]
+        - button "Patient Balances" [ref=e73] [cursor=pointer]
+      - generic [ref=e74]:
+        - generic [ref=e75]:
+          - generic [ref=e76]:
+            - generic [ref=e77]:
+              - generic [ref=e78]:
+                - paragraph [ref=e79]: Clean Claim Rate
+                - paragraph [ref=e80]: "0"
+              - img [ref=e82]
+            - generic [ref=e85]:
+              - img [ref=e86]
+              - generic [ref=e89]: +2.1% vs last week
+          - generic [ref=e90]:
+            - generic [ref=e91]:
+              - generic [ref=e92]:
+                - paragraph [ref=e93]: Denial Rate
+                - paragraph [ref=e94]: "0"
+              - img [ref=e96]
+            - generic [ref=e100]:
+              - img [ref=e101]
+              - generic [ref=e104]: "-0.4% vs last week"
+          - generic [ref=e105]:
+            - generic [ref=e106]:
+              - generic [ref=e107]:
+                - paragraph [ref=e108]: Days in A/R
+                - paragraph [ref=e109]: "32"
+              - img [ref=e111]
+            - generic [ref=e114]:
+              - img [ref=e115]
+              - generic [ref=e118]: +2 days vs last week
+          - generic [ref=e119]:
+            - generic [ref=e120]:
+              - generic [ref=e121]:
+                - paragraph [ref=e122]: Collections This Week
+                - paragraph [ref=e123]: $48,200
+              - img [ref=e125]
+            - generic [ref=e127]:
+              - img [ref=e128]
+              - generic [ref=e131]: +$3,100 vs last week
+        - generic [ref=e132]:
+          - generic [ref=e133]:
+            - generic [ref=e134]:
+              - heading "Claim Queue" [level=3] [ref=e135]
+              - paragraph [ref=e136]: Claims pending action or review
+            - button "View all" [ref=e137] [cursor=pointer]:
+              - text: View all
+              - img [ref=e138]
+          - table [ref=e141]:
+            - rowgroup [ref=e142]:
+              - row "Patient DOS CPT Charge Payer Status" [ref=e143]:
+                - columnheader "Patient" [ref=e144]
+                - columnheader "DOS" [ref=e145]
+                - columnheader "CPT" [ref=e146]
+                - columnheader "Charge" [ref=e147]
+                - columnheader "Payer" [ref=e148]
+                - columnheader "Status" [ref=e149]
+            - rowgroup
+        - generic [ref=e150]:
+          - generic [ref=e151]:
+            - generic [ref=e152]:
+              - heading "Denial Queue" [level=3] [ref=e153]
+              - paragraph [ref=e154]: Requires appeal or correction
+            - generic [ref=e155]: $1,290 at risk
+          - table [ref=e157]:
+            - rowgroup [ref=e158]:
+              - row "Patient DOS Denial Reason Amount Age" [ref=e159]:
+                - columnheader "Patient" [ref=e160]
+                - columnheader "DOS" [ref=e161]
+                - columnheader "Denial Reason" [ref=e162]
+                - columnheader "Amount" [ref=e163]
+                - columnheader "Age" [ref=e164]
+            - rowgroup [ref=e165]:
+              - row "Patricia Nguyen Medicare 2026-03-10 CO-97 Payment included in allowance for another service $330 9d" [ref=e166]:
+                - cell "Patricia Nguyen Medicare" [ref=e167]:
+                  - paragraph [ref=e168]: Patricia Nguyen
+                  - paragraph [ref=e169]: Medicare
+                - cell "2026-03-10" [ref=e170]
+                - cell "CO-97 Payment included in allowance for another service" [ref=e171]:
+                  - paragraph [ref=e172]: CO-97
+                  - paragraph [ref=e173]: Payment included in allowance for another service
+                - cell "$330" [ref=e174]
+                - cell "9d" [ref=e175]:
+                  - generic [ref=e176]: 9d
+              - row "Linda Chen Cigna 2026-03-17 CO-4 Procedure code inconsistent with modifier $290 2d" [ref=e177]:
+                - cell "Linda Chen Cigna" [ref=e178]:
+                  - paragraph [ref=e179]: Linda Chen
+                  - paragraph [ref=e180]: Cigna
+                - cell "2026-03-17" [ref=e181]
+                - cell "CO-4 Procedure code inconsistent with modifier" [ref=e182]:
+                  - paragraph [ref=e183]: CO-4
+                  - paragraph [ref=e184]: Procedure code inconsistent with modifier
+                - cell "$290" [ref=e185]
+                - cell "2d" [ref=e186]:
+                  - generic [ref=e187]: 2d
+              - row "James Miller UnitedHealth 2026-03-12 CO-50 Non-covered service — patient plan exclusion $290 7d" [ref=e188]:
+                - cell "James Miller UnitedHealth" [ref=e189]:
+                  - paragraph [ref=e190]: James Miller
+                  - paragraph [ref=e191]: UnitedHealth
+                - cell "2026-03-12" [ref=e192]
+                - cell "CO-50 Non-covered service — patient plan exclusion" [ref=e193]:
+                  - paragraph [ref=e194]: CO-50
+                  - paragraph [ref=e195]: Non-covered service — patient plan exclusion
+                - cell "$290" [ref=e196]
+                - cell "7d" [ref=e197]:
+                  - generic [ref=e198]: 7d
+              - row "Helen Brooks Aetna 2026-03-05 CO-22 Coordination of benefits — other insurance primary $220 14d" [ref=e199]:
+                - cell "Helen Brooks Aetna" [ref=e200]:
+                  - paragraph [ref=e201]: Helen Brooks
+                  - paragraph [ref=e202]: Aetna
+                - cell "2026-03-05" [ref=e203]
+                - cell "CO-22 Coordination of benefits — other insurance primary" [ref=e204]:
+                  - paragraph [ref=e205]: CO-22
+                  - paragraph [ref=e206]: Coordination of benefits — other insurance primary
+                - cell "$220" [ref=e207]
+                - cell "14d" [ref=e208]:
+                  - generic [ref=e209]: 14d
+              - row "Frank Torres BlueCross 2026-02-28 PR-1 Deductible amount — patient responsibility $160 19d" [ref=e210]:
+                - cell "Frank Torres BlueCross" [ref=e211]:
+                  - paragraph [ref=e212]: Frank Torres
+                  - paragraph [ref=e213]: BlueCross
+                - cell "2026-02-28" [ref=e214]
+                - cell "PR-1 Deductible amount — patient responsibility" [ref=e215]:
+                  - paragraph [ref=e216]: PR-1
+                  - paragraph [ref=e217]: Deductible amount — patient responsibility
+                - cell "$160" [ref=e218]
+                - cell "19d" [ref=e219]:
+                  - generic [ref=e220]: 19d
+```

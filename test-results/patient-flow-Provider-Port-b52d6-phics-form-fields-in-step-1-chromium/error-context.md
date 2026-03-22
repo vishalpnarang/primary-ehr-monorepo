@@ -1,0 +1,226 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - complementary [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: P
+      - generic [ref=e7]: Primus EHR
+    - button "Search... ⌘K" [ref=e9] [cursor=pointer]:
+      - img [ref=e10]
+      - generic [ref=e13]: Search...
+      - generic [ref=e14]: ⌘K
+    - navigation [ref=e15]:
+      - link "Dashboard" [ref=e16] [cursor=pointer]:
+        - /url: /dashboard
+        - img [ref=e17]
+        - generic [ref=e20]: Dashboard
+      - link "Scheduling" [ref=e21] [cursor=pointer]:
+        - /url: /schedule
+        - img [ref=e22]
+        - generic [ref=e24]: Scheduling
+      - link "Patients" [ref=e25] [cursor=pointer]:
+        - /url: /patients
+        - img [ref=e27]
+        - generic [ref=e32]: Patients
+      - link "Inbox 8" [ref=e33] [cursor=pointer]:
+        - /url: /inbox
+        - img [ref=e34]
+        - generic [ref=e37]: Inbox
+        - generic [ref=e38]: "8"
+    - generic [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e41]: EC
+        - generic [ref=e42]:
+          - paragraph [ref=e43]: Emily Chen
+          - paragraph [ref=e44]: provider
+        - button "Sign out" [ref=e45] [cursor=pointer]:
+          - img [ref=e46]
+      - button "Collapse" [ref=e49] [cursor=pointer]:
+        - img [ref=e50]
+        - generic [ref=e52]: Collapse
+  - main [ref=e53]:
+    - generic [ref=e55]:
+      - navigation [ref=e56]:
+        - button "Patients" [ref=e57] [cursor=pointer]
+        - img [ref=e58]
+        - generic [ref=e60]: New Patient
+      - generic [ref=e61]:
+        - heading "Register New Patient" [level=1] [ref=e62]
+        - paragraph [ref=e63]: Complete all three steps to create the patient record
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - generic [ref=e66]: "1"
+          - generic [ref=e67]: Demographics
+        - generic [ref=e69]:
+          - generic [ref=e70]: "2"
+          - generic [ref=e71]: Insurance
+        - generic [ref=e73]:
+          - generic [ref=e74]: "3"
+          - generic [ref=e75]: Review
+      - generic [ref=e76]:
+        - generic [ref=e77]:
+          - generic [ref=e78]:
+            - generic [ref=e79]:
+              - heading "Personal Information" [level=3] [ref=e80]
+              - paragraph [ref=e81]: Required fields are marked with an asterisk
+            - generic [ref=e82]:
+              - generic [ref=e83]:
+                - generic [ref=e84]: First Name*
+                - textbox "Jane" [ref=e85]
+              - generic [ref=e86]:
+                - generic [ref=e87]: Last Name*
+                - textbox "Smith" [ref=e88]
+              - generic [ref=e89]:
+                - generic [ref=e90]: Date of Birth*
+                - generic [ref=e91]:
+                  - textbox [ref=e92]
+                  - img
+              - generic [ref=e93]:
+                - generic [ref=e94]: Mobile Phone
+                - generic [ref=e95]:
+                  - textbox "(312) 555-0100" [ref=e96]
+                  - img
+              - generic [ref=e97]:
+                - generic [ref=e98]: Email
+                - generic [ref=e99]:
+                  - textbox "jane.smith@email.com" [ref=e100]
+                  - img
+          - generic [ref=e101]:
+            - heading "Identity" [level=3] [ref=e103]
+            - generic [ref=e104]:
+              - generic [ref=e105]:
+                - generic [ref=e106]: Sex at Birth*
+                - generic [ref=e107]:
+                  - combobox [ref=e108] [cursor=pointer]:
+                    - option "Select…" [selected]
+                    - option "Male"
+                    - option "Female"
+                    - option "Other"
+                  - img
+              - generic [ref=e109]:
+                - generic [ref=e110]: Gender Identity
+                - generic [ref=e111]:
+                  - combobox [ref=e112] [cursor=pointer]:
+                    - option "Select…" [selected]
+                    - option "Man"
+                    - option "Woman"
+                    - option "Non-binary"
+                    - option "Transgender man"
+                    - option "Transgender woman"
+                    - option "Genderqueer"
+                    - option "Prefer not to say"
+                    - option "Not listed"
+                  - img
+              - generic [ref=e113]:
+                - generic [ref=e114]: Preferred Pronouns
+                - generic [ref=e115]:
+                  - combobox [ref=e116] [cursor=pointer]:
+                    - option "Select…" [selected]
+                    - option "He/Him"
+                    - option "She/Her"
+                    - option "They/Them"
+                    - option "Ze/Zir"
+                    - option "Prefer not to say"
+                  - img
+          - generic [ref=e117]:
+            - heading "Address" [level=3] [ref=e119]
+            - generic [ref=e120]:
+              - generic [ref=e121]:
+                - generic [ref=e122]: Address Line 1
+                - textbox "123 Main St" [ref=e123]
+              - generic [ref=e124]:
+                - generic [ref=e125]: Address Line 2
+                - textbox "Apt, Suite, Unit (optional)" [ref=e126]
+              - generic [ref=e127]:
+                - generic [ref=e128]:
+                  - generic [ref=e129]: City
+                  - textbox "Chicago" [ref=e130]
+                - generic [ref=e131]:
+                  - generic [ref=e132]: State
+                  - generic [ref=e133]:
+                    - combobox [ref=e134] [cursor=pointer]:
+                      - option "State…" [selected]
+                      - option "AL"
+                      - option "AK"
+                      - option "AZ"
+                      - option "AR"
+                      - option "CA"
+                      - option "CO"
+                      - option "CT"
+                      - option "DE"
+                      - option "FL"
+                      - option "GA"
+                      - option "HI"
+                      - option "ID"
+                      - option "IL"
+                      - option "IN"
+                      - option "IA"
+                      - option "KS"
+                      - option "KY"
+                      - option "LA"
+                      - option "ME"
+                      - option "MD"
+                      - option "MA"
+                      - option "MI"
+                      - option "MN"
+                      - option "MS"
+                      - option "MO"
+                      - option "MT"
+                      - option "NE"
+                      - option "NV"
+                      - option "NH"
+                      - option "NJ"
+                      - option "NM"
+                      - option "NY"
+                      - option "NC"
+                      - option "ND"
+                      - option "OH"
+                      - option "OK"
+                      - option "OR"
+                      - option "PA"
+                      - option "RI"
+                      - option "SC"
+                      - option "SD"
+                      - option "TN"
+                      - option "TX"
+                      - option "UT"
+                      - option "VT"
+                      - option "VA"
+                      - option "WA"
+                      - option "WV"
+                      - option "WI"
+                      - option "WY"
+                    - img
+                - generic [ref=e135]:
+                  - generic [ref=e136]: ZIP Code
+                  - textbox "60601" [ref=e137]
+          - generic [ref=e138]:
+            - heading "Emergency Contact" [level=3] [ref=e140]
+            - generic [ref=e141]:
+              - generic [ref=e142]:
+                - generic [ref=e143]: Contact Name
+                - textbox "John Smith" [ref=e144]
+              - generic [ref=e145]:
+                - generic [ref=e146]: Relationship
+                - generic [ref=e147]:
+                  - combobox [ref=e148] [cursor=pointer]:
+                    - option "Select…" [selected]
+                    - option "Spouse"
+                    - option "Parent"
+                    - option "Child"
+                    - option "Sibling"
+                    - option "Friend"
+                    - option "Other"
+                  - img
+              - generic [ref=e149]:
+                - generic [ref=e150]: Phone
+                - generic [ref=e151]:
+                  - textbox "(312) 555-0199" [ref=e152]
+                  - img
+        - generic [ref=e153]:
+          - button "Cancel" [ref=e154] [cursor=pointer]
+          - button "Next" [ref=e155] [cursor=pointer]:
+            - text: Next
+            - img [ref=e156]
+```
