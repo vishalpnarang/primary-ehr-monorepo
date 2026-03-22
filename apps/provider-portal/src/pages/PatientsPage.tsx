@@ -23,15 +23,16 @@ import { cn } from '@primus/ui/lib';
 type PatientStatus = 'active' | 'inactive' | 'deceased';
 
 interface MockPatient {
-  id: string;
+  id: string | number;
+  uuid?: string;
   mrn: string;
   firstName: string;
   lastName: string;
   preferredName?: string;
   dob: string;
   age?: number;
-  sex: 'Male' | 'Female' | 'Other';
-  phone: string;
+  sex: 'Male' | 'Female' | 'Other' | string;
+  phone?: string;
   email?: string;
   insurance?: {
     payerName: string;
@@ -40,10 +41,10 @@ interface MockPatient {
   };
   status?: PatientStatus;
   lastVisitDate?: string;
-  primaryProvider: string;
-  hasHighRisk: boolean;
-  hasCareGap: boolean;
-  hasBalance: boolean;
+  primaryProvider?: string;
+  hasHighRisk?: boolean;
+  hasCareGap?: boolean;
+  hasBalance?: boolean;
 }
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
@@ -182,7 +183,9 @@ function getAvatarColor(id: string): string {
     'bg-indigo-100 text-indigo-700',
     'bg-amber-100 text-amber-700',
   ];
-  const index = parseInt(id.replace(/\D/g, ''), 10) % colors.length;
+  if (id == null) return colors[0];
+  const digits = String(id).replace(/\D/g, '');
+  const index = (parseInt(digits, 10) || 0) % colors.length;
   return colors[index];
 }
 
@@ -190,12 +193,12 @@ function matchesSearch(patient: MockPatient, query: string): boolean {
   if (!query.trim()) return true;
   const q = query.toLowerCase().trim();
   return (
-    patient.firstName.toLowerCase().includes(q) ||
-    patient.lastName.toLowerCase().includes(q) ||
-    `${patient.firstName} ${patient.lastName}`.toLowerCase().includes(q) ||
-    patient.mrn.toLowerCase().includes(q) ||
-    patient.phone.replace(/\D/g, '').includes(q.replace(/\D/g, '')) ||
-    patient.dob.includes(q) ||
+    patient.firstName?.toLowerCase().includes(q) ||
+    patient.lastName?.toLowerCase().includes(q) ||
+    `${patient.firstName ?? ''} ${patient.lastName ?? ''}`.toLowerCase().includes(q) ||
+    (patient.mrn?.toLowerCase().includes(q) ?? false) ||
+    (patient.phone?.replace(/\D/g, '').includes(q.replace(/\D/g, '')) ?? false) ||
+    (patient.dob?.includes(q) ?? false) ||
     (patient.email?.toLowerCase().includes(q) ?? false)
   );
 }
@@ -423,10 +426,10 @@ const PatientsPage: React.FC = () => {
             <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Recent Patients</span>
           </div>
           <div className="flex gap-2 flex-wrap">
-            {recentPatients.map((patient) => (
+            {recentPatients.map((patient, idx) => (
               <button
-                key={patient.id}
-                onClick={() => navigate(`/patients/${patient.id}`)}
+                key={patient.uuid ?? patient.id ?? idx}
+                onClick={() => navigate(`/patients/${patient.uuid ?? patient.id}`)}
                 className="flex items-center gap-2.5 px-3 py-2 bg-white border border-slate-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-400 group"
               >
                 <PatientAvatar patient={patient} size="sm" />
@@ -479,11 +482,11 @@ const PatientsPage: React.FC = () => {
           ) : filteredPatients.length === 0 ? (
             <EmptySearch query={searchQuery} onClear={() => setSearchQuery('')} />
           ) : (
-            filteredPatients.map((patient) => (
+            filteredPatients.map((patient, idx) => (
               <PatientRow
-                key={patient.id}
+                key={patient.uuid ?? patient.id ?? idx}
                 patient={patient}
-                onClick={() => navigate(`/patients/${patient.id}`)}
+                onClick={() => navigate(`/patients/${patient.uuid ?? patient.id}`)}
               />
             ))
           )}
