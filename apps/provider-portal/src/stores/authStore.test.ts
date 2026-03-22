@@ -28,6 +28,13 @@ const mockNurse: User = {
   tenantId: 'TEN-00001',
 };
 
+/** Helper to read the Zustand persisted auth state from sessionStorage */
+function getPersistedAuth() {
+  const raw = sessionStorage.getItem('primus-auth');
+  if (!raw) return null;
+  return JSON.parse(raw).state;
+}
+
 describe('authStore', () => {
   beforeEach(() => {
     // Reset store and clear sessionStorage before each test
@@ -36,6 +43,8 @@ describe('authStore', () => {
       user: null,
       isAuthenticated: false,
       token: null,
+      refreshToken: null,
+      tenantId: null,
       loading: false,
       error: null,
     });
@@ -78,13 +87,13 @@ describe('authStore', () => {
       expect(state.isAuthenticated).toBe(true);
     });
 
-    it('persists user to sessionStorage', () => {
+    it('persists user to sessionStorage via Zustand persist', () => {
       const { loginMock } = useAuthStore.getState();
       loginMock(mockProvider);
 
-      const stored = sessionStorage.getItem('primus-user');
-      expect(stored).not.toBeNull();
-      expect(JSON.parse(stored!)).toEqual(mockProvider);
+      const persisted = getPersistedAuth();
+      expect(persisted).not.toBeNull();
+      expect(persisted.user).toEqual(mockProvider);
     });
 
     it('sets loading to false after mock login', () => {
@@ -124,37 +133,37 @@ describe('authStore', () => {
       expect(token).toBeNull();
     });
 
-    it('removes primus-user from sessionStorage', () => {
+    it('clears user from persisted state on logout', () => {
       const { loginMock, logout } = useAuthStore.getState();
       loginMock(mockProvider);
-      expect(sessionStorage.getItem('primus-user')).not.toBeNull();
+      expect(getPersistedAuth()?.user).not.toBeNull();
 
       logout();
-      expect(sessionStorage.getItem('primus-user')).toBeNull();
+      expect(getPersistedAuth()?.user).toBeNull();
     });
 
-    it('removes primus-access-token from sessionStorage', () => {
-      sessionStorage.setItem('primus-access-token', 'some-token');
+    it('clears token from persisted state on logout', () => {
+      useAuthStore.setState({ token: 'some-token', isAuthenticated: true });
       const { logout } = useAuthStore.getState();
       logout();
 
-      expect(sessionStorage.getItem('primus-access-token')).toBeNull();
+      expect(getPersistedAuth()?.token).toBeNull();
     });
 
-    it('removes primus-refresh-token from sessionStorage', () => {
-      sessionStorage.setItem('primus-refresh-token', 'some-refresh-token');
+    it('clears refreshToken from persisted state on logout', () => {
+      useAuthStore.setState({ refreshToken: 'some-refresh-token' });
       const { logout } = useAuthStore.getState();
       logout();
 
-      expect(sessionStorage.getItem('primus-refresh-token')).toBeNull();
+      expect(getPersistedAuth()?.refreshToken).toBeNull();
     });
 
-    it('removes primus-tenant-id from sessionStorage', () => {
-      sessionStorage.setItem('primus-tenant-id', '1');
+    it('clears tenantId from persisted state on logout', () => {
+      useAuthStore.setState({ tenantId: '5' });
       const { logout } = useAuthStore.getState();
       logout();
 
-      expect(sessionStorage.getItem('primus-tenant-id')).toBeNull();
+      expect(getPersistedAuth()?.tenantId).toBeNull();
     });
   });
 
@@ -181,13 +190,13 @@ describe('authStore', () => {
       expect(user?.tenantId).toBe(mockProvider.tenantId);
     });
 
-    it('updates sessionStorage with new role', () => {
+    it('updates persisted state with new role', () => {
       const { loginMock, switchRole } = useAuthStore.getState();
       loginMock(mockProvider);
       switchRole('front_desk');
 
-      const stored = JSON.parse(sessionStorage.getItem('primus-user')!);
-      expect(stored.role).toBe('front_desk');
+      const persisted = getPersistedAuth();
+      expect(persisted.user.role).toBe('front_desk');
     });
 
     it('handles switchRole when no user is logged in (returns null user)', () => {

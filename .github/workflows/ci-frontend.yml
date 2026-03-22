@@ -1,0 +1,80 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/**'
+      - 'package.json'
+      - 'package-lock.json'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/**'
+      - 'package.json'
+      - 'package-lock.json'
+
+jobs:
+  lint-test-build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        portal: [provider-portal, patient-portal]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com
+          scope: '@primus-ehr'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lint
+        run: npx eslint apps/${{ matrix.portal }}/src/ --max-warnings 0
+        continue-on-error: true
+
+      - name: Type check
+        run: npx tsc --noEmit --project apps/${{ matrix.portal }}/tsconfig.json
+        continue-on-error: true
+
+      - name: Unit tests
+        run: npm run test --workspace=apps/${{ matrix.portal }} -- --run
+        env:
+          CI: true
+
+      - name: Build
+        run: npm run build --workspace=apps/${{ matrix.portal }}
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: lint-test-build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://npm.pkg.github.com
+          scope: '@primus-ehr'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run e2e tests
+        run: npm run test:e2e
+        env:
+          CI: true

@@ -12,15 +12,22 @@ export const api = axios.create({
   timeout: 30000,
 });
 
-// Request interceptor — attach JWT token and tenant ID
+// Request interceptor — attach JWT token and tenant ID from Zustand persisted store
 api.interceptors.request.use((config) => {
-  const token = sessionStorage.getItem('primus-access-token');
-  const tenantId = sessionStorage.getItem('primus-tenant-id') || '5';
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  const raw = sessionStorage.getItem('primus-auth');
+  if (raw) {
+    try {
+      const { state } = JSON.parse(raw);
+      if (state?.token) {
+        config.headers.Authorization = `Bearer ${state.token}`;
+      }
+      config.headers['X-TENANT-ID'] = state?.tenantId || '5';
+    } catch {
+      config.headers['X-TENANT-ID'] = '5';
+    }
+  } else {
+    config.headers['X-TENANT-ID'] = '5';
   }
-  config.headers['X-TENANT-ID'] = tenantId;
 
   return config;
 });
