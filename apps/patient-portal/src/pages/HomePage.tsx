@@ -153,7 +153,7 @@ const HomePage: React.FC = () => {
                     <MapPin className="w-3.5 h-3.5" />
                   )}
                   <span className="truncate">
-                    {nextAppt.isVirtual ? 'Video Visit' : (nextAppt.locationName ?? 'Primus Demo Clinic — Dublin, OH')}
+                    {nextAppt.isVirtual ? 'Video Visit' : (nextAppt.locationName ?? 'Primus Think — Dublin, OH')}
                   </span>
                 </div>
               </div>

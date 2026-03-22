@@ -15,7 +15,7 @@ export const api = axios.create({
 // Request interceptor — attach JWT token and tenant ID
 api.interceptors.request.use((config) => {
   const token = sessionStorage.getItem('primus-access-token');
-  const tenantId = sessionStorage.getItem('primus-tenant-id') || '1';
+  const tenantId = sessionStorage.getItem('primus-tenant-id') || '5';
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

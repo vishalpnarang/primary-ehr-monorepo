@@ -80,7 +80,7 @@ const MOCK_USERS = [
 const MOCK_LOCATIONS = [
   {
     id: 'LOC-00001',
-    name: 'Primus Demo — Downtown',
+    name: 'Primus Think — Downtown',
     address: '250 W 57th St, Suite 801, New York, NY 10107',
     phone: '(212) 555-0100',
     fax: '(212) 555-0101',
@@ -89,7 +89,7 @@ const MOCK_LOCATIONS = [
   },
   {
     id: 'LOC-00002',
-    name: 'Primus Demo — Midtown',
+    name: 'Primus Think — Midtown',
     address: '420 Lexington Ave, Suite 300, New York, NY 10170',
     phone: '(212) 555-0200',
     fax: '(212) 555-0201',
@@ -98,7 +98,7 @@ const MOCK_LOCATIONS = [
   },
   {
     id: 'LOC-00003',
-    name: 'Primus Demo — Uptown',
+    name: 'Primus Think — Uptown',
     address: '2880 Broadway, Suite 201, New York, NY 10025',
     phone: '(212) 555-0300',
     fax: '(212) 555-0301',
@@ -108,7 +108,7 @@ const MOCK_LOCATIONS = [
 ];
 
 const MOCK_TENANTS = [
-  { id: 'TEN-00001', name: 'Primus Demo Clinic', subdomain: 'primusdemo', locations: 3, users: 11, status: 'active',       createdAt: '2025-10-01' },
+  { id: 'TEN-00001', name: 'Primus Think', subdomain: 'primusdemo', locations: 3, users: 11, status: 'active',       createdAt: '2025-10-01' },
   { id: 'TEN-00002', name: 'Riverside Family Medicine',  subdomain: 'riverside',   locations: 2, users: 8,  status: 'active',       createdAt: '2026-01-15' },
   { id: 'TEN-00003', name: 'Lakewood Internal Medicine', subdomain: 'lakewood',    locations: 1, users: 5,  status: 'provisioning', createdAt: '2026-03-10' },
   { id: 'TEN-00004', name: 'Sunrise Health Partners',    subdomain: 'sunrise',     locations: 4, users: 22, status: 'active',       createdAt: '2025-12-01' },
@@ -149,7 +149,7 @@ const OrganizationView: React.FC = () => {
             <label className="block text-xs font-medium text-gray-700 mb-1.5">Practice Name</label>
             <input
               type="text"
-              defaultValue="Primus Demo Clinic"
+              defaultValue="Primus Think"
               className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>

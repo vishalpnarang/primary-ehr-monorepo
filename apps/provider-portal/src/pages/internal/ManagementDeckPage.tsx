@@ -95,7 +95,7 @@ const HeroSection = () => (
       <p className="text-slate-400 text-lg max-w-2xl leading-relaxed mb-10">
         A multi-tenant SaaS Electronic Health Record platform purpose-built for
         US primary care clinics. Replacing legacy EMRs — starting with legacy EHR
-        at Primus Demo Clinic — then scaling to a full SaaS offering.
+        at Primus Think — then scaling to a full SaaS offering.
       </p>
       <div className="flex flex-wrap gap-4">
         {[
@@ -573,7 +573,7 @@ const GTMSection = () => (
         <div>
           <h3 className="text-blue-400 font-semibold mb-4 text-sm uppercase tracking-widest">Phase 1 — First Client</h3>
           <div className="bg-white/10 border border-white/10 rounded-2xl p-6">
-            <div className="text-2xl font-bold text-white mb-2">Primus Demo Clinic</div>
+            <div className="text-2xl font-bold text-white mb-2">Primus Think</div>
             <div className="text-slate-400 text-sm mb-4">3–4 clinic locations · USA · Primary Care</div>
             <div className="space-y-2">
               {[
@@ -597,7 +597,7 @@ const GTMSection = () => (
             {[
               { step: '1', title: 'SaaS Hardening', desc: 'RLS, audit logs, pen test, HIPAA BAA' },
               { step: '2', title: 'Self-serve onboarding', desc: 'Tenant provisioning in < 5 minutes' },
-              { step: '3', title: 'Inbound via referrals', desc: 'Primus Demo Clinic → peer clinics' },
+              { step: '3', title: 'Inbound via referrals', desc: 'Primus Think → peer clinics' },
               { step: '4', title: 'Channel partnerships', desc: 'Billing companies, MSOs, GPOs' },
               { step: '5', title: 'Target: 10 tenants', desc: '$15K–25K MRR at Year 1 SaaS' },
             ].map((step) => (
@@ -658,7 +658,7 @@ const TeamSection = () => (
             primary care actually works.
           </p>
           <p className="text-slate-600 text-sm leading-relaxed">
-            Starting with a real client (Primus Demo Clinic) gives us battle-tested
+            Starting with a real client (Primus Think) gives us battle-tested
             software from day one — not vaporware.
           </p>
         </div>
@@ -666,7 +666,7 @@ const TeamSection = () => (
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-6 text-white text-center">
         <div className="text-2xl font-bold mb-2">Ready to Build the Future of Primary Care EHR</div>
         <div className="text-blue-200 text-sm">
-          Phase 0 complete · Phase 1 starting · Primus Demo Clinic deployment target: Q3 2026
+          Phase 0 complete · Phase 1 starting · Primus Think deployment target: Q3 2026
         </div>
       </div>
     </div>

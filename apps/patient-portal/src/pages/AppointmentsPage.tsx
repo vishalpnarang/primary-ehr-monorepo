@@ -89,7 +89,7 @@ const ApptCard: React.FC<ApptCardProps> = ({ appt, upcoming }) => {
   const visitType = appt.appointmentType ?? appt.type ?? 'Office Visit';
   const location = appt.isVirtual || appt.isTelehealth
     ? 'Video Visit'
-    : (appt.locationName ?? appt.location ?? 'Primus Demo Clinic — Dublin, OH');
+    : (appt.locationName ?? appt.location ?? 'Primus Think — Dublin, OH');
   const isVirtual = appt.isVirtual || appt.isTelehealth;
 
   return (
@@ -198,7 +198,7 @@ const AppointmentsPage: React.FC = () => {
       startTime: '14:00',
       providerName: 'Dr. Emily Chen, MD',
       appointmentType: 'Follow-up Visit',
-      locationName: 'Primus Demo Clinic — Dublin, OH',
+      locationName: 'Primus Think — Dublin, OH',
       isVirtual: false,
       status: 'confirmed',
     },
@@ -208,7 +208,7 @@ const AppointmentsPage: React.FC = () => {
       startTime: '10:30',
       providerName: 'Dr. Emily Chen, MD',
       appointmentType: 'Annual Wellness Visit',
-      locationName: 'Primus Demo Clinic — Dublin, OH',
+      locationName: 'Primus Think — Dublin, OH',
       isVirtual: false,
       status: 'confirmed',
     },
@@ -231,7 +231,7 @@ const AppointmentsPage: React.FC = () => {
       startTime: '11:00',
       providerName: 'Dr. Emily Chen, MD',
       appointmentType: 'Office Visit — Diabetes Management',
-      locationName: 'Primus Demo Clinic — Dublin, OH',
+      locationName: 'Primus Think — Dublin, OH',
       isVirtual: false,
       status: 'completed',
     },
@@ -241,7 +241,7 @@ const AppointmentsPage: React.FC = () => {
       startTime: '09:00',
       providerName: 'Dr. Emily Chen, MD',
       appointmentType: 'Follow-up — Lab Results',
-      locationName: 'Primus Demo Clinic — Dublin, OH',
+      locationName: 'Primus Think — Dublin, OH',
       isVirtual: false,
       status: 'completed',
     },
@@ -261,7 +261,7 @@ const AppointmentsPage: React.FC = () => {
       startTime: '10:00',
       providerName: 'Dr. Emily Chen, MD',
       appointmentType: 'Annual Physical',
-      locationName: 'Primus Demo Clinic — Dublin, OH',
+      locationName: 'Primus Think — Dublin, OH',
       isVirtual: false,
       status: 'completed',
     },
@@ -271,7 +271,7 @@ const AppointmentsPage: React.FC = () => {
       startTime: '13:00',
       providerName: 'Dr. Emily Chen, MD',
       appointmentType: 'Office Visit — Hypertension',
-      locationName: 'Primus Demo Clinic — Dublin, OH',
+      locationName: 'Primus Think — Dublin, OH',
       isVirtual: false,
       status: 'completed',
     },

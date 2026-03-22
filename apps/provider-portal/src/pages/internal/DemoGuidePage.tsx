@@ -186,7 +186,7 @@ const CredentialsSection = () => (
       </table>
     </div>
     <p className="text-slate-500 text-xs mt-2">
-      All users belong to tenant: <span className="font-mono bg-slate-100 px-1 py-0.5 rounded">TEN-00001</span> (Primus Demo Clinic). Super Admin can switch tenants from the top nav.
+      All users belong to tenant: <span className="font-mono bg-slate-100 px-1 py-0.5 rounded">TEN-00001</span> (Primus Think). Super Admin can switch tenants from the top nav.
     </p>
   </section>
 );

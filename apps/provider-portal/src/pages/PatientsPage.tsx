@@ -375,7 +375,10 @@ const PatientsPage: React.FC = () => {
           <h1 className="text-xl font-semibold text-gray-900">Patients</h1>
           <p className="text-sm text-gray-500 mt-0.5">{allPatients.length} patients in practice</p>
         </div>
-        <button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        <button
+          onClick={() => navigate('/patients/new')}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
           <Plus className="w-4 h-4" />
           New Patient
         </button>

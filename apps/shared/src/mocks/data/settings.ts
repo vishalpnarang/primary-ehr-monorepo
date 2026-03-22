@@ -2,7 +2,7 @@ import type { Tenant, Location, SmartPhrase } from '../../types';
 
 export const mockTenant: Tenant = {
   id: 'TEN-00001',
-  name: 'Primus Demo Clinic',
+  name: 'Primus Think',
   subdomain: 'primusdemo',
   npi: '1578234901',
   taxId: '36-4891234',
@@ -22,7 +22,7 @@ export const mockTenant: Tenant = {
 export const mockLocations: Location[] = [
   {
     id: 'LOC-00001',
-    name: 'Primus Demo Clinic — Gold Coast',
+    name: 'Primus Think — Gold Coast',
     address: {
       line1: '900 N Michigan Ave',
       line2: 'Suite 1200',
@@ -84,7 +84,7 @@ export const mockLocations: Location[] = [
   },
   {
     id: 'LOC-00002',
-    name: 'Primus Demo Clinic — Lincoln Park',
+    name: 'Primus Think — Lincoln Park',
     address: {
       line1: '2001 N Halsted St',
       line2: 'Suite 300',

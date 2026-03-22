@@ -1,7 +1,7 @@
 -- =============================================================================
 -- Primus EHR — Demo Seed Data
 -- =============================================================================
--- Purpose : Populate a fresh demo environment for Primus Demo Clinic.
+-- Purpose : Populate a fresh demo environment for Primus Think.
 -- Audience : Developers, QA, sales demos.
 -- Run after: All Liquibase migrations have been applied.
 -- Safety   : Every INSERT uses ON CONFLICT DO NOTHING so the script is
@@ -20,7 +20,7 @@ INSERT INTO tenants (uuid, name, subdomain, npi, tax_id, phone, fax,
                      address_line1, city, state, zip, status,
                      created_by, modified_by)
 VALUES ('10000000-0000-0000-0000-000000000001',
-        'Primus Demo Clinic',
+        'Primus Think',
         'primusdemo',
         '1234567890',
         '47-1234567',
@@ -48,11 +48,11 @@ INSERT INTO locations (uuid, tenant_id, name, address_line1, city, state, zip,
                        phone, fax, active, created_by, modified_by)
 VALUES
   ('20000000-0000-0000-0000-000000000001',
-   v_tenant_id, 'Primus Demo Clinic Downtown',
+   v_tenant_id, 'Primus Think Downtown',
    '250 W 57th St', 'New York', 'NY', '10107',
    '(212) 555-0110', '(212) 555-0111', true, 'system', 'system'),
   ('20000000-0000-0000-0000-000000000002',
-   v_tenant_id, 'Primus Demo Clinic Midtown',
+   v_tenant_id, 'Primus Think Midtown',
    '420 Lexington Ave', 'New York', 'NY', '10170',
    '(212) 555-0120', '(212) 555-0121', true, 'system', 'system')
 ON CONFLICT (uuid) DO NOTHING;
