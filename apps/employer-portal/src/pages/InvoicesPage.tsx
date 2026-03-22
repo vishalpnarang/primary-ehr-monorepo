@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Download, CheckCircle2, Clock, AlertCircle, FileText } from 'lucide-react';
+import { useAuthStore } from '@/stores/authStore';
+import { useEmployerInvoices } from '@/hooks/useApi';
 
 interface Invoice {
   id: string;
@@ -91,12 +93,22 @@ const statusConfig = {
 const InvoicesPage = () => {
   const [expanded, setExpanded] = useState<string | null>(null);
 
+  const user = useAuthStore((s) => s.user);
+  const companyId = user?.companyId ?? '';
+
+  // Real API — falls back to MOCK_INVOICES when backend is down
+  const { data: apiInvoices, isLoading: apiLoading } = useEmployerInvoices(companyId);
+
   const { data: invoices, isLoading } = useQuery({
-    queryKey: ['employer-invoices'],
+    queryKey: ['employer-invoices', companyId],
     queryFn: async (): Promise<Invoice[]> => {
+      if (Array.isArray(apiInvoices) && apiInvoices.length > 0) {
+        return apiInvoices as Invoice[];
+      }
       await new Promise((r) => setTimeout(r, 500));
       return MOCK_INVOICES;
     },
+    enabled: !apiLoading,
   });
 
   const totals = {

@@ -11,6 +11,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
+import { useEmployerDashboard, useEmployerActivity } from '@/hooks/useApi';
 
 interface KPI {
   label: string;
@@ -130,21 +131,32 @@ const statusConfig = {
 
 const DashboardPage = () => {
   const user = useAuthStore((s) => s.user);
+  const companyId = user?.companyId ?? '';
+
+  // Real API — falls back to MOCK_KPIS / MOCK_ACTIVITIES when backend is down
+  const { data: apiKpis, isLoading: apiKpiLoading } = useEmployerDashboard(companyId);
+  const { data: apiActivities } = useEmployerActivity(companyId);
 
   const { data: kpis, isLoading } = useQuery({
-    queryKey: ['employer-kpis'],
+    queryKey: ['employer-kpis', companyId],
     queryFn: async (): Promise<KPI[]> => {
+      if (apiKpis) return apiKpis as KPI[];
       await new Promise((r) => setTimeout(r, 600));
       return MOCK_KPIS;
     },
+    enabled: !apiKpiLoading,
   });
 
   const { data: activities } = useQuery({
-    queryKey: ['employer-activities'],
+    queryKey: ['employer-activities', companyId],
     queryFn: async (): Promise<RecentActivity[]> => {
+      if (Array.isArray(apiActivities) && apiActivities.length > 0) {
+        return apiActivities as RecentActivity[];
+      }
       await new Promise((r) => setTimeout(r, 400));
       return MOCK_ACTIVITIES;
     },
+    enabled: !apiKpiLoading,
   });
 
   const today = new Date().toLocaleDateString('en-US', {

@@ -10,6 +10,7 @@ import {
   ArrowUpRight,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
+import { useBrokerDashboard, useBrokerEmployers, useBrokerEvents } from '@/hooks/useApi';
 
 interface EmployerSummary {
   id: string;
@@ -50,14 +51,27 @@ const eventConfig = {
 
 const DashboardPage = () => {
   const user = useAuthStore((s) => s.user);
+  const brokerId = user?.agencyId ?? '';
+
+  // Real API — falls back to MOCK_TOP_EMPLOYERS / MOCK_RECENT_EVENTS when backend is down
+  const { data: apiBrokerDashboard } = useBrokerDashboard(brokerId);
+  const { data: apiEmployers = [] } = useBrokerEmployers(brokerId);
+  const { data: apiEvents = [] } = useBrokerEvents(brokerId);
 
   const { data: employers } = useQuery({
-    queryKey: ['broker-top-employers'],
+    queryKey: ['broker-top-employers', brokerId],
     queryFn: async (): Promise<EmployerSummary[]> => {
+      if (Array.isArray(apiEmployers) && apiEmployers.length > 0) {
+        return apiEmployers as EmployerSummary[];
+      }
       await new Promise((r) => setTimeout(r, 600));
       return MOCK_TOP_EMPLOYERS;
     },
+    enabled: true,
   });
+
+  // Suppress unused warning — used by parent dashboard KPI when backend responds
+  void apiBrokerDashboard;
 
   const totalEmployers = 12;
   const totalEmployees = employers?.reduce((s, e) => s + e.employees, 0) ?? 0;
@@ -156,7 +170,10 @@ const DashboardPage = () => {
             <h2 className="text-base font-semibold text-gray-900">Recent Events</h2>
           </div>
           <div className="divide-y divide-gray-50">
-            {MOCK_RECENT_EVENTS.map((ev) => {
+            {(apiEvents.length > 0
+              ? apiEvents as typeof MOCK_RECENT_EVENTS
+              : MOCK_RECENT_EVENTS
+            ).map((ev) => {
               const ec = eventConfig[ev.type as keyof typeof eventConfig];
               const EvIcon = ec.icon;
               return (

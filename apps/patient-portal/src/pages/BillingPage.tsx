@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import {
   CreditCard,
   CheckCircle,
@@ -13,9 +12,7 @@ import {
   Phone,
   FileText,
 } from 'lucide-react';
-import { billingApi } from '@primus/ui/mocks/api';
-
-const PATIENT_ID = 'PAT-10001';
+import { useBalance } from '@/hooks/useApi';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -92,10 +89,8 @@ const BillingPage: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'statements' | 'payments'>('statements');
 
-  const { data: balanceData, isLoading: loadingBalance } = useQuery({
-    queryKey: ['balance', PATIENT_ID],
-    queryFn: () => billingApi.getPatientBalance(PATIENT_ID),
-  });
+  // Real API — falls back to computed fallback balance when backend is down
+  const { data: balanceData, isLoading: loadingBalance } = useBalance();
 
   // Always use fallback statements for display — the shared billing API returns provider-facing claims data
   const statements = FALLBACK_STATEMENTS;

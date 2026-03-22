@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Search, Filter, Download, UserPlus, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { useAuthStore } from '@/stores/authStore';
+import { useEmployees } from '@/hooks/useApi';
 
 interface Employee {
   id: string;
@@ -38,12 +40,22 @@ const EmployeesPage = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'pending' | 'terminated'>('all');
 
+  const user = useAuthStore((s) => s.user);
+  const companyId = user?.companyId ?? '';
+
+  // Real API — falls back to MOCK_EMPLOYEES when backend is down
+  const { data: apiEmployees, isLoading: apiLoading } = useEmployees(companyId);
+
   const { data: employees, isLoading } = useQuery({
-    queryKey: ['employer-employees'],
+    queryKey: ['employer-employees', companyId],
     queryFn: async (): Promise<Employee[]> => {
+      if (Array.isArray(apiEmployees) && apiEmployees.length > 0) {
+        return apiEmployees as Employee[];
+      }
       await new Promise((r) => setTimeout(r, 500));
       return MOCK_EMPLOYEES;
     },
+    enabled: !apiLoading,
   });
 
   const filtered = (employees ?? []).filter((emp) => {

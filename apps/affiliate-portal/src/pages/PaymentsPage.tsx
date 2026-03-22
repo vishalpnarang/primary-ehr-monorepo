@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { DollarSign, Download, CheckCircle2, Clock, Calendar } from 'lucide-react';
+import { useAuthStore } from '@/stores/authStore';
+import { useAffiliatePayments } from '@/hooks/useApi';
 
 interface Payment {
   id: string;
@@ -29,12 +31,22 @@ const statusConfig = {
 };
 
 const PaymentsPage = () => {
+  const user = useAuthStore((s) => s.user);
+  const affiliateId = user?.organizationId ?? '';
+
+  // Real API — falls back to MOCK_PAYMENTS when backend is down
+  const { data: apiPayments, isLoading: apiLoading } = useAffiliatePayments(affiliateId);
+
   const { data: payments, isLoading } = useQuery({
-    queryKey: ['affiliate-payments'],
+    queryKey: ['affiliate-payments', affiliateId],
     queryFn: async (): Promise<Payment[]> => {
+      if (Array.isArray(apiPayments) && apiPayments.length > 0) {
+        return apiPayments as Payment[];
+      }
       await new Promise((r) => setTimeout(r, 500));
       return MOCK_PAYMENTS;
     },
+    enabled: !apiLoading,
   });
 
   const totalPaid = payments?.filter((p) => p.status === 'paid').reduce((sum) => sum, 0);

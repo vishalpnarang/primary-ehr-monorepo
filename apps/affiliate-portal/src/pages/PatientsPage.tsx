@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Search, CheckCircle2, Clock, XCircle, Lock } from 'lucide-react';
+import { useAuthStore } from '@/stores/authStore';
+import { useAffiliatePatients } from '@/hooks/useApi';
 
 interface ReferredPatient {
   id: string;
@@ -34,12 +36,22 @@ const statusConfig = {
 const PatientsPage = () => {
   const [search, setSearch] = useState('');
 
+  const user = useAuthStore((s) => s.user);
+  const affiliateId = user?.organizationId ?? '';
+
+  // Real API — falls back to MOCK_PATIENTS when backend is down
+  const { data: apiPatients, isLoading: apiLoading } = useAffiliatePatients(affiliateId);
+
   const { data: patients, isLoading } = useQuery({
-    queryKey: ['affiliate-patients'],
+    queryKey: ['affiliate-patients', affiliateId],
     queryFn: async (): Promise<ReferredPatient[]> => {
+      if (Array.isArray(apiPatients) && apiPatients.length > 0) {
+        return apiPatients as ReferredPatient[];
+      }
       await new Promise((r) => setTimeout(r, 500));
       return MOCK_PATIENTS;
     },
+    enabled: !apiLoading,
   });
 
   const filtered = (patients ?? []).filter(
@@ -80,13 +92,15 @@ const PatientsPage = () => {
 
       {/* Table */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-        {isLoading ? (
+        {isLoading && (
           <div className="p-8 text-center">
             <div className="w-8 h-8 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mx-auto" />
           </div>
-        ) : filtered.length === 0 ? (
+        )}
+        {!isLoading && filtered.length === 0 && (
           <div className="p-12 text-center text-gray-400 text-sm">No patients match your search.</div>
-        ) : (
+        )}
+        {!isLoading && filtered.length > 0 && (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">

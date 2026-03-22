@@ -9,6 +9,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
+import { useAffiliateDashboard, useRecentReferrals } from '@/hooks/useApi';
 
 interface ReferralStat {
   month: string;
@@ -36,10 +37,16 @@ const MOCK_RECENT_REFERRALS = [
 
 const DashboardPage = () => {
   const user = useAuthStore((s) => s.user);
+  const affiliateId = user?.organizationId ?? '';
+
+  // Real API — falls back to MOCK_STATS / MOCK_RECENT_REFERRALS when backend is down
+  const { data: apiDashboard } = useAffiliateDashboard(affiliateId);
+  const { data: apiRecentReferrals = [] } = useRecentReferrals(affiliateId);
 
   const { data: stats } = useQuery({
-    queryKey: ['affiliate-stats'],
+    queryKey: ['affiliate-stats', affiliateId],
     queryFn: async (): Promise<ReferralStat[]> => {
+      if (Array.isArray(apiDashboard)) return apiDashboard as ReferralStat[];
       await new Promise((r) => setTimeout(r, 500));
       return MOCK_STATS;
     },
@@ -138,7 +145,10 @@ const DashboardPage = () => {
             </button>
           </div>
           <div className="divide-y divide-gray-50">
-            {MOCK_RECENT_REFERRALS.map((ref) => (
+            {(apiRecentReferrals.length > 0
+              ? apiRecentReferrals as typeof MOCK_RECENT_REFERRALS
+              : MOCK_RECENT_REFERRALS
+            ).map((ref) => (
               <div key={ref.id} className="px-5 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {ref.status === 'converted'

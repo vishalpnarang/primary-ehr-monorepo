@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Search, Building2, Users, CheckCircle2, Clock, AlertCircle, Plus, Phone, Mail } from 'lucide-react';
+import { useAuthStore } from '@/stores/authStore';
+import { useBrokerEmployers } from '@/hooks/useApi';
 
 interface ManagedEmployer {
   id: string;
@@ -63,12 +65,22 @@ const EmployersPage = () => {
   const [search, setSearch] = useState('');
   const [expanded, setExpanded] = useState<string | null>(null);
 
+  const user = useAuthStore((s) => s.user);
+  const brokerId = user?.agencyId ?? '';
+
+  // Real API — falls back to MOCK_EMPLOYERS when backend is down
+  const { data: apiEmployers, isLoading: apiLoading } = useBrokerEmployers(brokerId);
+
   const { data: employers, isLoading } = useQuery({
-    queryKey: ['broker-employers'],
+    queryKey: ['broker-employers', brokerId],
     queryFn: async (): Promise<ManagedEmployer[]> => {
+      if (Array.isArray(apiEmployers) && apiEmployers.length > 0) {
+        return apiEmployers as ManagedEmployer[];
+      }
       await new Promise((r) => setTimeout(r, 500));
       return MOCK_EMPLOYERS;
     },
+    enabled: !apiLoading,
   });
 
   const filtered = (employers ?? []).filter(

@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import {
   MessageSquare,
   Send,
@@ -10,7 +9,7 @@ import {
   Paperclip,
   Lock,
 } from 'lucide-react';
-import { inboxApi } from '@primus/ui/mocks/api';
+import { useMessageThreads } from '@/hooks/useApi';
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -179,11 +178,8 @@ const MessagesPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Try shared API threads — falls back to local data if empty
-  const { data: apiThreads, isLoading } = useQuery({
-    queryKey: ['inbox', 'threads'],
-    queryFn: () => inboxApi.getThreads(),
-  });
+  // Real API — falls back to FALLBACK_THREADS when backend is down or returns empty
+  const { data: apiThreads = [], isLoading } = useMessageThreads();
 
   // Use fallback threads (structured for UI) since the shared API returns inbox items with different shape
   const threads: Thread[] = FALLBACK_THREADS;

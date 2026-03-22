@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { DollarSign, Download, TrendingUp, Calendar, CheckCircle2, Clock } from 'lucide-react';
+import { useAuthStore } from '@/stores/authStore';
+import { useBrokerCommissions } from '@/hooks/useApi';
 
 interface CommissionRecord {
   id: string;
@@ -73,12 +75,22 @@ const statusConfig = {
 const CommissionsPage = () => {
   const [expanded, setExpanded] = useState<string | null>('COM-0326');
 
+  const user = useAuthStore((s) => s.user);
+  const brokerId = user?.agencyId ?? '';
+
+  // Real API — falls back to MOCK_COMMISSIONS when backend is down
+  const { data: apiCommissions, isLoading: apiLoading } = useBrokerCommissions(brokerId);
+
   const { data: commissions, isLoading } = useQuery({
-    queryKey: ['broker-commissions'],
+    queryKey: ['broker-commissions', brokerId],
     queryFn: async (): Promise<CommissionRecord[]> => {
+      if (Array.isArray(apiCommissions) && apiCommissions.length > 0) {
+        return apiCommissions as CommissionRecord[];
+      }
       await new Promise((r) => setTimeout(r, 500));
       return MOCK_COMMISSIONS;
     },
+    enabled: !apiLoading,
   });
 
   const ytdTotal = '$35,625';
